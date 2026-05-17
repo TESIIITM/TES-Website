@@ -170,7 +170,7 @@ export default function EnigmaFooter() {
             <div ref={col1Ref} className="fade-up flex flex-col items-center sm:items-start text-center sm:text-left">
               <div className="mb-6">
                 <img 
-                  src="/TES-Website/teslogo-nobg-text-white.png" 
+                  src="/teslogo-nobg-text-white.png" 
                   alt="TES Logo" 
                   className="w-48 opacity-90 transition-opacity" 
                 />

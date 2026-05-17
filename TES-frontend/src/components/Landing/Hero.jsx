@@ -51,8 +51,8 @@ const Hero = () => {
           className="w-64 h-24 md:w-80 md:h-32 transition-all duration-700 ease-in-out group-hover:scale-105"
           style={{
             backgroundColor: logoColors[colorIndex],
-            WebkitMaskImage: "url('/TES-Website/teslogo-nobg-text-white.png')",
-            maskImage: "url('/TES-Website/teslogo-nobg-text-white.png')",
+            WebkitMaskImage: "url('/teslogo-nobg-text-white.png')",
+            maskImage: "url('/teslogo-nobg-text-white.png')",
             WebkitMaskSize: "contain",
             maskSize: "contain",
             WebkitMaskRepeat: "no-repeat",
