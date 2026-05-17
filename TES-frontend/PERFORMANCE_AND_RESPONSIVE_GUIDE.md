@@ -202,7 +202,7 @@ const About = lazy(() => import('./pages/About'));
 
 function App() {
   return (
-    <BrowserRouter basename="/TES-Website/">
+    <BrowserRouter basename="/">
       <Suspense fallback={<Spinner />}>
         <Routes>
           <Route path="/" element={<Landing />} />
