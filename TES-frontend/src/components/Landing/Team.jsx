@@ -61,7 +61,7 @@ const Team = () => {
         </div>
       </div>
 
-      {/* Lead Coordinators Section */}
+      {/* Lead Coordinators Section - commented out
       <div className="space-y-6 pt-6 justify-center flex flex-col items-center rounded-2xl">
         <h3 className="text-[var(--color-lavender)] text-2xl md:text-3xl font-bold tracking-tight text-center">
           Coordinators
@@ -73,7 +73,6 @@ const Team = () => {
               href={lead.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              /* ADDED items-center and removed block */
               className="group bg-[var(--color-surface)] border border-white/5 p-6 rounded-2xl hover:border-[var(--color-sapphire)]/50 transition-all flex flex-col items-center cursor-pointer"
             >
               <div className="w-30 h-28 shrink-0 bg-white/5 mb-6 flex items-center justify-center overflow-hidden relative rounded-full border border-white/5 group-hover:border-[var(--color-sapphire)]/30 transition-colors">
@@ -97,6 +96,7 @@ const Team = () => {
           ))}
         </div>
       </div>
+      */}
 
     </section>
   );

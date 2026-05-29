@@ -67,6 +67,15 @@ const styles = `
     opacity: 1;
     transform: translateY(0);
   }
+
+  .github-link {
+    opacity: 0.25;
+    transition: opacity 0.25s ease;
+  }
+
+  .github-link:hover {
+    opacity: 1;
+  }
 `;
 
 const STARS = Array.from({ length: 24 }, (_, i) => ({
@@ -98,10 +107,17 @@ const MediumIcon = () => (
   </svg>
 );
 
+const GithubIcon = ({ className = "w-4 h-4" }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+  </svg>
+);
+
 const socials = [
   { label: "Instagram", icon: <InstaIcon />, href: "https://www.instagram.com/tes_iiitm" },
   { label: "LinkedIn", icon: <LinkedinIcon />, href: "https://www.linkedin.com/company/tes-the-enigma-society/" },
   { label: "Medium", icon: <MediumIcon />, href: "https://medium.com/@tes.abviiitm" },
+  { label: "GitHub", icon: <GithubIcon />, href: "https://github.com/TESIIITM" },
 ];
 
 const navLinks = [
@@ -166,13 +182,13 @@ export default function EnigmaFooter() {
           {/* ── Grid ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 pb-12 border-b border-surface">
 
-            {/* Brand - Center Align Mobile */}
+            {/* Brand */}
             <div ref={col1Ref} className="fade-up flex flex-col items-center sm:items-start text-center sm:text-left">
               <div className="mb-6">
-                <img 
-                  src="/teslogo-nobg-text-white.png" 
-                  alt="TES Logo" 
-                  className="w-48 opacity-90 transition-opacity" 
+                <img
+                  src="/teslogo-nobg-text-white.png"
+                  alt="TES Logo"
+                  className="w-48 opacity-90 transition-opacity"
                 />
               </div>
 
@@ -182,17 +198,17 @@ export default function EnigmaFooter() {
 
               <div
                 className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border mono text-[10px] tracking-wide uppercase"
-                style={{ 
-                  background: "color-mix(in srgb, var(--color-sapphire) 7%, transparent)", 
-                  borderColor: "color-mix(in srgb, var(--color-sapphire) 20%, transparent)", 
-                  color: "var(--color-sapphire)" 
+                style={{
+                  background: "color-mix(in srgb, var(--color-sapphire) 7%, transparent)",
+                  borderColor: "color-mix(in srgb, var(--color-sapphire) 20%, transparent)",
+                  color: "var(--color-sapphire)"
                 }}
               >
                 <span>◆</span> ABV-IIITM Gwalior
               </div>
             </div>
 
-            {/* Navigate - Center Align Mobile */}
+            {/* Navigate */}
             <div ref={col2Ref} className="fade-up text-center sm:text-left">
               <ColHeader>Navigate</ColHeader>
               <ul className="space-y-3 flex flex-col items-center sm:items-start">
@@ -210,7 +226,7 @@ export default function EnigmaFooter() {
               </ul>
             </div>
 
-            {/* Socials - Center & Full Width Mobile */}
+            {/* Socials */}
             <div ref={col3Ref} className="fade-up text-center sm:text-left">
               <ColHeader>Socials</ColHeader>
               <div className="flex flex-col items-center sm:items-start space-y-2">
@@ -235,7 +251,7 @@ export default function EnigmaFooter() {
               </div>
             </div>
 
-            {/* Contact - Center Align Mobile */}
+            {/* Contact */}
             <div ref={col4Ref} className="fade-up text-center sm:text-left">
               <ColHeader>Contact</ColHeader>
               <div className="space-y-6">
@@ -270,6 +286,16 @@ export default function EnigmaFooter() {
             <p className="mono text-[10px] tracking-widest text-[var(--color-text-muted)] opacity-60 order-2 lg:order-3">
               BUILT BY ENIGMA SOCIETY
             </p>
+
+            <a
+              href="https://github.com/TESIIITM/TES-Website"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="github-link order-4 lg:order-4"
+              aria-label="TES GitHub Repository"
+            >
+              <GithubIcon className="w-6 h-6" />
+            </a>
           </div>
 
         </div>
