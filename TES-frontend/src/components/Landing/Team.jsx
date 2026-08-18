@@ -61,7 +61,7 @@ const Team = () => {
         </div>
       </div>
 
-      {/* Lead Coordinators Section - commented out
+      {
       <div className="space-y-6 pt-6 justify-center flex flex-col items-center rounded-2xl">
         <h3 className="text-[var(--color-lavender)] text-2xl md:text-3xl font-bold tracking-tight text-center">
           Coordinators
@@ -96,7 +96,7 @@ const Team = () => {
           ))}
         </div>
       </div>
-      */}
+      }
 
     </section>
   );
