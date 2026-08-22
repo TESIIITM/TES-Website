@@ -110,4 +110,4 @@ If you want to contribute, check out [CONTRIBUTING.md](./CONTRIBUTING.md) for gu
 
 ---
 
-*ABV-IIITM Gwalior · The Enigma Society*
+*ABV-IIITM Gwalior · The Enigma Society(TES)*
