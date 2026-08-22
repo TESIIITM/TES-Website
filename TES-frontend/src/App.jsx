@@ -6,7 +6,7 @@ import About from "./pages/About";
 
 export default function App() {
   return (
-    <Router basename="/">
+    <Router basename={import.meta.env.PROD ? "/TES-Website" : "/"}>
       <Routes>
         {/* Everything inside this route uses the Layout wrapper (Header + Styling) */}
         <Route element={<Layout />}>
