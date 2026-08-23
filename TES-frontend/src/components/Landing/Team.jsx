@@ -1,14 +1,16 @@
 import React from 'react';
 
+const base = import.meta.env.BASE_URL;
+
 const teamData = {
   coordinators: [
-    { name: "Dr. Rahul Kala", linkedin: "https://www.linkedin.com/in/rkala001/", image: "/team/Dr.RahulKala.jpeg" },
-    { name: "Dr. Rohit Kumar", linkedin: "https://www.linkedin.com/in/dr-rohit-kumar-smieee/", image: "/team/Dr.RohitKumar.png" }
+    { name: "Dr. Rahul Kala", linkedin: "https://www.linkedin.com/in/rkala001/", image: `${base}team/Dr.RahulKala.jpeg` },
+    { name: "Dr. Rohit Kumar", linkedin: "https://www.linkedin.com/in/dr-rohit-kumar-smieee/", image: `${base}team/Dr.RohitKumar.png` }
     
   ],
   team: [
-    { name: "Mithul Nama", linkedin: "https://www.linkedin.com/in/mithul-nama-61362a331", image:   "/team/mithul.jpg" },
-    { name: "Rohinth S", linkedin: "https://www.linkedin.com/in/srohinth/", image: "/team/rohinth.jpg"},
+    { name: "Mithul Nama", linkedin: "https://www.linkedin.com/in/mithul-nama-61362a331", image: `${base}team/mithul.jpg` },
+    { name: "Rohinth S", linkedin: "https://www.linkedin.com/in/srohinth/", image: `${base}team/rohinth.jpg` },
     { name: "Aman Dabral", linkedin: "https://www.linkedin.com/in/aman-dabral-163730323/", image: "" },
   ]
 };
@@ -36,7 +38,6 @@ const Team = () => {
               href={member.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              /* ADDED items-center and removed block */
               className="group bg-[var(--color-surface)] border border-white/5 p-6 rounded-2xl hover:border-[var(--color-teal)]/50 transition-all flex flex-col items-center cursor-pointer"
             >
               <div className="w-20 h-20 bg-white/5 mb-6 flex items-center justify-center overflow-hidden relative rounded-full border border-white/5 group-hover:border-[var(--color-teal)]/30 transition-colors">
