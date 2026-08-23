@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TextType from '../TextType';
 import Tilt from 'react-parallax-tilt';
 
+const base = import.meta.env.BASE_URL;
 
 // Moved outside the component so it doesn't re-create on every single render
 const logoColors = [
@@ -51,8 +52,8 @@ const Hero = () => {
           className="w-64 h-24 md:w-80 md:h-32 transition-all duration-700 ease-in-out group-hover:scale-105"
           style={{
             backgroundColor: logoColors[colorIndex],
-            WebkitMaskImage: "url('/teslogo-nobg-text-white.png')",
-            maskImage: "url('/teslogo-nobg-text-white.png')",
+            WebkitMaskImage: `url('${base}teslogo-nobg-text-white.png')`,
+            maskImage: `url('${base}teslogo-nobg-text-white.png')`,
             WebkitMaskSize: "contain",
             maskSize: "contain",
             WebkitMaskRepeat: "no-repeat",
