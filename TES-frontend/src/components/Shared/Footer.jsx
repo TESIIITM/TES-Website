@@ -186,7 +186,7 @@ export default function EnigmaFooter() {
             <div ref={col1Ref} className="fade-up flex flex-col items-center sm:items-start text-center sm:text-left">
               <div className="mb-6">
                 <img
-                  src="/teslogo-nobg-text-white.png"
+                  src={`${import.meta.env.BASE_URL}teslogo-nobg-text-white.png`}
                   alt="TES Logo"
                   className="w-48 opacity-90 transition-opacity"
                 />
@@ -236,16 +236,15 @@ export default function EnigmaFooter() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="social-row flex items-center justify-center sm:justify-start gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] no-underline w-[70%] sm:w-full"
-                    style={{ background: "color-mix(in srgb, var(--color-surface) 50%, transparent)" }}
+                    className="social-row flex items-center justify-center sm:justify-start gap-3 px-4 py-2.5 rounded-lg text-[var(--color-text-muted)] text-sm font-medium w-full sm:w-auto"
                   >
-                    <div
-                      className="social-icon-wrap w-8 h-8 flex items-center justify-center rounded-md flex-shrink-0 text-[var(--color-sapphire)]"
-                      style={{ background: "color-mix(in srgb, var(--color-sapphire) 10%, transparent)" }}
+                    <span
+                      className="social-icon-wrap flex items-center justify-center w-7 h-7 rounded-md"
+                      style={{ background: "color-mix(in srgb, var(--color-sapphire) 12%, transparent)" }}
                     >
                       {icon}
-                    </div>
-                    <span>{label}</span>
+                    </span>
+                    {label}
                   </a>
                 ))}
               </div>
