@@ -8,7 +8,8 @@ export default function Header() {
         <Link to="/" className="flex items-center gap-3 group">
           {/* Drop your logo.png into the 'public' folder */}
           <img 
-                        src="/teslogo-nobg-text-white.png"            alt="TES Logo" 
+            src={`${import.meta.env.BASE_URL}teslogo-nobg-text-white.png`}
+            alt="TES Logo" 
             className="w-20 h-10 object-contain opacity-90 group-hover:opacity-100 transition-opacity" 
             /* Fallback block if the image isn't added yet */
             onError={(e) => { e.target.style.display = 'none' }}
