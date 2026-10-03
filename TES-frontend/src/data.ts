@@ -7,7 +7,7 @@ export const society = {
   medium: 'https://medium.com/@tes.abviiitm',
   instagram: 'https://www.instagram.com/tes_iiitm',
   linkedin: 'https://www.linkedin.com/company/tes-the-enigma-society/',
-  email: 'tes.abviiitm@gmail.com',
+  email: 'tes@iiitm.ac.in',
   eventForm: 'https://forms.gle/QkzT3Bcsaukr5Lib6',
   eventRules: 'https://robust-calcium-ce6.notion.site/Tech-Lekhan-2f53e328d0a4807481ffe287fcc92460',
 } as const;
@@ -29,9 +29,9 @@ export const stories: Story[] = [
 ];
 
 export const people = [
-  { name: 'Mithul Nama', role: 'Core member', portrait: asset('team/mithul.jpg'), linkedin: 'https://www.linkedin.com/in/mithul-nama-61362a331' },
-  { name: 'Rohinth S', role: 'Core member', portrait: asset('team/rohinth.jpg'), linkedin: 'https://www.linkedin.com/in/srohinth/' },
-  { name: 'Aman Dabral', role: 'Core member', portrait: '', linkedin: 'https://www.linkedin.com/in/aman-dabral-163730323/' },
+  { name: 'Mithul Nama', role: 'Club head', portrait: asset('team/mithul.jpg'), linkedin: 'https://www.linkedin.com/in/mithul-nama-61362a331' },
+  { name: 'Rohinth S', role: 'Club head', portrait: asset('team/rohinth.jpg'), linkedin: 'https://www.linkedin.com/in/srohinth/' },
+  { name: 'Aman Dabral', role: 'Club head', portrait: '', linkedin: 'https://www.linkedin.com/in/aman-dabral-163730323/' },
   { name: 'Dr. Rahul Kala', role: 'Faculty coordinator', portrait: asset('team/Dr.RahulKala.jpeg'), linkedin: 'https://www.linkedin.com/in/rkala001/' },
   { name: 'Dr. Rohit Kumar', role: 'Faculty coordinator', portrait: asset('team/Dr.RohitKumar.png'), linkedin: 'https://www.linkedin.com/in/dr-rohit-kumar-smieee/' },
 ] as const;
