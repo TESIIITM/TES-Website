@@ -132,7 +132,7 @@ function BuildPanel() {
           <div className="feature-heading"><Label>FEATURED / OPEN REPOSITORY</Label><span className="source-insignia"><GitFork size={17} strokeWidth={1.5} /> TES / OPEN SOURCE</span></div>
           <h3>Make the web<br /><em>a little better.</em></h3>
           <p>Our society website is open for exploration. Read the source, improve an interaction, fix a bug, or make the docs clearer. Start with one useful change.</p>
-          <div className="feature-tags"><span>TES-Website</span><span>JavaScript</span><span>MIT</span></div>
+          <div className="feature-tags"><span>TES-Website</span><span>TypeScript</span><span>MIT</span></div>
           <div className="feature-links"><a href={society.repository} target="_blank" rel="noopener noreferrer">Explore repository <ArrowUpRight size={17} /></a><a href={society.contributionGuide} target="_blank" rel="noopener noreferrer">Contribution guide <ArrowUpRight size={17} /></a></div>
         </SpotlightCard>
         <SpotlightCard className="terminal-card">
