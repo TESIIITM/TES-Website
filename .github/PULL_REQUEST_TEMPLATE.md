@@ -1,57 +1,24 @@
-## PR Title
-
-<!-- Use one of: feat, fix, docs, refactor, perf, test, build, breaking, chore -->
-<!-- Example: feat: add ranked backlog generation -->
-
-
 ## Summary
 
-<!-- What does this PR do in 2–3 sentences? -->
+<!-- Explain what changed and why. -->
 
+## Related issue
 
-## Related Issue
+<!-- Example: Fixes #30 -->
 
-<!-- One of: Fixes / Resolves / Closes -->
-Fixes #___
+## Validation
 
+- [ ] `cd TES-frontend && npm ci`
+- [ ] `npm run lint`
+- [ ] `npm run typecheck`
+- [ ] `npm run verify:licenses`
+- [ ] `npm run build`
+- [ ] Desktop and mobile interaction checks
 
-## Type of Change
+## Screenshots
 
-- [ ] feat
-- [ ] fix
-- [ ] docs
-- [ ] refactor
-- [ ] perf
-- [ ] test
-- [ ] build
-- [ ] breaking
-- [ ] chore
+<!-- Add before/after or desktop/mobile images for UI changes. -->
 
+## Reviewer notes
 
-## How Was This Tested?
-
-- [ ] Local run
-- [ ] Unit tests
-- [ ] Integration tests
-- [ ] Not tested (explain why)
-
-Notes:
-
-
-
-## CE & Security Check
-
-- [ ] Targets **GitMesh CE** only (no EE code)
-- [ ] No secrets or credentials committed
-
-
-## Screenshots / Demos (if UI or UX)
-
-<!-- Optional: add screenshot, GIF, or short note -->
-
-
-## Checklist
-
-- [ ] Code follows project style
-- [ ] Self-reviewed
-- [ ] Tests updated/added where needed
+<!-- Call out anything that needs special attention. -->

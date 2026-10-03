@@ -20,10 +20,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: TES-frontend/package-lock.json
       
       - name: Install dependencies
-        run: cd TES-frontend && npm install
+        run: cd TES-frontend && npm ci
       
       - name: Build the app
         run: cd TES-frontend && npm run build

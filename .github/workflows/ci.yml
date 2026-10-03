@@ -1,38 +1,31 @@
-name: Enigma CI Checks
+name: Enigma CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
-# This tells GitHub to run all 'run' commands inside the TES-frontend folder
+permissions:
+  contents: read
+
 defaults:
   run:
     working-directory: TES-frontend
 
 jobs:
-  enigma-verification:
-    name: 💠 Enigma Security Check
+  verify:
+    name: Lint, typecheck, licenses, build
     runs-on: ubuntu-latest
-
     steps:
-      - name: 🛰️ Intercepting Source Code
-        uses: actions/checkout@v4
-
-      - name: ⚙️ Setting up Node.js Environment
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          # We point the cache to the lockfile inside the subfolder
-          cache: 'npm'
+          node-version: '22'
+          cache: npm
           cache-dependency-path: TES-frontend/package-lock.json
-
-      - name: 📦 Syncing Dependencies
-        run: npm ci
-
-      - name: 🔍 Analyzing Code Quality
-        run: npm run lint || echo "No lint script found"
-
-      - name: 🏗️ Compiling Enigma Build
-        run: npm run build
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run verify:licenses
+      - run: npm run build

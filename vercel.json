@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm --prefix TES-frontend ci",
+  "buildCommand": "npm --prefix TES-frontend run build",
+  "outputDirectory": "TES-frontend/dist"
+}

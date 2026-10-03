@@ -31,13 +31,13 @@ You do not need to be a core member to contribute. Here are some ways you can he
 # 1. Fork the repository on GitHub
 
 # 2. Clone your fork
-git clone https://github.com/YOUR-USERNAME/tes-frontend.git
+git clone https://github.com/YOUR-USERNAME/TES-Website.git
 
 # 3. Move into the project
-cd tes-frontend
+cd TES-Website/TES-frontend
 
 # 4. Install dependencies
-npm install
+npm ci
 
 # 5. Create a new branch
 git checkout -b feat/your-feature-name
@@ -92,7 +92,8 @@ Write in lowercase and present tense.
 
 Before opening a PR:
 
-* Make sure the project runs (`npm run dev`)
+* Use Node.js 22 and make sure the project runs (`npm run dev`)
+* Run `npm run lint`, `npm run typecheck`, `npm run verify:licenses`, and `npm run build` from `TES-frontend/`
 * Test on desktop and mobile
 * Pull latest changes from `main`
 * Write a clear title and description
