@@ -22,7 +22,10 @@ const students = people.filter((person) => person.role !== 'Faculty coordinator'
 function readBookmarks(): string[] {
   try {
     const value: unknown = JSON.parse(localStorage.getItem('tes-reading-list') || '[]');
-    return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+    const knownIds = new Set(stories.map((story) => story.id));
+    return Array.isArray(value)
+      ? [...new Set(value.filter((item): item is string => typeof item === 'string' && knownIds.has(item)))]
+      : [];
   } catch { return []; }
 }
 
@@ -278,23 +281,30 @@ function Footer() {
 export default function App() {
   const [panel, setPanel] = useState<Panel>('build');
   const [commandOpen, setCommandOpen] = useState(false);
-  const navigate = (target: string) => {
+  const navigate = (target: string, scroll = true) => {
     if (target === 'build' || target === 'learn' || target === 'gather') setPanel(target);
-    history.pushState(null, '', `#${target}`);
-    document.getElementById(target === 'home' || target === 'about' ? target : 'explore')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+    if (location.hash !== `#${target}`) history.pushState(null, '', `#${target}`);
+    if (scroll) document.getElementById(target === 'home' || target === 'about' ? target : 'explore')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
   };
   useEffect(() => {
+    let frame = 0;
     const sync = () => {
       const target = location.hash.slice(1);
+      let section: string | undefined;
       if (target === 'build' || target === 'learn' || target === 'gather') {
         setPanel(target);
-        requestAnimationFrame(() => document.getElementById('explore')?.scrollIntoView({ behavior: 'instant' }));
-      } else if (target === 'about') requestAnimationFrame(() => document.getElementById('about')?.scrollIntoView({ behavior: 'instant' }));
+        section = 'explore';
+      } else if (target === '' || target === 'home') {
+        setPanel('build');
+        section = 'home';
+      } else if (target === 'about' || target === 'explore') section = target;
+      cancelAnimationFrame(frame);
+      if (section) frame = requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ behavior: 'instant' }));
     };
     sync();
     addEventListener('popstate', sync);
     addEventListener('hashchange', sync);
-    return () => { removeEventListener('popstate', sync); removeEventListener('hashchange', sync); };
+    return () => { cancelAnimationFrame(frame); removeEventListener('popstate', sync); removeEventListener('hashchange', sync); };
   }, []);
   useEffect(() => {
     const shortcut = (event: globalThis.KeyboardEvent) => {
@@ -306,6 +316,6 @@ export default function App() {
     window.addEventListener('keydown', shortcut);
     return () => window.removeEventListener('keydown', shortcut);
   }, []);
-  const onPanel = (value: Panel) => { setPanel(value); history.replaceState(null, '', `#${value}`); };
+  const onPanel = (value: Panel) => navigate(value, false);
   return <><a className="skip-link" href="#explore">Skip to content</a><Header navigate={navigate} onCommand={() => setCommandOpen(true)} /><main><Hero navigate={navigate} onCommand={() => setCommandOpen(true)} /><Explorer panel={panel} onPanel={onPanel} /><About navigate={navigate} /></main><Footer />{commandOpen && <CommandPalette onOpenChange={setCommandOpen} navigate={navigate} />}</>;
 }
