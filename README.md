@@ -23,8 +23,15 @@ npm run dev
 npm run lint
 npm run typecheck
 npm run verify:licenses
+npm run verify:security
 npm run build
+npm run test:install
+npm test
 ```
+
+Dev and preview bind to loopback by default. For an intentional LAN preview, use `npm run dev -- --host 0.0.0.0` on a trusted network; never expose Vite as a production server.
+
+`npm test` runs browser regression tests on the production build at desktop and mobile sizes. Run `npm run build` first. The test harness starts its own loopback preview.
 
 `npm run preview` serves the production build locally. The output in `TES-frontend/dist/` can be hosted by any static server. Vite uses a relative base path, so the build works at a site root or a repository subpath. The GitHub Pages workflow builds and uploads that directory after changes reach `main`.
 
@@ -33,10 +40,12 @@ To self-host with Docker:
 ```sh
 cd TES-frontend
 docker build -t tes-website .
-docker run --rm -p 8080:8080 tes-website
+docker run --rm --read-only --tmpfs /tmp:rw,noexec,nosuid,size=32m --cap-drop=ALL --security-opt=no-new-privileges -p 127.0.0.1:8080:8080 tes-website
 ```
 
-Open `http://localhost:8080`.
+Open `http://localhost:8080`. The pinned Nginx image runs as UID 101 and includes an HTTP health check. Put it behind an HTTPS reverse proxy for external traffic; configure HSTS at that TLS terminator. Nginx headers cover HTML, cached assets, and error responses. `node scripts/test-container.mjs` checks them against a running container.
+
+See [the security review](docs/security-review.md) for the issue-by-issue changes and hosting limitations.
 
 ## GitHub Pages and Vercel
 
@@ -52,9 +61,13 @@ Before deploying, check the home page and images, the Build/Learn/Gather tabs, t
 
 - `TES-frontend/src/data.ts`: members, projects, articles, events, and official links.
 - `TES-frontend/src/App.tsx`: section content and interactions.
-- `TES-frontend/src/styles.css` and `tailwind.config.ts`: visual system and responsive behavior.
+- `TES-frontend/src/styles.css`: visual system and responsive behavior; `src/reset.css` is the local browser baseline.
 - `TES-frontend/public/assets/`: TES compass, wordmark, and team portraits.
 
-The source is MIT licensed. Production dependencies use permissive software or font licenses. The license check also permits the development-only Python-2.0 and BlueOak-1.0.0 licenses, and CC-BY-4.0 browser-compatibility data. The latter is not shipped as site content. See `TES-frontend/scripts/check-licenses.mjs` for the enforced policy. Society media is from the existing repository and supplied club assets; review image rights before redistributing outside TES.
+The source is MIT licensed. The local browser reset retains its Tailwind Preflight MIT notice in `public/licenses/tailwind-preflight.txt`; the application uses custom CSS without a Tailwind compiler dependency. Production dependencies use permissive software or font licenses. The license check also permits the development-only Python-2.0 and BlueOak-1.0.0 licenses, and CC-BY-4.0 browser-compatibility data. The latter is not shipped as site content. See `TES-frontend/scripts/check-licenses.mjs` for the enforced policy. Society media is from the existing repository and supplied club assets; review image rights before redistributing outside TES.
 
 For contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## Contact
+
+Email: [tes@iiitm.ac.in](mailto:tes@iiitm.ac.in).

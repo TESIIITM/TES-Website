@@ -17,7 +17,7 @@ export function CommandPalette({ onOpenChange, navigate }: { onOpenChange: (open
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const inputId = useId();
-  const results = actions.filter((action) => `${action.label} ${action.detail} ${action.group}`.toLowerCase().includes(query.trim().toLowerCase()));
+  const results = actions.filter((action) => `${action.label} ${action.detail} ${action.target} ${action.group}`.toLowerCase().includes(query.trim().toLowerCase()));
   const run = (action: Action) => {
     onOpenChange(false);
     if (action.external) window.open(action.target, '_blank', 'noopener,noreferrer');
@@ -36,7 +36,7 @@ export function CommandPalette({ onOpenChange, navigate }: { onOpenChange: (open
           <div className="command-top"><span><Compass size={15} /> THE ENIGMA SOCIETY / QUICK NAVIGATION</span><Dialog.Close aria-label="Close command menu"><X size={18} /></Dialog.Close></div>
           <Dialog.Title className="sr-only">Explore the society</Dialog.Title>
           <Dialog.Description id="command-description" className="sr-only">Search and select a page or community destination.</Dialog.Description>
-          <label className="command-search" htmlFor={inputId}><Search size={22} /><input id={inputId} autoFocus type="search" value={query} onChange={(event) => { setQuery(event.target.value); setActive(0); }} onKeyDown={onKey} placeholder="Where would you like to go?" aria-controls="command-results" aria-activedescendant={results[active] ? `command-result-${active}` : undefined} role="combobox" aria-expanded="true" aria-autocomplete="list" /><kbd>ESC</kbd></label>
+          <label className="command-search" htmlFor={inputId}><Search size={22} /><input id={inputId} autoFocus aria-label="Search community destinations" type="search" value={query} onChange={(event) => { setQuery(event.target.value); setActive(0); }} onKeyDown={onKey} placeholder="Where would you like to go?" aria-controls="command-results" aria-activedescendant={results[active] ? `command-result-${active}` : undefined} role="combobox" aria-expanded="true" aria-autocomplete="list" /><kbd>ESC</kbd></label>
           <div id="command-results" className="command-results" role="listbox" aria-label="Navigation results">
             {results.length ? results.map((action, index) => <button type="button" id={`command-result-${index}`} key={action.label} role="option" aria-selected={active === index} onPointerMove={() => setActive(index)} onClick={() => run(action)}><span className="command-index">0{index + 1}</span><span className="command-result-copy"><strong>{action.label}</strong><small>{action.detail}</small></span>{action.external ? <ArrowUpRight size={18} /> : <ArrowDownRight size={18} />}</button>) : <p className="command-empty">No route found. Try “build”, “learn”, or “people”.</p>}
           </div>

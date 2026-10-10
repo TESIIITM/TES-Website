@@ -15,11 +15,11 @@ defaults:
 
 jobs:
   verify:
-    name: Lint, typecheck, licenses, build
+    name: Lint, security, build, browser regressions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
           cache: npm
@@ -28,4 +28,26 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run verify:licenses
+      - run: npm run verify:security
       - run: npm run build
+      - run: npm run test:install
+      - run: npm test
+
+  container:
+    name: Non-root container and HTTP security headers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - run: docker build -t tes-website .
+      - run: docker run -d --read-only --tmpfs /tmp:rw,noexec,nosuid,size=32m --cap-drop=ALL --security-opt=no-new-privileges --name tes-smoke -p 127.0.0.1:8080:8080 tes-website
+      - run: test "$(docker exec tes-smoke id -u)" = 101
+      - run: node scripts/test-container.mjs
+      - run: docker exec tes-smoke wget -q -O /dev/null http://127.0.0.1:8080/
+      - name: Container logs and cleanup
+        if: always()
+        run: |
+          docker logs tes-smoke || true
+          docker rm -f tes-smoke || true

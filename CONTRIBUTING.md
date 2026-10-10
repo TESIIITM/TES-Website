@@ -93,8 +93,8 @@ Write in lowercase and present tense.
 Before opening a PR:
 
 * Use Node.js 22 and make sure the project runs (`npm run dev`)
-* Run `npm run lint`, `npm run typecheck`, `npm run verify:licenses`, and `npm run build` from `TES-frontend/`
-* Test on desktop and mobile
+* Run `npm run lint`, `npm run typecheck`, `npm run verify:licenses`, `npm run verify:security`, `npm run build`, and `npm test` from `TES-frontend/`
+* Run `npm run test:install` once, then `npm test` after building; verify desktop and mobile
 * Pull latest changes from `main`
 * Write a clear title and description
 * Do not include unnecessary files like `.env` or `node_modules`
@@ -106,7 +106,7 @@ PRs will be reviewed by the team. Feedback will be direct and helpful.
 ## Code Style
 
 * Use functional React components with hooks
-* Use Tailwind CSS for styling
+* Reuse the existing custom CSS variables and component styles
 * Keep components small and focused
 * Use clear variable and function names
 * Remove `console.log` before pushing
@@ -157,7 +157,7 @@ Give and receive feedback respectfully.
 
 Reach out anytime:
 
-* Email: [tes.abviiitm@gmail.com](mailto:tes.abviiitm@gmail.com)
+* Email: [tes@iiitm.ac.in](mailto:tes@iiitm.ac.in)
 * Instagram: [@TES_IIITM](https://www.instagram.com/tes_iiitm)
 * LinkedIn: [The Enigma Society](https://www.linkedin.com/company/tes-the-enigma-society/)
 
