@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Environment
+.env
+.env*.local
+
+# Tests
+playwright-report/
+test-results/
+coverage/
+
+# Logs
+*.log
+
+# Editors and OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local working notes for maintainers and coding agents. Not part of the project.
+AGENTS.md
+CLAUDE.md
+HANDOFF.md
+.notes/
+
+# Vercel CLI
+.vercel

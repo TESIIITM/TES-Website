@@ -1,0 +1,68 @@
+import { describe, expect, it } from 'vitest';
+import { announcementSchema, memberSchema, settingsSchema, storySchema } from '@/lib/validation';
+
+const member = { name: 'Rohinth S', role: 'Club head', group: 'student', linkedinUrl: '', sortOrder: '2', isPublished: true };
+
+describe('memberSchema', () => {
+  it('trims text, coerces order, and turns an empty link into null', () => {
+    const result = memberSchema.parse({ ...member, name: '  Rohinth S  ' });
+    expect(result).toMatchObject({ name: 'Rohinth S', sortOrder: 2, linkedinUrl: null });
+  });
+
+  it('accepts only https profile links', () => {
+    expect(memberSchema.safeParse({ ...member, linkedinUrl: 'http://linkedin.com/in/x' }).success).toBe(false);
+    expect(memberSchema.safeParse({ ...member, linkedinUrl: 'javascript:alert(1)' }).success).toBe(false);
+    expect(memberSchema.safeParse({ ...member, linkedinUrl: 'https://www.linkedin.com/in/srohinth/' }).success).toBe(true);
+  });
+
+  it('rejects unknown sections and fractional order', () => {
+    expect(memberSchema.safeParse({ ...member, group: 'alumni' }).success).toBe(false);
+    expect(memberSchema.safeParse({ ...member, sortOrder: '1.5' }).success).toBe(false);
+  });
+});
+
+describe('storySchema', () => {
+  const story = { slug: 'gsoc', title: 'GSoC', category: 'Open source', summary: 'A path in.', url: 'https://medium.com/x', publishedOn: '2026-06-01', isPublished: true };
+
+  it('normalises the slug case and rejects malformed slugs', () => {
+    expect(storySchema.parse({ ...story, slug: 'GSoC-26' }).slug).toBe('gsoc-26');
+    for (const slug of ['has space', '-leading', 'double--hyphen', '']) {
+      expect(storySchema.safeParse({ ...story, slug }).success).toBe(false);
+    }
+  });
+
+  it('requires a real calendar date', () => {
+    expect(storySchema.safeParse({ ...story, publishedOn: '2026-02-30' }).success).toBe(false);
+  });
+});
+
+describe('announcementSchema', () => {
+  const announcement = {
+    label: 'Community announcement', title: 'Tech', titleEmphasis: 'Lekhan.', summary: 'Write.', details: '',
+    primaryLabel: '', primaryUrl: '', secondaryLabel: '', secondaryUrl: '', publishedOn: '2026-09-01', isPublished: true,
+  };
+
+  it('allows an announcement without buttons', () => {
+    expect(announcementSchema.parse(announcement)).toMatchObject({ details: null, primaryUrl: null, secondaryLabel: null });
+  });
+
+  it('reports a button with a label but no link on the link field', () => {
+    const result = announcementSchema.safeParse({ ...announcement, primaryLabel: 'Register' });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues.map((issue) => issue.path[0])).toEqual(['primaryUrl']);
+  });
+
+  it('reports a link without a label on the label field', () => {
+    const result = announcementSchema.safeParse({ ...announcement, secondaryUrl: 'https://example.org/rules' });
+    expect(result.error?.issues.map((issue) => issue.path[0])).toEqual(['secondaryLabel']);
+  });
+});
+
+describe('settingsSchema', () => {
+  it('requires every link and a valid email', () => {
+    const links = { github: 'https://github.com/TESIIITM', repository: 'https://github.com/TESIIITM/TES-Website', contributionGuide: 'https://github.com/x', medium: 'https://medium.com/x', instagram: 'https://instagram.com/x', linkedin: 'https://linkedin.com/x', email: 'tes@iiitm.ac.in' };
+    expect(settingsSchema.safeParse(links).success).toBe(true);
+    expect(settingsSchema.safeParse({ ...links, email: 'not-an-email' }).success).toBe(false);
+    expect(settingsSchema.safeParse({ ...links, medium: '' }).success).toBe(false);
+  });
+});
