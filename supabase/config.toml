@@ -245,10 +245,15 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# Invite and recovery emails link to /admin/auth/confirm, where the person chooses a password.
+# Copy these into Authentication > Emails on a hosted project.
+[auth.email.template.invite]
+subject = "You have been invited to the TES dashboard"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.recovery]
+subject = "Reset your TES dashboard password"
+content_path = "./supabase/templates/recovery.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]

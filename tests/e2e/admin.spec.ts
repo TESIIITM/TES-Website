@@ -100,6 +100,14 @@ test('the newest published announcement is featured under Gather', async ({ page
   await expect(row).toHaveCount(0);
 });
 
+test('an invalid or used email link explains what to do', async ({ page }) => {
+  await page.goto('/admin/auth/confirm?token_hash=not-a-real-token&type=invite');
+  await expect(page).toHaveURL(/\/admin\/login\?link=invalid$/);
+  await expect(page.locator('.admin-message-error')).toContainText('That link has expired or was already used.');
+  await page.goto('/admin/set-password');
+  await expect(page).toHaveURL(/\/admin\/login$/);
+});
+
 test('signing out closes the dashboard', async ({ page }) => {
   await signIn(page);
   await page.getByRole('button', { name: 'Sign out' }).click();

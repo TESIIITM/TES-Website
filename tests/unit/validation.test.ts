@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { announcementSchema, memberSchema, settingsSchema, storySchema } from '@/lib/validation';
+import { announcementSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema } from '@/lib/validation';
 
 const member = { name: 'Rohinth S', role: 'Club head', group: 'student', linkedinUrl: '', sortOrder: '2', isPublished: true };
 
@@ -64,5 +64,19 @@ describe('settingsSchema', () => {
     expect(settingsSchema.safeParse(links).success).toBe(true);
     expect(settingsSchema.safeParse({ ...links, email: 'not-an-email' }).success).toBe(false);
     expect(settingsSchema.safeParse({ ...links, medium: '' }).success).toBe(false);
+  });
+});
+
+describe('newPasswordSchema', () => {
+  it('requires at least 12 characters and a matching confirmation', () => {
+    expect(newPasswordSchema.safeParse({ password: 'short', confirmPassword: 'short' }).success).toBe(false);
+    const mismatch = newPasswordSchema.safeParse({ password: 'a long enough password', confirmPassword: 'a long enough passw0rd' });
+    expect(mismatch.error?.issues.map((issue) => issue.path[0])).toEqual(['confirmPassword']);
+    expect(newPasswordSchema.safeParse({ password: 'a long enough password', confirmPassword: 'a long enough password' }).success).toBe(true);
+  });
+
+  it('rejects passwords bcrypt would silently truncate', () => {
+    const tooLong = 'é'.repeat(37); // 37 characters, 74 bytes
+    expect(newPasswordSchema.safeParse({ password: tooLong, confirmPassword: tooLong }).success).toBe(false);
   });
 });

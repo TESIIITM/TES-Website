@@ -86,3 +86,19 @@ export const signInSchema = z.object({
   email: z.email('Enter your email address.'),
   password: z.string().min(1, 'Enter your password.'),
 });
+
+export const MIN_PASSWORD_LENGTH = 12;
+
+export const newPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(MIN_PASSWORD_LENGTH, `Use at least ${MIN_PASSWORD_LENGTH} characters.`)
+      // Supabase hashes passwords with bcrypt, which ignores everything past 72 bytes.
+      .refine((value) => new TextEncoder().encode(value).length <= 72, 'Keep this under 72 characters.'),
+    confirmPassword: z.string(),
+  })
+  .refine((value) => value.password === value.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'The passwords do not match.',
+  });

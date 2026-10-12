@@ -8,6 +8,7 @@ const exceptions = {
   production: {
     // Next.js image optimisation ships libvips as a separate, dynamically loaded binary.
     'Apache-2.0 AND LGPL-3.0-or-later': /^@img\/sharp-/,
+    'LGPL-3.0-or-later': /^@img\/sharp-libvips-/,
     // Browser support data read at build time; not served as site content.
     'CC-BY-4.0': /^caniuse-lite$/,
   },

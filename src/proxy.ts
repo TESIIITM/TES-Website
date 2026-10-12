@@ -3,6 +3,9 @@ import { updateSession } from '@/lib/supabase/proxy';
 
 const isDev = process.env.NODE_ENV === 'development';
 
+// Reachable without a session: sign-in, and the route that turns an emailed link into one.
+const PUBLIC_ADMIN_PATHS = new Set(['/admin/login', '/admin/auth/confirm']);
+
 function contentSecurityPolicy(nonce: string) {
   return [
     "default-src 'self'",
@@ -33,7 +36,7 @@ export async function proxy(request: NextRequest) {
   if (pathname.startsWith('/admin')) {
     const session = await updateSession(request, requestHeaders);
     // A quick redirect for signed-out visitors. Pages and actions still check admin rights.
-    response = !session.hasSession && pathname !== '/admin/login'
+    response = !session.hasSession && !PUBLIC_ADMIN_PATHS.has(pathname)
       ? NextResponse.redirect(new URL('/admin/login', request.url))
       : session.response;
     response.headers.set('Cache-Control', 'private, no-store');

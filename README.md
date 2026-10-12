@@ -40,7 +40,7 @@ Put the API URL and publishable key printed by `db:start` into `.env.local`, the
 
 Public sign-up is disabled. To give someone dashboard access:
 
-1. Create their user in Supabase Studio under **Authentication → Users → Add user**. Use a password of at least 12 characters.
+1. Invite them in Supabase Studio under **Authentication → Users → Add user → Send invitation**.
 2. Grant admin rights in the SQL editor:
 
    ```sql
@@ -48,9 +48,13 @@ Public sign-up is disabled. To give someone dashboard access:
    select id from auth.users where email = 'maintainer@example.com';
    ```
 
-3. Sign in at `/admin/login`.
+3. They open the link in the invite email, choose a password of at least 12 characters, and land in the dashboard.
+
+Invite links work once and expire after an hour; send a new invite if one lapses. **Send password recovery** on the same page lets an admin reset a forgotten password the same way.
 
 Remove the row from `admin_users` to revoke access.
+
+On a local stack the emails arrive in Mailpit at http://127.0.0.1:54324.
 
 ## Scripts
 
@@ -114,7 +118,9 @@ Any Next.js host works. On Vercel:
 
 1. Create a Supabase project, then link it and push the schema with `pnpm exec supabase link` and `pnpm exec supabase db push`. Run `supabase/seed.sql` in the SQL editor once to import the current content.
 2. In the Supabase dashboard, turn off **Allow new users to sign up** under Authentication. Leave the Email provider itself enabled, because admins sign in with it.
-3. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in the Vercel project, then deploy.
+3. Under **Authentication → URL Configuration**, set **Site URL** to the site's address. Invite and recovery links are built from it.
+4. Under **Authentication → Emails**, replace the **Invite user** and **Reset password** templates with `supabase/templates/invite.html` and `recovery.html`. The defaults sign people in without asking for a password.
+5. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in the Vercel project, then deploy.
 
 The original `/about/` and `/articles/` URLs redirect to their sections.
 
