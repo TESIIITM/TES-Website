@@ -38,21 +38,24 @@ Put the API URL and publishable key printed by `db:start` into `.env.local`, the
 
 ### Creating an admin
 
-Public sign-up is disabled. To give someone dashboard access:
+Public sign-up is disabled. Every admin needs a user account and a row in `admin_users`:
 
-1. Invite them in Supabase Studio under **Authentication → Users → Add user → Send invitation**.
-2. Grant admin rights in the SQL editor:
+```sql
+insert into public.admin_users (user_id)
+select id from auth.users where email = 'maintainer@example.com';
+```
 
-   ```sql
-   insert into public.admin_users (user_id)
-   select id from auth.users where email = 'maintainer@example.com';
-   ```
+Remove the row to revoke access.
 
-3. They open the link in the invite email, choose a password of at least 12 characters, and land in the dashboard.
+**Without email.** Inviting people needs custom SMTP, because Supabase only lets you edit email templates once it is set up. Until then, create the user under **Authentication → Users → Add user → Create new user**, tick **Auto Confirm User**, give them a temporary password of at least 12 characters, and run the insert above. They change the password under **Password** in the dashboard. If someone forgets theirs, set a new temporary one in the SQL editor:
 
-Invite links work once and expire after an hour; send a new invite if one lapses. **Send password recovery** on the same page lets an admin reset a forgotten password the same way.
+```sql
+update auth.users
+set encrypted_password = extensions.crypt('a-new-temporary-password', extensions.gen_salt('bf'))
+where email = 'maintainer@example.com';
+```
 
-Remove the row from `admin_users` to revoke access.
+**With SMTP.** Copy `supabase/templates/invite.html` and `recovery.html` into **Authentication → Emails**. Then invite people under **Add user → Send invitation** and run the insert above; they open the link, choose a password, and land in the dashboard. Invite links work once and expire after an hour. **Send password recovery** resets a forgotten password the same way.
 
 On a local stack the emails arrive in Mailpit at http://127.0.0.1:54324.
 

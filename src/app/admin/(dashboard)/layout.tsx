@@ -20,6 +20,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           <p>{user.email}</p>
           <div>
             <Link className="admin-link" href="/" target="_blank">View site ↗</Link>
+            <Link className="admin-link" href="/admin/account">Password</Link>
             <form action={signOut}><button className="admin-link" type="submit">Sign out</button></form>
           </div>
         </div>

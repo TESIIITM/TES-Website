@@ -108,6 +108,29 @@ test('an invalid or used email link explains what to do', async ({ page }) => {
   await expect(page).toHaveURL(/\/admin\/login$/);
 });
 
+test('an admin can change their own password', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Changes the shared admin password; run once.');
+  const changeTo = async (current: string, next: string) => {
+    await page.getByLabel('Current password').fill(current);
+    await page.getByLabel('New password', { exact: true }).fill(next);
+    await page.getByLabel('Confirm new password').fill(next);
+    await page.locator('main').getByRole('button', { name: 'Change password' }).click();
+  };
+
+  await signIn(page);
+  await page.getByRole('link', { name: 'Password' }).click();
+  await expect(page).toHaveURL(/\/admin\/account$/);
+
+  await changeTo('not-the-password', 'a brand new password 1');
+  await expect(page.locator('#currentPassword-error')).toHaveText('That is not your current password.');
+
+  const temporary = `${password}-changed`;
+  await changeTo(password!, temporary);
+  await expect(page.getByRole('status')).toHaveText('Password changed. Use the new one next time you sign in.');
+  await changeTo(temporary, password!);
+  await expect(page.getByRole('status')).toHaveText('Password changed. Use the new one next time you sign in.');
+});
+
 test('signing out closes the dashboard', async ({ page }) => {
   await signIn(page);
   await page.getByRole('button', { name: 'Sign out' }).click();

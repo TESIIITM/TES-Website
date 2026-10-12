@@ -89,16 +89,20 @@ export const signInSchema = z.object({
 
 export const MIN_PASSWORD_LENGTH = 12;
 
-export const newPasswordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(MIN_PASSWORD_LENGTH, `Use at least ${MIN_PASSWORD_LENGTH} characters.`)
-      // Supabase hashes passwords with bcrypt, which ignores everything past 72 bytes.
-      .refine((value) => new TextEncoder().encode(value).length <= 72, 'Keep this under 72 characters.'),
-    confirmPassword: z.string(),
-  })
-  .refine((value) => value.password === value.confirmPassword, {
-    path: ['confirmPassword'],
-    message: 'The passwords do not match.',
-  });
+const newPasswordFields = {
+  password: z
+    .string()
+    .min(MIN_PASSWORD_LENGTH, `Use at least ${MIN_PASSWORD_LENGTH} characters.`)
+    // Supabase hashes passwords with bcrypt, which ignores everything past 72 bytes.
+    .refine((value) => new TextEncoder().encode(value).length <= 72, 'Keep this under 72 characters.'),
+  confirmPassword: z.string(),
+};
+
+const passwordsMatch = (value: { password: string; confirmPassword: string }) => value.password === value.confirmPassword;
+const mismatch = { path: ['confirmPassword'], message: 'The passwords do not match.' };
+
+export const newPasswordSchema = z.object(newPasswordFields).refine(passwordsMatch, mismatch);
+
+export const changePasswordSchema = z
+  .object({ currentPassword: z.string().min(1, 'Enter your current password.'), ...newPasswordFields })
+  .refine(passwordsMatch, mismatch);

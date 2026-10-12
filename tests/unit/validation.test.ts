@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { announcementSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema } from '@/lib/validation';
+import { announcementSchema, changePasswordSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema } from '@/lib/validation';
 
 const member = { name: 'Rohinth S', role: 'Club head', group: 'student', linkedinUrl: '', sortOrder: '2', isPublished: true };
 
@@ -78,5 +78,14 @@ describe('newPasswordSchema', () => {
   it('rejects passwords bcrypt would silently truncate', () => {
     const tooLong = 'é'.repeat(37); // 37 characters, 74 bytes
     expect(newPasswordSchema.safeParse({ password: tooLong, confirmPassword: tooLong }).success).toBe(false);
+  });
+});
+
+describe('changePasswordSchema', () => {
+  it('needs the current password as well as a valid new one', () => {
+    const change = { currentPassword: 'old password value', password: 'a long enough password', confirmPassword: 'a long enough password' };
+    expect(changePasswordSchema.safeParse(change).success).toBe(true);
+    expect(changePasswordSchema.safeParse({ ...change, currentPassword: '' }).error?.issues.map((issue) => issue.path[0])).toEqual(['currentPassword']);
+    expect(changePasswordSchema.safeParse({ ...change, confirmPassword: 'something else' }).error?.issues.map((issue) => issue.path[0])).toEqual(['confirmPassword']);
   });
 });
