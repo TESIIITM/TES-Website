@@ -96,7 +96,7 @@ Before opening a PR:
 * Use Node.js 22 and make sure the project runs (`pnpm dev`)
 * Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm verify:licenses`, and `pnpm verify:security`
 * Run `pnpm test:install` once, then `pnpm build` and `pnpm test:e2e`; verify desktop and mobile
-* If you change the database, add a new file under `supabase/migrations/` (never edit one that has shipped), run `pnpm db:reset`, and commit the output of `pnpm db:types`
+* If you change the database, add a new file under `supabase/migrations/` (never edit one that has shipped), apply it with `pnpm db:reset` or `pnpm exec supabase migration up --local`, and commit the output of `pnpm db:types`. Say in the PR that the migration must reach the hosted project before the code deploys
 * Pull latest changes from `main`
 * Write a clear title and description
 * Do not include unnecessary files like `.env` or `node_modules`
@@ -108,7 +108,7 @@ PRs will be reviewed by the team. Feedback will be direct and helpful.
 ## Code Style
 
 * Use functional React components with hooks. Keep components on the server unless they need state or browser APIs
-* Reuse the existing custom CSS variables and component styles. The public design is meant to match the original site, so discuss visual changes in an issue first
+* Reuse the existing custom CSS variables and component styles. The public design is meant to match the original site, so discuss visual changes in an issue first. Leave `src/styles/site.css` as it is; a new section gets its own stylesheet
 * Validate admin input with the schemas in `src/lib/validation.ts`, and start every Server Action with `requireAdmin()`
 * Keep components small and focused
 * Use clear variable and function names
@@ -131,7 +131,7 @@ When opening an issue, include:
 
 ## Content Contributions
 
-Team members, announcements, stories, domains, and links are managed by maintainers in the admin dashboard at `/admin`, so they no longer need a pull request. To suggest a change, open an issue or contact the society.
+Team members, announcements, stories, tech news, Instagram posts, videos, domains, GitHub repositories, and links are managed by maintainers in the admin dashboard at `/admin`, so they no longer need a pull request. To suggest a change, open an issue or contact the society.
 
 If you change the bundled sample content, update `supabase/seed.sql` and `src/lib/content/fallback.ts` together.
 
