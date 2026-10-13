@@ -16,6 +16,19 @@ test('a saved light theme is applied before the page hydrates', async ({ page })
   await expect(page.getByRole('button', { name: 'Switch to dark theme' })).toBeVisible();
 });
 
+test('a hash change before hydration finishes is not lost', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'CPU throttling needs the Chrome DevTools Protocol');
+  test.setTimeout(60_000);
+  // Slow the page enough that `load` fires well before React hydrates, as on CI runners.
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 6 });
+  await page.goto('/');
+  await page.goto('/#learn');
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+  await expect(page.getByRole('tab', { name: /Learn/ })).toHaveAttribute('aria-selected', 'true');
+  await expect(page).toHaveURL(/#learn$/);
+});
+
 test('pages are served with a nonce-based content security policy', async ({ request }) => {
   const response = await request.get('/');
   const csp = response.headers()['content-security-policy'];

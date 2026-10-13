@@ -5,6 +5,7 @@ import { announcementTitle } from '@/lib/format';
 import type { SiteContent } from '@/lib/content/types';
 import { About } from './about';
 import { CommandPalette } from './command-palette';
+import { restoreErasedHash, takeHashBeforeHydration } from './erased-hash';
 import { Explorer } from './explorer';
 import { Footer } from './footer';
 import { Header } from './header';
@@ -30,8 +31,8 @@ export function SiteShell({ content }: { content: SiteContent }) {
 
   useEffect(() => {
     let frame = 0;
-    const sync = () => {
-      const target = window.location.hash.slice(1);
+    const sync = (hash: string) => {
+      const target = hash.slice(1);
       let section: string | undefined;
       if (isPanel(target)) {
         setPanel(target);
@@ -45,13 +46,15 @@ export function SiteShell({ content }: { content: SiteContent }) {
       cancelAnimationFrame(frame);
       if (section) frame = requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ behavior: 'instant' }));
     };
-    sync();
-    window.addEventListener('popstate', sync);
-    window.addEventListener('hashchange', sync);
+    const onPopState = () => sync(window.location.hash);
+    const onHashChange = (event: HashChangeEvent) => sync(restoreErasedHash(new URL(event.newURL).hash));
+    sync(restoreErasedHash(takeHashBeforeHydration()));
+    window.addEventListener('popstate', onPopState);
+    window.addEventListener('hashchange', onHashChange);
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener('popstate', sync);
-      window.removeEventListener('hashchange', sync);
+      window.removeEventListener('popstate', onPopState);
+      window.removeEventListener('hashchange', onHashChange);
     };
   }, []);
 
