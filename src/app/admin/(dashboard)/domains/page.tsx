@@ -15,7 +15,7 @@ export default async function DomainsPage() {
 
   return (
     <>
-      <PageHeader eyebrow="07 / STACK" title="Domains" description="The technical directions listed under Build → Explore the stack." action={{ href: '/admin/domains/new', label: 'Add domain' }} />
+      <PageHeader eyebrow="08 / STACK" title="Domains" description="The technical directions listed under Build → Explore the stack." action={{ href: '/admin/domains/new', label: 'Add domain' }} />
       {domains.length === 0 ? (
         <EmptyState>No domains yet. The section is hidden on the site until you <Link href="/admin/domains/new">add one</Link>.</EmptyState>
       ) : (

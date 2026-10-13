@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { instagramPostUrl } from './admin/instagram-post';
+import { youtubeVideoId } from './youtube';
 import { weekStart } from './format';
 
 const required = (max: number) =>
@@ -66,6 +67,19 @@ export const linkSchema = httpsUrl;
 export const instagramLinkSchema = z
   .string()
   .transform((value, ctx) => instagramPostUrl(value) ?? (ctx.addIssue({ code: 'custom', message: 'Paste a link to an Instagram post or reel.' }), z.NEVER));
+
+export const youtubeLinkSchema = z
+  .string()
+  .transform((value, ctx) => youtubeVideoId(value) ?? (ctx.addIssue({ code: 'custom', message: 'Paste a link to a YouTube video.' }), z.NEVER));
+
+export const youtubeVideoSchema = z.object({
+  url: youtubeLinkSchema,
+  title: required(200),
+  channel: optional(80),
+  imageSourceUrl: optionalHttpsUrl,
+  publishedOn: isoDate,
+  isPublished: z.boolean(),
+});
 
 export const instagramPostSchema = z.object({
   url: instagramLinkSchema,

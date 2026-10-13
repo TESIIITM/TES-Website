@@ -11,6 +11,7 @@ const items = [
   { href: '/admin/stories', label: 'Stories' },
   { href: '/admin/news', label: 'Tech news' },
   { href: '/admin/instagram', label: 'Instagram' },
+  { href: '/admin/videos', label: 'Videos' },
   { href: '/admin/domains', label: 'Domains' },
   { href: '/admin/settings', label: 'Links' },
 ];

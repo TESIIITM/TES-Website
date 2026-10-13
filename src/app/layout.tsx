@@ -6,6 +6,7 @@ import '@/styles/reset.css';
 import '@/styles/site.css';
 import '@/styles/tech-news.css';
 import '@/styles/instagram-posts.css';
+import '@/styles/videos.css';
 import { themeInitScript } from '@/lib/theme';
 
 export const metadata: Metadata = {

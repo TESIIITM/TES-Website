@@ -16,6 +16,8 @@ function contentSecurityPolicy(nonce: string) {
     "img-src 'self' blob: data:",
     "font-src 'self'",
     "connect-src 'self'",
+    // Video players under Learn, loaded only when a visitor presses play.
+    "frame-src https://www.youtube-nocookie.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

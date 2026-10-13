@@ -70,7 +70,7 @@ export function InstagramForm({ post, action }: Props) {
 
       <TextArea name="caption" label="Caption" maxLength={300} rows={3} hint="Optional. Shortened to three lines on the site." className="admin-field-wide" state={state} defaultValue={post?.caption} />
       <TextField name="postedOn" label="Posted on" type="date" required hint="Newer posts come first; the four newest are shown." state={state} defaultValue={post?.posted_on} />
-      <PreviewImageField label="Image" state={state} currentUrl={post?.image_url ?? null} fetched={fetchedImage} onDiscardFetched={() => setFetchedImage(null)} width={150} height={150} />
+      <PreviewImageField label="Image" state={state} currentUrl={post?.image_url ?? null} fetched={fetchedImage} onDiscardFetched={() => setFetchedImage(null)} width={150} height={150} sourceName="The post’s image" />
       <Checkbox name="isPublished" label="Show on the site" state={state} defaultChecked={post?.is_published ?? true} />
 
       <div className="admin-form-actions"><SubmitButton>{post ? 'Save changes' : 'Add post'}</SubmitButton></div>

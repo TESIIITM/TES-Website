@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { announcementSchema, changePasswordSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema, techNewsSchema, instagramPostSchema } from '@/lib/validation';
+import { announcementSchema, changePasswordSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema, techNewsSchema, instagramPostSchema, youtubeVideoSchema } from '@/lib/validation';
 
 const member = { name: 'Rohinth S', role: 'Club head', group: 'student', linkedinUrl: '', sortOrder: '2', isPublished: true };
 
@@ -114,5 +114,17 @@ describe('instagramPostSchema', () => {
     const result = instagramPostSchema.safeParse({ ...post, url: 'https://www.instagram.com/tes_iiitm/' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0].message).toBe('Paste a link to an Instagram post or reel.');
+  });
+});
+
+describe('youtubeVideoSchema', () => {
+  const video = { url: 'https://youtu.be/jNQXAC9IVRw?si=x', title: 'Me at the zoo', channel: '', imageSourceUrl: '', publishedOn: '2026-10-13', isPublished: true };
+
+  it('stores the video ID', () => {
+    expect(youtubeVideoSchema.parse(video)).toMatchObject({ url: 'jNQXAC9IVRw', channel: null });
+  });
+
+  it('refuses links that are not videos', () => {
+    expect(youtubeVideoSchema.safeParse({ ...video, url: 'https://www.youtube.com/@tes_iiitm' }).error?.issues[0].message).toBe('Paste a link to a YouTube video.');
   });
 });

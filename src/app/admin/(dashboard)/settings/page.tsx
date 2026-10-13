@@ -14,7 +14,7 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <PageHeader eyebrow="08 / LINKS" title="Links" description="Where the site’s buttons and footer point." />
+      <PageHeader eyebrow="09 / LINKS" title="Links" description="Where the site’s buttons and footer point." />
       <SettingsForm links={links} />
     </>
   );

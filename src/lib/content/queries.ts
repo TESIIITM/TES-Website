@@ -3,18 +3,20 @@ import { unstable_cache } from 'next/cache';
 import { createPublicClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { fallbackContent } from './fallback';
-import { toAnnouncement, toDomain, toMember, toSiteLinks, toInstagramPost, toStory, toTechNewsIssue } from './mappers';
+import { toAnnouncement, toDomain, toMember, toSiteLinks, toInstagramPost, toStory, toTechNewsIssue, toYouTubeVideo } from './mappers';
 import type { SiteContent } from './types';
 
 /** Instagram posts shown under Gather. */
 const INSTAGRAM_POST_LIMIT = 4;
+/** Videos shown under Learn. */
+const VIDEO_LIMIT = 3;
 
 /** Invalidated by every admin mutation. */
 export const SITE_CONTENT_TAG = 'site-content';
 
 async function fetchSiteContent(): Promise<SiteContent> {
   const supabase = createPublicClient();
-  const [settings, members, stories, domains, announcements, techNews, instagramPosts] = await Promise.all([
+  const [settings, members, stories, domains, announcements, techNews, instagramPosts, videos] = await Promise.all([
     supabase.from('site_settings').select('*').maybeSingle(),
     supabase.from('members').select('*').eq('is_published', true).order('sort_order').order('name'),
     supabase.from('stories').select('*').eq('is_published', true).order('published_on'),
@@ -23,9 +25,10 @@ async function fetchSiteContent(): Promise<SiteContent> {
     // Enough rows for the latest week; older weeks are not shown.
     supabase.from('tech_news').select('*').eq('is_published', true).order('week_of', { ascending: false }).order('sort_order').order('created_at').limit(30),
     supabase.from('instagram_posts').select('*').eq('is_published', true).order('posted_on', { ascending: false }).limit(INSTAGRAM_POST_LIMIT),
+    supabase.from('youtube_videos').select('*').eq('is_published', true).order('published_on', { ascending: false }).order('created_at', { ascending: false }).limit(VIDEO_LIMIT),
   ]);
 
-  const failed = [settings, members, stories, domains, announcements, techNews, instagramPosts].find((result) => result.error);
+  const failed = [settings, members, stories, domains, announcements, techNews, instagramPosts, videos].find((result) => result.error);
   if (failed?.error) throw new Error(`Could not load site content: ${failed.error.message}`);
 
   return {
@@ -36,6 +39,7 @@ async function fetchSiteContent(): Promise<SiteContent> {
     announcements: (announcements.data ?? []).map(toAnnouncement),
     techNews: toTechNewsIssue(techNews.data ?? []),
     instagramPosts: (instagramPosts.data ?? []).map(toInstagramPost),
+    videos: (videos.data ?? []).map(toYouTubeVideo),
   };
 }
 

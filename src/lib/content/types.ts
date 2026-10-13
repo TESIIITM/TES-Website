@@ -67,6 +67,15 @@ export type InstagramPost = {
   postedOn: string;
 };
 
+export type YouTubeVideo = {
+  id: string;
+  /** YouTube's 11-character ID. */
+  videoId: string;
+  title: string;
+  channel: string | null;
+  thumbnailUrl: string | null;
+};
+
 export type SiteLinks = {
   github: string;
   repository: string;
@@ -88,4 +97,6 @@ export type SiteContent = {
   techNews: TechNewsIssue | null;
   /** Newest first, shown under Gather. */
   instagramPosts: InstagramPost[];
+  /** Newest first, shown under Learn. */
+  videos: YouTubeVideo[];
 };

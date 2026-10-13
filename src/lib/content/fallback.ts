@@ -49,4 +49,5 @@ export const fallbackContent: SiteContent = {
   // Added weekly from the dashboard; the seed has none.
   techNews: null,
   instagramPosts: [],
+  videos: [],
 };

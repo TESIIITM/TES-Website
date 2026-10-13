@@ -5,15 +5,16 @@ import { ArrowRight, ArrowUpRight, BookOpen, Bookmark, Search } from 'lucide-rea
 import { useBrowserStore } from '@/lib/browser-store';
 import { formatStoryDate } from '@/lib/format';
 import { readingListStore } from '@/lib/reading-list';
-import type { Story } from '@/lib/content/types';
+import type { Story, YouTubeVideo } from '@/lib/content/types';
 import { Eyebrow } from './eyebrow';
+import { Videos } from './videos';
 
 const ALL = 'All';
 const SAVED = 'Saved';
 
-type Props = { stories: Story[]; mediumUrl: string };
+type Props = { stories: Story[]; videos: YouTubeVideo[]; mediumUrl: string };
 
-export function LearnPanel({ stories, mediumUrl }: Props) {
+export function LearnPanel({ stories, videos, mediumUrl }: Props) {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState(ALL);
   const stored = useBrowserStore(readingListStore);
@@ -64,6 +65,7 @@ export function LearnPanel({ stories, mediumUrl }: Props) {
         <div className="empty-reading"><BookOpen size={25} /><h4>No stories found.</h4><p>Try a different search or clear the filters.</p><button onClick={reset}>Reset reading list <ArrowRight size={16} /></button></div>
       )}
       <p className="reading-footnote">A curated snapshot of the society’s Medium publication. Saved stories remain in this browser.</p>
+      {videos.length > 0 && <Videos videos={videos} />}
     </div>
   );
 }

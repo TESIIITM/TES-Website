@@ -162,6 +162,36 @@ test('an Instagram post added in the dashboard is shown under Gather', async ({ 
   await expect(row).toHaveCount(0);
 });
 
+test('a YouTube video added in the dashboard plays under Learn', async ({ page, browser }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Writes shared data; run once.');
+  await signIn(page);
+  await page.goto('/admin/videos/new');
+  // Title first, so leaving the link field doesn't fetch the video from the network.
+  await page.getByLabel('Title').fill('Playwright video');
+  await page.getByLabel('Video link').fill('https://www.youtube.com/@tes_iiitm');
+  await save(page);
+  await expect(page.locator('#url-error')).toHaveText('Paste a link to a YouTube video.');
+
+  await page.getByLabel('Video link').fill('https://youtu.be/jNQXAC9IVRw?si=test');
+  await page.getByLabel('Date').fill('2099-01-01');
+  await page.getByLabel('Thumbnail').setInputFiles(path.join(process.cwd(), 'public/assets/team/mithul.jpg'));
+  await save(page);
+  const row = page.locator('tr', { hasText: 'Playwright video' });
+  await expect(row).toContainText('01 JAN 2099');
+
+  const site = await browser.newPage();
+  await site.goto('/#learn');
+  await expect(site.locator('.video-frame img').first()).toHaveAttribute('src', /video-thumbnails/);
+  await expect(site.locator('iframe')).toHaveCount(0);
+  await site.getByRole('button', { name: 'Play Playwright video' }).click();
+  await expect(site.locator('iframe[title="Playwright video"]')).toHaveAttribute('src', /^https:\/\/www\.youtube-nocookie\.com\/embed\/jNQXAC9IVRw/);
+  await site.close();
+
+  await row.getByRole('button', { name: 'Delete' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Delete' }).click();
+  await expect(row).toHaveCount(0);
+});
+
 test('an invalid or used email link explains what to do', async ({ page }) => {
   await page.goto('/admin/auth/confirm?token_hash=not-a-real-token&type=invite');
   await expect(page).toHaveURL(/\/admin\/login\?link=invalid$/);

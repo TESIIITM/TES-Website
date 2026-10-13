@@ -47,6 +47,7 @@ export default async function OverviewPage() {
           <li><Link href="/admin/stories/new">Add a Medium story to the reading list</Link></li>
           <li><Link href="/admin/news/new">Add a link to this week’s tech news</Link></li>
           <li><Link href="/admin/instagram/new">Show an Instagram post under Gather</Link></li>
+          <li><Link href="/admin/videos/new">Add a YouTube video under Learn</Link></li>
           <li><Link href="/admin/settings">Update social and contact links</Link></li>
         </ul>
       </section>

@@ -117,6 +117,20 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"youtube_videos": {
+                  Row: {
+                    "channel": string | null,"created_at": string,"id": string,"is_published": boolean,"published_on": string,"thumbnail_url": string | null,"title": string,"updated_at": string,"video_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "channel"?: string | null,"created_at"?: string,"id"?: string,"is_published"?: boolean,"published_on"?: string,"thumbnail_url"?: string | null,"title": string,"updated_at"?: string,"video_id": string
+                  }
+                  Update: {
+                    "channel"?: string | null,"created_at"?: string,"id"?: string,"is_published"?: boolean,"published_on"?: string,"thumbnail_url"?: string | null,"title"?: string,"updated_at"?: string,"video_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 }
           }
           Views: {

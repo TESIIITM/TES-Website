@@ -1,5 +1,5 @@
 import type { Tables } from '@/lib/supabase/database.types';
-import type { Action, Announcement, Domain, InstagramPost, Member, SiteLinks, Story, TechNewsIssue } from './types';
+import type { Action, Announcement, Domain, InstagramPost, Member, SiteLinks, Story, TechNewsIssue, YouTubeVideo } from './types';
 
 export function toMember(row: Tables<'members'>): Member {
   return {
@@ -72,4 +72,8 @@ export function toTechNewsIssue(rows: Tables<'tech_news'>[]): TechNewsIssue | nu
 
 export function toInstagramPost(row: Tables<'instagram_posts'>): InstagramPost {
   return { id: row.id, url: row.url, caption: row.caption, imageUrl: row.image_url, postedOn: row.posted_on };
+}
+
+export function toYouTubeVideo(row: Tables<'youtube_videos'>): YouTubeVideo {
+  return { id: row.id, videoId: row.video_id, title: row.title, channel: row.channel, thumbnailUrl: row.thumbnail_url };
 }
