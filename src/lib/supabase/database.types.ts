@@ -47,6 +47,34 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"github_repos": {
+                  Row: {
+                    "created_at": string,"description": string | null,"full_name": string,"headline": string | null,"headline_emphasis": string | null,"id": string,"is_featured": boolean,"is_published": boolean,"sort_order": number,"title": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"description"?: string | null,"full_name": string,"headline"?: string | null,"headline_emphasis"?: string | null,"id"?: string,"is_featured"?: boolean,"is_published"?: boolean,"sort_order"?: number,"title"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"description"?: string | null,"full_name"?: string,"headline"?: string | null,"headline_emphasis"?: string | null,"id"?: string,"is_featured"?: boolean,"is_published"?: boolean,"sort_order"?: number,"title"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"github_settings": {
+                  Row: {
+                    "contributors_heading": string,"contributors_intro": string | null,"hidden_logins": (string)[],"id": boolean,"max_contributors": number,"show_contributors": boolean,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "contributors_heading"?: string,"contributors_intro"?: string | null,"hidden_logins"?: (string)[],"id"?: boolean,"max_contributors"?: number,"show_contributors"?: boolean,"updated_at"?: string
+                  }
+                  Update: {
+                    "contributors_heading"?: string,"contributors_intro"?: string | null,"hidden_logins"?: (string)[],"id"?: boolean,"max_contributors"?: number,"show_contributors"?: boolean,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"instagram_posts": {
                   Row: {
                     "caption": string | null,"created_at": string,"id": string,"image_url": string | null,"is_published": boolean,"posted_on": string,"updated_at": string,"url": string

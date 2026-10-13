@@ -76,6 +76,48 @@ export type YouTubeVideo = {
   thumbnailUrl: string | null;
 };
 
+export type RepoStats = {
+  stars: number;
+  forks: number;
+  openIssues: number;
+  /** People, not bots. */
+  contributors: number;
+  /** ISO date of the last push. */
+  pushedOn: string;
+};
+
+export type Repository = {
+  id: string;
+  /** `owner/name`. */
+  fullName: string;
+  title: string;
+  description: string | null;
+  headline: string | null;
+  headlineEmphasis: string | null;
+  isFeatured: boolean;
+  language: string | null;
+  /** SPDX ID, e.g. `MIT`. */
+  license: string | null;
+  /** Live from GitHub; `null` when it could not be reached. */
+  stats: RepoStats | null;
+};
+
+export type Contributor = {
+  login: string;
+  avatarUrl: string;
+  profileUrl: string;
+  contributions: number;
+};
+
+export type ContributorsSection = {
+  heading: string;
+  intro: string | null;
+  hiddenLogins: string[];
+  max: number;
+  /** Live from GitHub; empty when it could not be reached. */
+  people: Contributor[];
+};
+
 export type SiteLinks = {
   github: string;
   repository: string;
@@ -99,4 +141,8 @@ export type SiteContent = {
   instagramPosts: InstagramPost[];
   /** Newest first, shown under Learn. */
   videos: YouTubeVideo[];
+  /** Shown under Build, the featured one first. */
+  repositories: Repository[];
+  /** `null` when an admin has turned the section off. */
+  contributors: ContributorsSection | null;
 };

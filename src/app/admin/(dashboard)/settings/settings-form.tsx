@@ -9,7 +9,7 @@ import { saveSettings } from './actions';
 
 const fields: { name: keyof SiteLinks; label: string; hint: string }[] = [
   { name: 'github', label: 'GitHub organisation', hint: 'Header button, contact dialog, and Build panel.' },
-  { name: 'repository', label: 'Website repository', hint: 'Featured repository card and footer.' },
+  { name: 'repository', label: 'Website repository', hint: 'Footer, and the Build panel’s card when no repository is featured.' },
   { name: 'contributionGuide', label: 'Contribution guide', hint: 'Build panel, join band, and footer.' },
   { name: 'medium', label: 'Medium publication', hint: 'Learn panel and footer.' },
   { name: 'instagram', label: 'Instagram', hint: 'Contact dialog and footer.' },

@@ -50,4 +50,20 @@ export const fallbackContent: SiteContent = {
   techNews: null,
   instagramPosts: [],
   videos: [],
+  // The migration that adds GitHub repositories features this one with the same copy.
+  repositories: [
+    {
+      id: 'tes-website',
+      fullName: 'TESIIITM/TES-Website',
+      title: 'TES-Website',
+      description: 'Our society website is open for exploration. Read the source, improve an interaction, fix a bug, or make the docs clearer. Start with one useful change.',
+      headline: 'Make the web',
+      headlineEmphasis: 'a little better.',
+      isFeatured: true,
+      language: 'TypeScript',
+      license: 'MIT',
+      stats: null,
+    },
+  ],
+  contributors: null,
 };

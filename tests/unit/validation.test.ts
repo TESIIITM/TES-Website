@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { announcementSchema, changePasswordSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema, techNewsSchema, instagramPostSchema, youtubeVideoSchema } from '@/lib/validation';
+import { announcementSchema, changePasswordSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema, techNewsSchema, instagramPostSchema, youtubeVideoSchema, githubRepoSchema, githubSettingsSchema } from '@/lib/validation';
 
 const member = { name: 'Rohinth S', role: 'Club head', group: 'student', linkedinUrl: '', sortOrder: '2', isPublished: true };
 
@@ -126,5 +126,30 @@ describe('youtubeVideoSchema', () => {
 
   it('refuses links that are not videos', () => {
     expect(youtubeVideoSchema.safeParse({ ...video, url: 'https://www.youtube.com/@tes_iiitm' }).error?.issues[0].message).toBe('Paste a link to a YouTube video.');
+  });
+});
+
+describe('githubRepoSchema', () => {
+  const repo = { repository: 'https://github.com/TESIIITM/TES-Website', title: '', description: '', headline: '', headlineEmphasis: '', isFeatured: true, sortOrder: '1', isPublished: true };
+
+  it('stores owner/name and empty copy as null', () => {
+    expect(githubRepoSchema.parse(repo)).toMatchObject({ repository: 'TESIIITM/TES-Website', title: null, headline: null, sortOrder: 1 });
+  });
+
+  it('refuses something that is not a repository', () => {
+    expect(githubRepoSchema.safeParse({ ...repo, repository: 'https://github.com/TESIIITM' }).success).toBe(false);
+  });
+});
+
+describe('githubSettingsSchema', () => {
+  const settings = { showContributors: true, heading: 'Built in the open.', intro: '', hiddenLogins: '@ada, lin', maxContributors: '24' };
+
+  it('reads the hidden logins as a list', () => {
+    expect(githubSettingsSchema.parse(settings)).toMatchObject({ hiddenLogins: ['ada', 'lin'], intro: null, maxContributors: 24 });
+  });
+
+  it('names logins that are not valid and keeps the limit to 100', () => {
+    expect(githubSettingsSchema.safeParse({ ...settings, hiddenLogins: 'ok bad!' }).error?.issues[0].message).toBe('Not a GitHub username: bad!');
+    expect(githubSettingsSchema.safeParse({ ...settings, maxContributors: '101' }).success).toBe(false);
   });
 });

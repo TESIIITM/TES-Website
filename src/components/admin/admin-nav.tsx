@@ -13,6 +13,7 @@ const items = [
   { href: '/admin/instagram', label: 'Instagram' },
   { href: '/admin/videos', label: 'Videos' },
   { href: '/admin/domains', label: 'Domains' },
+  { href: '/admin/github', label: 'GitHub' },
   { href: '/admin/settings', label: 'Links' },
 ];
 

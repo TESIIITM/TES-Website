@@ -48,6 +48,7 @@ export default async function OverviewPage() {
           <li><Link href="/admin/news/new">Add a link to this week’s tech news</Link></li>
           <li><Link href="/admin/instagram/new">Show an Instagram post under Gather</Link></li>
           <li><Link href="/admin/videos/new">Add a YouTube video under Learn</Link></li>
+          <li><Link href="/admin/github">Choose the repositories and contributors under Build</Link></li>
           <li><Link href="/admin/settings">Update social and contact links</Link></li>
         </ul>
       </section>

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { instagramPostUrl } from './admin/instagram-post';
 import { youtubeVideoId } from './youtube';
 import { weekStart } from './format';
+import { parseLogins, parseRepositoryName } from './github-names';
 
 const required = (max: number) =>
   z.string().trim().min(1, 'Required.').max(max, `Keep this under ${max} characters.`);
@@ -79,6 +80,31 @@ export const youtubeVideoSchema = z.object({
   imageSourceUrl: optionalHttpsUrl,
   publishedOn: isoDate,
   isPublished: z.boolean(),
+});
+
+export const githubRepoSchema = z.object({
+  repository: z
+    .string()
+    .transform((value, ctx) => parseRepositoryName(value) ?? (ctx.addIssue({ code: 'custom', message: 'Use owner/name or a github.com link to the repository.' }), z.NEVER)),
+  title: optional(80),
+  description: optional(400),
+  headline: optional(60),
+  headlineEmphasis: optional(60),
+  isFeatured: z.boolean(),
+  sortOrder,
+  isPublished: z.boolean(),
+});
+
+export const githubSettingsSchema = z.object({
+  showContributors: z.boolean(),
+  heading: required(80),
+  intro: optional(300),
+  hiddenLogins: z.string().transform((value, ctx) => {
+    const { logins, invalid } = parseLogins(value);
+    if (invalid.length) ctx.addIssue({ code: 'custom', message: `Not a GitHub username: ${invalid.join(', ')}` });
+    return logins;
+  }),
+  maxContributors: z.coerce.number({ error: 'Use a whole number.' }).int('Use a whole number.').min(1, 'Show at least one.').max(100, 'GitHub lists up to 100 per repository.'),
 });
 
 export const instagramPostSchema = z.object({

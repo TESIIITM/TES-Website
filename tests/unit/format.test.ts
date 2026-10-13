@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { announcementTitle, formatStoryDate, initials, ordinal, weekStart } from '@/lib/format';
+import { announcementTitle, formatCount, formatStoryDate, initials, ordinal, weekStart } from '@/lib/format';
 
 describe('formatStoryDate', () => {
   it('formats ISO dates the way the reading list shows them', () => {
@@ -38,5 +38,11 @@ describe('weekStart', () => {
     expect(weekStart('2026-10-14')).toBe('2026-10-12');
     expect(weekStart('2026-10-18')).toBe('2026-10-12');
     expect(weekStart('2027-01-01')).toBe('2026-12-28');
+  });
+});
+
+describe('formatCount', () => {
+  it('shortens thousands without rounding up', () => {
+    expect([0, 950, 1000, 1299, 9999, 25_900].map(formatCount)).toEqual(['0', '950', '1k', '1.2k', '9.9k', '25k']);
   });
 });

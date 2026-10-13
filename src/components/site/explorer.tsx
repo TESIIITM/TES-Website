@@ -35,7 +35,7 @@ export function Explorer({ panel, onPanel, content }: Props) {
       <div className="explorer-content">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={panel} id={`panel-${panel}`} role="tabpanel" aria-labelledby={`tab-${panel}`} tabIndex={0} initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: 0, y: -10 }} transition={{ duration: 0.24 }}>
-            {panel === 'build' && <BuildPanel domains={content.domains} links={content.links} />}
+            {panel === 'build' && <BuildPanel domains={content.domains} links={content.links} repositories={content.repositories} contributors={content.contributors} />}
             {panel === 'learn' && <LearnPanel stories={content.stories} videos={content.videos} mediumUrl={content.links.medium} />}
             {panel === 'gather' && <GatherPanel announcements={content.announcements} instagramPosts={content.instagramPosts} instagramUrl={content.links.instagram} />}
           </motion.div>

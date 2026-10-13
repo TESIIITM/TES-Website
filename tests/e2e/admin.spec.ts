@@ -192,6 +192,35 @@ test('a YouTube video added in the dashboard plays under Learn', async ({ page, 
   await expect(row).toHaveCount(0);
 });
 
+test('GitHub repositories and the contributors section are checked before saving', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Writes shared data; run once.');
+  await signIn(page);
+  await page.goto('/admin/github/new');
+  await page.getByLabel('Repository', { exact: true }).fill('https://github.com/TESIIITM');
+  await save(page);
+  await expect(page.locator('#repository-error')).toHaveText('Use owner/name or a github.com link to the repository.');
+
+  await page.goto('/admin/github');
+  const heading = page.getByLabel('Heading');
+  const original = await heading.inputValue();
+  await heading.fill('Playwright heading');
+  await page.getByLabel('Hidden people').fill('@octocat, not valid!');
+  await page.getByRole('button', { name: 'Save contributors section' }).click();
+  await expect(page.locator('#hiddenLogins-error')).toHaveText('Not a GitHub username: valid!');
+
+  await page.getByLabel('Hidden people').fill('@octocat, dependabot');
+  await page.getByRole('button', { name: 'Save contributors section' }).click();
+  await expect(page.getByRole('status')).toContainText('Contributors section saved');
+  await page.reload();
+  await expect(page.getByLabel('Heading')).toHaveValue('Playwright heading');
+  await expect(page.getByLabel('Hidden people')).toHaveValue('octocat, dependabot');
+
+  await page.getByLabel('Heading').fill(original);
+  await page.getByLabel('Hidden people').fill('');
+  await page.getByRole('button', { name: 'Save contributors section' }).click();
+  await expect(page.getByRole('status')).toContainText('Contributors section saved');
+});
+
 test('an invalid or used email link explains what to do', async ({ page }) => {
   await page.goto('/admin/auth/confirm?token_hash=not-a-real-token&type=invite');
   await expect(page).toHaveURL(/\/admin\/login\?link=invalid$/);

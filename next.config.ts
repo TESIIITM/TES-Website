@@ -14,6 +14,9 @@ const storagePatterns: RemotePattern[] = supabaseUrl
     }))
   : [];
 
+// Contributor avatars under Build.
+const githubAvatars: RemotePattern = { protocol: 'https', hostname: 'avatars.githubusercontent.com', pathname: '/u/**' };
+
 const securityHeaders = [
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -27,7 +30,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
-    remotePatterns: storagePatterns,
+    remotePatterns: [...storagePatterns, githubAvatars],
     // Next.js refuses to optimize images from private addresses. Allow it only
     // when the app is explicitly pointed at a local Supabase stack.
     dangerouslyAllowLocalIP: supabaseUrl?.hostname === '127.0.0.1' || supabaseUrl?.hostname === 'localhost',

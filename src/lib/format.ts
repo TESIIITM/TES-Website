@@ -13,6 +13,13 @@ export function weekStart(isoDate: string): string {
   return date.toISOString().slice(0, 10);
 }
 
+/** Short counts for stats: 950 → `950`, 1234 → `1.2k`, 25000 → `25k`. */
+export function formatCount(value: number): string {
+  if (value < 1000) return String(value);
+  const thousands = value / 1000;
+  return `${thousands < 10 ? Math.floor(thousands * 10) / 10 : Math.floor(thousands)}k`;
+}
+
 /** Initials for a portrait placeholder, skipping titles such as "Dr.". */
 export function initials(name: string): string {
   const words = name.split(/\s+/).filter((word) => word && !word.endsWith('.'));

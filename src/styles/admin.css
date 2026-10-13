@@ -78,6 +78,7 @@
 .admin-form-single { grid-template-columns: 1fr; }
 .admin-form > .admin-message, .admin-form > .admin-checkbox, .admin-form-actions, .admin-field-wide, .admin-fieldset { grid-column: 1 / -1; }
 .admin-fieldset { display: grid; grid-template-columns: inherit; gap: inherit; margin: 0; padding: 22px 0 0; border: 0; border-top: 1px solid var(--border); }
+.admin-fieldset > .admin-checkbox { grid-column: 1 / -1; }
 .admin-fieldset legend { padding: 0 12px 0 0; color: var(--muted); font: 700 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; }
 .admin-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .admin-field > label { color: var(--text); font: 700 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
@@ -147,3 +148,5 @@
   .admin-row-actions { display: flex !important; gap: 16px; padding-top: 10px !important; }
   .admin-row-actions > * + * { margin-left: 0; }
 }
+.admin-inline-form { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 14px; }
+.admin-status-featured { margin-left: 6px; }
