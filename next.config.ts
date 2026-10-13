@@ -4,14 +4,14 @@ type RemotePattern = NonNullable<NonNullable<NextConfig['images']>['remotePatter
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL) : null;
 
-// Portraits uploaded from the admin dashboard are served from Supabase Storage.
-const portraitPattern: RemotePattern[] = supabaseUrl
-  ? [{
+// Portraits and news images uploaded from the admin dashboard are served from Supabase Storage.
+const storagePatterns: RemotePattern[] = supabaseUrl
+  ? ['portraits', 'news-images'].map((bucket): RemotePattern => ({
       protocol: supabaseUrl.protocol === 'http:' ? 'http' : 'https',
       hostname: supabaseUrl.hostname,
       port: supabaseUrl.port,
-      pathname: '/storage/v1/object/public/portraits/**',
-    }]
+      pathname: `/storage/v1/object/public/${bucket}/**`,
+    }))
   : [];
 
 const securityHeaders = [
@@ -27,7 +27,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
-    remotePatterns: portraitPattern,
+    remotePatterns: storagePatterns,
     // Next.js refuses to optimize images from private addresses. Allow it only
     // when the app is explicitly pointed at a local Supabase stack.
     dangerouslyAllowLocalIP: supabaseUrl?.hostname === '127.0.0.1' || supabaseUrl?.hostname === 'localhost',

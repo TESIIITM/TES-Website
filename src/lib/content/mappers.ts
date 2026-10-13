@@ -1,5 +1,5 @@
 import type { Tables } from '@/lib/supabase/database.types';
-import type { Action, Announcement, Domain, Member, SiteLinks, Story } from './types';
+import type { Action, Announcement, Domain, Member, SiteLinks, Story, TechNewsIssue } from './types';
 
 export function toMember(row: Tables<'members'>): Member {
   return {
@@ -55,5 +55,17 @@ export function toSiteLinks(row: Tables<'site_settings'>): SiteLinks {
     instagram: row.instagram_url,
     linkedin: row.linkedin_url,
     email: row.contact_email,
+  };
+}
+
+/** Keeps the most recent week. Rows must arrive newest week first. */
+export function toTechNewsIssue(rows: Tables<'tech_news'>[]): TechNewsIssue | null {
+  const weekOf = rows[0]?.week_of;
+  if (!weekOf) return null;
+  return {
+    weekOf,
+    items: rows
+      .filter((row) => row.week_of === weekOf)
+      .map((row) => ({ id: row.id, title: row.title, url: row.url, summary: row.summary, source: row.source, imageUrl: row.image_url })),
   };
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { announcementTitle, formatStoryDate, initials, ordinal } from '@/lib/format';
+import { announcementTitle, formatStoryDate, initials, ordinal, weekStart } from '@/lib/format';
 
 describe('formatStoryDate', () => {
   it('formats ISO dates the way the reading list shows them', () => {
@@ -29,5 +29,14 @@ describe('announcementTitle', () => {
   it('joins the two title lines', () => {
     expect(announcementTitle({ title: 'Tech', titleEmphasis: 'Lekhan.' })).toBe('Tech Lekhan.');
     expect(announcementTitle({ title: 'Hackathon', titleEmphasis: null })).toBe('Hackathon');
+  });
+});
+
+describe('weekStart', () => {
+  it('returns the Monday on or before a date', () => {
+    expect(weekStart('2026-10-12')).toBe('2026-10-12');
+    expect(weekStart('2026-10-14')).toBe('2026-10-12');
+    expect(weekStart('2026-10-18')).toBe('2026-10-12');
+    expect(weekStart('2027-01-01')).toBe('2026-12-28');
   });
 });

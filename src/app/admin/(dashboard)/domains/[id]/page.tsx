@@ -15,7 +15,7 @@ export default async function EditDomainPage({ params }: PageProps<'/admin/domai
 
   return (
     <>
-      <PageHeader eyebrow="05 / STACK" title={domain.title} back={{ href: '/admin/domains', label: 'Domains' }} />
+      <PageHeader eyebrow="06 / STACK" title={domain.title} back={{ href: '/admin/domains', label: 'Domains' }} />
       <DomainForm domain={domain} action={saveDomain.bind(null, domain.id)} />
     </>
   );

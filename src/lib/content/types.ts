@@ -42,6 +42,22 @@ export type Announcement = {
   publishedOn: string;
 };
 
+export type TechNewsItem = {
+  id: string;
+  title: string;
+  url: string;
+  summary: string | null;
+  /** The publication, e.g. "The Verge". */
+  source: string | null;
+  imageUrl: string | null;
+};
+
+export type TechNewsIssue = {
+  /** ISO date of the week's Monday. */
+  weekOf: string;
+  items: TechNewsItem[];
+};
+
 export type SiteLinks = {
   github: string;
   repository: string;
@@ -59,4 +75,6 @@ export type SiteContent = {
   domains: Domain[];
   /** Newest first. The first one is featured in the Gather panel. */
   announcements: Announcement[];
+  /** The latest week with published news, or `null` when there is none. */
+  techNews: TechNewsIssue | null;
 };

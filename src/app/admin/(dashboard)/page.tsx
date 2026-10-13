@@ -2,25 +2,28 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PageHeader } from '@/components/admin/page-header';
 import { requireAdmin } from '@/lib/auth';
+import { formatStoryDate } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'Overview' };
 
 export default async function OverviewPage() {
   const { supabase } = await requireAdmin();
   const countOnly = { count: 'exact', head: true } as const;
-  const [members, hiddenMembers, stories, announcements, drafts, domains] = await Promise.all([
+  const [members, hiddenMembers, stories, announcements, drafts, domains, news] = await Promise.all([
     supabase.from('members').select('*', countOnly).eq('is_published', true),
     supabase.from('members').select('*', countOnly).eq('is_published', false),
     supabase.from('stories').select('*', countOnly).eq('is_published', true),
     supabase.from('announcements').select('*', countOnly).eq('is_published', true),
     supabase.from('announcements').select('*', countOnly).eq('is_published', false),
     supabase.from('domains').select('*', countOnly),
+    supabase.from('tech_news').select('week_of').eq('is_published', true).order('week_of', { ascending: false }).limit(1).maybeSingle(),
   ]);
 
   const cards = [
     { href: '/admin/members', label: 'Members', value: members.count, note: hiddenMembers.count ? `${hiddenMembers.count} hidden` : 'Faculty and students' },
     { href: '/admin/announcements', label: 'Announcements', value: announcements.count, note: drafts.count ? `${drafts.count} draft` : 'Shown under Gather' },
     { href: '/admin/stories', label: 'Stories', value: stories.count, note: 'In the reading list' },
+    { href: '/admin/news', label: 'Tech news', value: news.data ? formatStoryDate(news.data.week_of).slice(0, 6) : '—', note: news.data ? 'Latest week shown' : 'Nothing this week yet' },
     { href: '/admin/domains', label: 'Domains', value: domains.count, note: 'Under Explore the stack' },
   ];
 
@@ -42,6 +45,7 @@ export default async function OverviewPage() {
           <li><Link href="/admin/members/new">Add a faculty coordinator or student member</Link></li>
           <li><Link href="/admin/announcements/new">Post an announcement</Link></li>
           <li><Link href="/admin/stories/new">Add a Medium story to the reading list</Link></li>
+          <li><Link href="/admin/news/new">Add a link to this week’s tech news</Link></li>
           <li><Link href="/admin/settings">Update social and contact links</Link></li>
         </ul>
       </section>

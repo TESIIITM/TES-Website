@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { weekStart } from './format';
 
 const required = (max: number) =>
   z.string().trim().min(1, 'Required.').max(max, `Keep this under ${max} characters.`);
@@ -46,6 +47,20 @@ export const domainSchema = z.object({
   detail: required(300),
   sortOrder,
 });
+
+export const techNewsSchema = z.object({
+  url: httpsUrl,
+  title: required(200),
+  summary: optional(400),
+  source: optional(80),
+  imageSourceUrl: optionalHttpsUrl,
+  // Any day picks its week; the row stores the Monday.
+  weekOf: isoDate.transform(weekStart),
+  sortOrder,
+  isPublished: z.boolean(),
+});
+
+export const linkSchema = httpsUrl;
 
 /** Both halves of a call to action, or neither. */
 function requirePair(label: string | null, url: string | null, labelKey: string, urlKey: string, ctx: z.RefinementCtx) {

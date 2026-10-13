@@ -89,6 +89,20 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"tech_news": {
+                  Row: {
+                    "created_at": string,"id": string,"image_url": string | null,"is_published": boolean,"sort_order": number,"source": string | null,"summary": string | null,"title": string,"updated_at": string,"url": string,"week_of": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"image_url"?: string | null,"is_published"?: boolean,"sort_order"?: number,"source"?: string | null,"summary"?: string | null,"title": string,"updated_at"?: string,"url": string,"week_of": string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"image_url"?: string | null,"is_published"?: boolean,"sort_order"?: number,"source"?: string | null,"summary"?: string | null,"title"?: string,"updated_at"?: string,"url"?: string,"week_of"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 }
           }
           Views: {

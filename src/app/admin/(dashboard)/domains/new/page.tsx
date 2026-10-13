@@ -10,7 +10,7 @@ export default async function NewDomainPage() {
   await requireAdmin();
   return (
     <>
-      <PageHeader eyebrow="05 / STACK" title="Add domain" back={{ href: '/admin/domains', label: 'Domains' }} />
+      <PageHeader eyebrow="06 / STACK" title="Add domain" back={{ href: '/admin/domains', label: 'Domains' }} />
       <DomainForm action={saveDomain.bind(null, null)} />
     </>
   );

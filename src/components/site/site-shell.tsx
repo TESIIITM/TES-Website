@@ -11,6 +11,7 @@ import { Footer } from './footer';
 import { Header } from './header';
 import { Hero } from './hero';
 import { isPanel, type Navigate, type Panel } from './navigation';
+import { TechNews } from './tech-news';
 
 function scrollBehavior(): ScrollBehavior {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
@@ -40,7 +41,7 @@ export function SiteShell({ content }: { content: SiteContent }) {
       } else if (target === '' || target === 'home') {
         setPanel('build');
         section = 'home';
-      } else if (target === 'about' || target === 'explore') {
+      } else if (target === 'about' || target === 'explore' || target === 'news') {
         section = target;
       }
       cancelAnimationFrame(frame);
@@ -79,6 +80,7 @@ export function SiteShell({ content }: { content: SiteContent }) {
       <main>
         <Hero navigate={navigate} onCommand={openCommand} />
         <Explorer panel={panel} onPanel={(value) => navigate(value, false)} content={content} />
+        {content.techNews && <TechNews issue={content.techNews} />}
         <About navigate={navigate} members={content.members} links={content.links} />
       </main>
       <Footer links={content.links} />

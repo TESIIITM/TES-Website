@@ -6,6 +6,13 @@ export function formatStoryDate(isoDate: string): string {
   return `${day} ${MONTHS[Number(month) - 1]} ${year}`;
 }
 
+/** The Monday on or before a date, as `YYYY-MM-DD`. Weekly news is grouped by it. */
+export function weekStart(isoDate: string): string {
+  const date = new Date(`${isoDate}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 6) % 7));
+  return date.toISOString().slice(0, 10);
+}
+
 /** Initials for a portrait placeholder, skipping titles such as "Dr.". */
 export function initials(name: string): string {
   const words = name.split(/\s+/).filter((word) => word && !word.endsWith('.'));

@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import '@fontsource-variable/inter/wght.css';
 import '@/styles/reset.css';
 import '@/styles/site.css';
+import '@/styles/tech-news.css';
 import { themeInitScript } from '@/lib/theme';
 
 export const metadata: Metadata = {

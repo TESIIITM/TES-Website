@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { announcementSchema, changePasswordSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema } from '@/lib/validation';
+import { announcementSchema, changePasswordSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema, techNewsSchema } from '@/lib/validation';
 
 const member = { name: 'Rohinth S', role: 'Club head', group: 'student', linkedinUrl: '', sortOrder: '2', isPublished: true };
 
@@ -87,5 +87,18 @@ describe('changePasswordSchema', () => {
     expect(changePasswordSchema.safeParse(change).success).toBe(true);
     expect(changePasswordSchema.safeParse({ ...change, currentPassword: '' }).error?.issues.map((issue) => issue.path[0])).toEqual(['currentPassword']);
     expect(changePasswordSchema.safeParse({ ...change, confirmPassword: 'something else' }).error?.issues.map((issue) => issue.path[0])).toEqual(['confirmPassword']);
+  });
+});
+
+describe('techNewsSchema', () => {
+  const item = { url: 'https://example.com/a', title: 'A', summary: '', source: ' ', imageSourceUrl: '', weekOf: '2026-10-15', sortOrder: '0', isPublished: true };
+
+  it('stores the week as its Monday and empty optional fields as null', () => {
+    expect(techNewsSchema.parse(item)).toMatchObject({ weekOf: '2026-10-12', summary: null, source: null, imageSourceUrl: null });
+  });
+
+  it('requires https for the link and the preview image', () => {
+    expect(techNewsSchema.safeParse({ ...item, url: 'http://example.com' }).success).toBe(false);
+    expect(techNewsSchema.safeParse({ ...item, imageSourceUrl: 'http://example.com/a.png' }).success).toBe(false);
   });
 });

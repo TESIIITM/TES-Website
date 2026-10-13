@@ -100,6 +100,39 @@ test('the newest published announcement is featured under Gather', async ({ page
   await expect(row).toHaveCount(0);
 });
 
+test('a tech news link appears in the latest week on the site', async ({ page, browser }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Writes shared data; run once.');
+  await signIn(page);
+  await page.goto('/admin/news/new');
+  // Title first, so leaving the link field doesn't fetch a preview from the network.
+  await page.getByLabel('Title').fill('Playwright digest link');
+  await page.getByLabel('Link').fill('http://example.org/story');
+  await save(page);
+  await expect(page.locator('#url-error')).toContainText('https://');
+
+  await page.getByLabel('Link').fill('https://example.org/story');
+  await page.getByLabel('Source').fill('Example Weekly');
+  // A Thursday; the row is stored under that week's Monday, which makes it the latest week.
+  await page.getByLabel('Week').fill('2099-01-01');
+  await page.getByLabel('Preview image').setInputFiles(path.join(process.cwd(), 'public/assets/team/mithul.jpg'));
+  await save(page);
+  const row = page.locator('tr', { hasText: 'Playwright digest link' });
+  await expect(row).toContainText('29 DEC 2098');
+
+  const site = await browser.newPage();
+  await site.goto('/#news');
+  await expect(site.locator('#news .eyebrow')).toContainText('WEEK OF 29 DEC 2098');
+  const card = site.locator('.news-card', { hasText: 'Playwright digest link' });
+  await expect(card).toHaveAttribute('href', 'https://example.org/story');
+  await expect(card).toContainText('Example Weekly');
+  await expect(card.locator('img')).toHaveAttribute('src', /news-images/);
+  await site.close();
+
+  await row.getByRole('button', { name: 'Delete' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Delete' }).click();
+  await expect(row).toHaveCount(0);
+});
+
 test('an invalid or used email link explains what to do', async ({ page }) => {
   await page.goto('/admin/auth/confirm?token_hash=not-a-real-token&type=invite');
   await expect(page).toHaveURL(/\/admin\/login\?link=invalid$/);

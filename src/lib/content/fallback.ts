@@ -46,4 +46,6 @@ export const fallbackContent: SiteContent = {
       publishedOn: '2026-09-01',
     },
   ],
+  // Added weekly from the dashboard; the seed has none.
+  techNews: null,
 };

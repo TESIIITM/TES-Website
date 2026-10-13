@@ -9,6 +9,7 @@ const items = [
   { href: '/admin/members', label: 'Members' },
   { href: '/admin/announcements', label: 'Announcements' },
   { href: '/admin/stories', label: 'Stories' },
+  { href: '/admin/news', label: 'Tech news' },
   { href: '/admin/domains', label: 'Domains' },
   { href: '/admin/settings', label: 'Links' },
 ];
