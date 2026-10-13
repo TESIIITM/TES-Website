@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { announcementSchema, changePasswordSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema, techNewsSchema } from '@/lib/validation';
+import { announcementSchema, changePasswordSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema, techNewsSchema, instagramPostSchema } from '@/lib/validation';
 
 const member = { name: 'Rohinth S', role: 'Club head', group: 'student', linkedinUrl: '', sortOrder: '2', isPublished: true };
 
@@ -100,5 +100,19 @@ describe('techNewsSchema', () => {
   it('requires https for the link and the preview image', () => {
     expect(techNewsSchema.safeParse({ ...item, url: 'http://example.com' }).success).toBe(false);
     expect(techNewsSchema.safeParse({ ...item, imageSourceUrl: 'http://example.com/a.png' }).success).toBe(false);
+  });
+});
+
+describe('instagramPostSchema', () => {
+  const post = { url: 'https://instagram.com/tes_iiitm/p/DeFjXczE841/?igsh=x', caption: '', imageSourceUrl: '', postedOn: '2026-10-04', isPublished: true };
+
+  it('stores the post link in one form', () => {
+    expect(instagramPostSchema.parse(post)).toMatchObject({ url: 'https://www.instagram.com/p/DeFjXczE841/', caption: null });
+  });
+
+  it('refuses links that are not Instagram posts', () => {
+    const result = instagramPostSchema.safeParse({ ...post, url: 'https://www.instagram.com/tes_iiitm/' });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('Paste a link to an Instagram post or reel.');
   });
 });

@@ -1,15 +1,16 @@
 import Image from 'next/image';
 import { ArrowUpRight, GitFork } from 'lucide-react';
 import { announcementTitle, formatStoryDate } from '@/lib/format';
-import type { Announcement } from '@/lib/content/types';
+import type { Announcement, InstagramPost } from '@/lib/content/types';
 import { Eyebrow } from './eyebrow';
+import { InstagramPosts } from './instagram-posts';
 
 /** Announcements after the featured one, listed under it. */
 const MAX_EARLIER = 3;
 
-type Props = { announcements: Announcement[]; instagramUrl: string };
+type Props = { announcements: Announcement[]; instagramPosts: InstagramPost[]; instagramUrl: string };
 
-export function GatherPanel({ announcements, instagramUrl }: Props) {
+export function GatherPanel({ announcements, instagramPosts, instagramUrl }: Props) {
   const [featured, ...earlier] = announcements;
   return (
     <div className="gather-panel">
@@ -26,6 +27,7 @@ export function GatherPanel({ announcements, instagramUrl }: Props) {
           ))}
         </div>
       )}
+      {instagramPosts.length > 0 && <InstagramPosts posts={instagramPosts} instagramUrl={instagramUrl} />}
     </div>
   );
 }

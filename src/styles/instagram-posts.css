@@ -1,0 +1,16 @@
+/* Instagram post cards under the Gather panel. Built from the tokens and
+   patterns in site.css, which stays a verbatim copy of the original stylesheet. */
+.instagram-strip { grid-column: 1 / -1; padding: 26px 32px 32px; border-top: 1px solid var(--border); }
+.instagram-strip-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.instagram-strip-head > span { display: inline-flex; align-items: center; gap: 10px; color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: .19em; }
+.instagram-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.instagram-card { display: flex; flex-direction: column; height: 100%; }
+.instagram-image { position: relative; display: grid; place-items: center; aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border); background: var(--bg-soft); color: var(--accent); transition: border-color .25s; }
+.instagram-image img { object-fit: cover; filter: grayscale(1); transition: filter .5s, transform .55s; }
+.instagram-card:hover .instagram-image, .instagram-card:focus-visible .instagram-image { border-color: color-mix(in oklch, var(--accent), transparent 52%); }
+.instagram-card:hover .instagram-image img { filter: grayscale(0); transform: scale(1.04); }
+.instagram-card > span { margin-top: 12px; color: var(--accent); font-size: 10px; letter-spacing: .12em; }
+.instagram-card p { display: -webkit-box; margin: 5px 0 0; overflow: hidden; color: var(--muted); font-size: 12px; line-height: 1.6; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow-wrap: anywhere; }
+@media (max-width: 1100px) { .instagram-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .instagram-strip { padding: 20px; } .instagram-strip-head { flex-wrap: wrap; } .instagram-grid { gap: 16px 10px; } }
+@media (prefers-reduced-motion: reduce) { .instagram-image img { transition: none; } .instagram-card:hover .instagram-image img { transform: none; } }

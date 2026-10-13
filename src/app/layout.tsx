@@ -5,6 +5,7 @@ import '@fontsource-variable/inter/wght.css';
 import '@/styles/reset.css';
 import '@/styles/site.css';
 import '@/styles/tech-news.css';
+import '@/styles/instagram-posts.css';
 import { themeInitScript } from '@/lib/theme';
 
 export const metadata: Metadata = {

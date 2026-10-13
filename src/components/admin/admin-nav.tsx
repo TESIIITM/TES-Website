@@ -10,6 +10,7 @@ const items = [
   { href: '/admin/announcements', label: 'Announcements' },
   { href: '/admin/stories', label: 'Stories' },
   { href: '/admin/news', label: 'Tech news' },
+  { href: '/admin/instagram', label: 'Instagram' },
   { href: '/admin/domains', label: 'Domains' },
   { href: '/admin/settings', label: 'Links' },
 ];

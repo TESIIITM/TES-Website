@@ -18,15 +18,18 @@ function decodeEntities(text: string): string {
   });
 }
 
-function clean(text: string | undefined, max: number): string | null {
-  if (!text) return null;
-  const value = decodeEntities(text).replace(/\s+/g, ' ').trim();
-  if (!value) return null;
+/** Cuts text to `max` characters with an ellipsis, at a word if one ends in the second half. */
+export function shorten(value: string, max: number): string {
   if (value.length <= max) return value;
-  // Break at a word if one ends in the second half.
   const cut = value.slice(0, max - 1);
   const space = cut.lastIndexOf(' ');
   return `${space > max / 2 ? cut.slice(0, space) : cut}…`;
+}
+
+function clean(text: string | undefined, max: number): string | null {
+  if (!text) return null;
+  const value = decodeEntities(text).replace(/\s+/g, ' ').trim();
+  return value ? shorten(value, max) : null;
 }
 
 function readAttributes(tag: string): Record<string, string> {

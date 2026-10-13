@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { instagramPostUrl } from './admin/instagram-post';
 import { weekStart } from './format';
 
 const required = (max: number) =>
@@ -61,6 +62,18 @@ export const techNewsSchema = z.object({
 });
 
 export const linkSchema = httpsUrl;
+
+export const instagramLinkSchema = z
+  .string()
+  .transform((value, ctx) => instagramPostUrl(value) ?? (ctx.addIssue({ code: 'custom', message: 'Paste a link to an Instagram post or reel.' }), z.NEVER));
+
+export const instagramPostSchema = z.object({
+  url: instagramLinkSchema,
+  caption: optional(300),
+  imageSourceUrl: optionalHttpsUrl,
+  postedOn: isoDate,
+  isPublished: z.boolean(),
+});
 
 /** Both halves of a call to action, or neither. */
 function requirePair(label: string | null, url: string | null, labelKey: string, urlKey: string, ctx: z.RefinementCtx) {

@@ -58,6 +58,15 @@ export type TechNewsIssue = {
   items: TechNewsItem[];
 };
 
+export type InstagramPost = {
+  id: string;
+  url: string;
+  caption: string | null;
+  imageUrl: string | null;
+  /** ISO date, `YYYY-MM-DD`. */
+  postedOn: string;
+};
+
 export type SiteLinks = {
   github: string;
   repository: string;
@@ -77,4 +86,6 @@ export type SiteContent = {
   announcements: Announcement[];
   /** The latest week with published news, or `null` when there is none. */
   techNews: TechNewsIssue | null;
+  /** Newest first, shown under Gather. */
+  instagramPosts: InstagramPost[];
 };

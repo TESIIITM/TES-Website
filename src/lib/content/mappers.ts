@@ -1,5 +1,5 @@
 import type { Tables } from '@/lib/supabase/database.types';
-import type { Action, Announcement, Domain, Member, SiteLinks, Story, TechNewsIssue } from './types';
+import type { Action, Announcement, Domain, InstagramPost, Member, SiteLinks, Story, TechNewsIssue } from './types';
 
 export function toMember(row: Tables<'members'>): Member {
   return {
@@ -68,4 +68,8 @@ export function toTechNewsIssue(rows: Tables<'tech_news'>[]): TechNewsIssue | nu
       .filter((row) => row.week_of === weekOf)
       .map((row) => ({ id: row.id, title: row.title, url: row.url, summary: row.summary, source: row.source, imageUrl: row.image_url })),
   };
+}
+
+export function toInstagramPost(row: Tables<'instagram_posts'>): InstagramPost {
+  return { id: row.id, url: row.url, caption: row.caption, imageUrl: row.image_url, postedOn: row.posted_on };
 }

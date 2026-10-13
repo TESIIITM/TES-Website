@@ -2,22 +2,17 @@
 
 import { redirect } from 'next/navigation';
 import { failed, invalid, readValues, type FormState } from '@/lib/admin/form-state';
-import { downloadPreviewImage, PreviewError, readLinkPreview } from '@/lib/admin/link-preview';
+import { PreviewError, readLinkPreview } from '@/lib/admin/link-preview';
+import { previewImage, storeChosenImage } from '@/lib/admin/preview-image';
 import { publishChanges } from '@/lib/admin/publish';
-import { MAX_IMAGE_BYTES, removeImage, uploadImage } from '@/lib/admin/storage-images';
-import { requireAdmin, type AdminSession } from '@/lib/auth';
+import { removeImage } from '@/lib/admin/storage-images';
+import { requireAdmin } from '@/lib/auth';
 import type { TablesInsert } from '@/lib/supabase/database.types';
 import { linkSchema, techNewsSchema } from '@/lib/validation';
 
 const FIELDS = ['url', 'title', 'summary', 'source', 'imageSourceUrl', 'weekOf', 'sortOrder', 'isPublished'] as const;
 const LIST = '/admin/news';
 const BUCKET = 'news-images';
-
-const uploadMessages = {
-  'too-large': 'Images must be 2 MB or smaller.',
-  'not-an-image': 'Use a JPEG, PNG, or WebP image.',
-  failed: 'The image could not be uploaded. Try again.',
-};
 
 export type LinkPreview =
   | { status: 'ok'; title: string | null; summary: string | null; source: string | null; image: { sourceUrl: string; dataUrl: string } | null }
@@ -31,34 +26,11 @@ export async function previewLink(link: string): Promise<LinkPreview> {
 
   try {
     const { imageUrl, ...text } = await readLinkPreview(url.data);
-    const image = imageUrl ? await downloadPreviewImage(imageUrl) : null;
-    return {
-      status: 'ok',
-      ...text,
-      // Sent as a data URL because the dashboard's CSP only loads images from this site.
-      image: image && imageUrl ? { sourceUrl: imageUrl, dataUrl: `data:${image.type};base64,${Buffer.from(image.bytes).toString('base64')}` } : null,
-    };
+    return { status: 'ok', ...text, image: await previewImage(imageUrl) };
   } catch (error) {
     if (error instanceof PreviewError) return { status: 'error', message: error.message };
     throw error;
   }
-}
-
-/** Resolves the image to store: `undefined` keeps the current one, `null` clears it. */
-async function chooseImage(supabase: AdminSession['supabase'], formData: FormData, sourceUrl: string | null): Promise<{ error: string } | { url: string | null | undefined }> {
-  const file = formData.get('image');
-  if (file instanceof File && file.size > 0) {
-    if (file.size > MAX_IMAGE_BYTES) return { error: uploadMessages['too-large'] };
-    const upload = await uploadImage(supabase, BUCKET, new Uint8Array(await file.arrayBuffer()));
-    return 'error' in upload ? { error: uploadMessages[upload.error] } : { url: upload.url };
-  }
-  if (sourceUrl) {
-    const image = await downloadPreviewImage(sourceUrl);
-    if (!image) return { error: 'The preview image could not be copied. Fetch the preview again, or upload an image.' };
-    const upload = await uploadImage(supabase, BUCKET, image.bytes);
-    return 'error' in upload ? { error: uploadMessages[upload.error] } : { url: upload.url };
-  }
-  return { url: formData.get('removeImage') === 'on' ? null : undefined };
 }
 
 export async function saveTechNews(id: string | null, _previous: FormState, formData: FormData): Promise<FormState> {
@@ -68,7 +40,7 @@ export async function saveTechNews(id: string | null, _previous: FormState, form
   if (!parsed.success) return invalid(parsed.error, values);
 
   const { url, title, summary, source, imageSourceUrl, weekOf, sortOrder, isPublished } = parsed.data;
-  const image = await chooseImage(supabase, formData, imageSourceUrl);
+  const image = await storeChosenImage(supabase, BUCKET, formData, imageSourceUrl);
   if ('error' in image) return failed(image.error, values, 'image');
 
   const row: TablesInsert<'tech_news'> = {

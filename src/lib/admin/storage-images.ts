@@ -6,7 +6,7 @@ import { detectImageType } from './image-type';
 export const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
 type Supabase = AdminSession['supabase'];
-export type ImageBucket = 'portraits' | 'news-images';
+export type ImageBucket = 'portraits' | 'news-images' | 'instagram-images';
 
 /** Uploads a JPEG, PNG, or WebP after checking its bytes, and returns its public URL. */
 export async function uploadImage(supabase: Supabase, bucket: ImageBucket, bytes: Uint8Array): Promise<{ url: string } | { error: 'too-large' | 'not-an-image' | 'failed' }> {

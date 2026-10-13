@@ -133,6 +133,35 @@ test('a tech news link appears in the latest week on the site', async ({ page, b
   await expect(row).toHaveCount(0);
 });
 
+test('an Instagram post added in the dashboard is shown under Gather', async ({ page, browser }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Writes shared data; run once.');
+  await signIn(page);
+  await page.goto('/admin/instagram/new');
+  // Caption first, so leaving the link field doesn't fetch the post from the network.
+  await page.getByLabel('Caption').fill('Playwright post caption');
+  await page.getByLabel('Post link').fill('https://www.instagram.com/tes_iiitm/');
+  await page.getByLabel('Posted on').fill('2099-01-01');
+  await save(page);
+  await expect(page.locator('#url-error')).toHaveText('Paste a link to an Instagram post or reel.');
+
+  await page.getByLabel('Post link').fill('https://instagram.com/tes_iiitm/p/Playwright1/?igsh=test');
+  await page.getByLabel('Image').setInputFiles(path.join(process.cwd(), 'public/assets/team/mithul.jpg'));
+  await save(page);
+  const row = page.locator('tr', { hasText: 'Playwright post caption' });
+  await expect(row).toContainText('01 JAN 2099');
+
+  const site = await browser.newPage();
+  await site.goto('/#gather');
+  const card = site.locator('.instagram-card', { hasText: 'Playwright post caption' });
+  await expect(card).toHaveAttribute('href', 'https://www.instagram.com/p/Playwright1/');
+  await expect(card.locator('img')).toHaveAttribute('src', /instagram-images/);
+  await site.close();
+
+  await row.getByRole('button', { name: 'Delete' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Delete' }).click();
+  await expect(row).toHaveCount(0);
+});
+
 test('an invalid or used email link explains what to do', async ({ page }) => {
   await page.goto('/admin/auth/confirm?token_hash=not-a-real-token&type=invite');
   await expect(page).toHaveURL(/\/admin\/login\?link=invalid$/);

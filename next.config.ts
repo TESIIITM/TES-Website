@@ -4,9 +4,9 @@ type RemotePattern = NonNullable<NonNullable<NextConfig['images']>['remotePatter
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL) : null;
 
-// Portraits and news images uploaded from the admin dashboard are served from Supabase Storage.
+// Portraits, news, and Instagram images uploaded from the admin dashboard are served from Supabase Storage.
 const storagePatterns: RemotePattern[] = supabaseUrl
-  ? ['portraits', 'news-images'].map((bucket): RemotePattern => ({
+  ? ['portraits', 'news-images', 'instagram-images'].map((bucket): RemotePattern => ({
       protocol: supabaseUrl.protocol === 'http:' ? 'http' : 'https',
       hostname: supabaseUrl.hostname,
       port: supabaseUrl.port,

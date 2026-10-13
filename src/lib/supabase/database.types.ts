@@ -47,6 +47,20 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"instagram_posts": {
+                  Row: {
+                    "caption": string | null,"created_at": string,"id": string,"image_url": string | null,"is_published": boolean,"posted_on": string,"updated_at": string,"url": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "caption"?: string | null,"created_at"?: string,"id"?: string,"image_url"?: string | null,"is_published"?: boolean,"posted_on": string,"updated_at"?: string,"url": string
+                  }
+                  Update: {
+                    "caption"?: string | null,"created_at"?: string,"id"?: string,"image_url"?: string | null,"is_published"?: boolean,"posted_on"?: string,"updated_at"?: string,"url"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"members": {
                   Row: {
                     "created_at": string,"id": string,"is_published": boolean,"linkedin_url": string | null,"member_group": Database["public"]['Enums']["member_group"],"name": string,"portrait_url": string | null,"role": string,"sort_order": number,"updated_at": string
