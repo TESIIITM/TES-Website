@@ -60,7 +60,6 @@ export function Contributors({ section }: { section: ContributorsSection }) {
             <a href={person.profileUrl} target="_blank" rel="noopener noreferrer">
               <Image src={person.avatarUrl} alt="" width={72} height={72} sizes="72px" />
               <strong>{person.login}</strong>
-              <span>{person.contributions} {person.contributions === 1 ? 'commit' : 'commits'}</span>
             </a>
           </li>
         ))}
