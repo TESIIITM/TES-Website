@@ -10,7 +10,8 @@ import { Explorer } from './explorer';
 import { Footer } from './footer';
 import { Header } from './header';
 import { Hero } from './hero';
-import { isPanel, type Navigate, type Panel } from './navigation';
+import { isPanel, isSection, type Navigate, type Panel } from './navigation';
+import { People } from './people';
 import { TechNews } from './tech-news';
 
 function scrollBehavior(): ScrollBehavior {
@@ -26,7 +27,7 @@ export function SiteShell({ content }: { content: SiteContent }) {
     if (isPanel(target)) setPanel(target);
     if (window.location.hash !== `#${target}`) window.history.pushState(null, '', `#${target}`);
     if (!scroll) return;
-    const section = target === 'home' || target === 'about' ? target : 'explore';
+    const section = isSection(target) ? target : 'explore';
     document.getElementById(section)?.scrollIntoView({ behavior: scrollBehavior() });
   };
 
@@ -41,7 +42,7 @@ export function SiteShell({ content }: { content: SiteContent }) {
       } else if (target === '' || target === 'home') {
         setPanel('build');
         section = 'home';
-      } else if (target === 'about' || target === 'explore' || target === 'news') {
+      } else if (isSection(target)) {
         section = target;
       }
       cancelAnimationFrame(frame);
@@ -78,10 +79,11 @@ export function SiteShell({ content }: { content: SiteContent }) {
       <a className="skip-link" href="#explore">Skip to content</a>
       <Header navigate={navigate} onCommand={openCommand} githubUrl={content.links.github} />
       <main>
-        <Hero navigate={navigate} onCommand={openCommand} />
+        <Hero navigate={navigate} />
+        <About domains={content.domains} />
         <Explorer panel={panel} onPanel={(value) => navigate(value, false)} content={content} />
         {content.techNews && <TechNews issue={content.techNews} />}
-        <About navigate={navigate} members={content.members} links={content.links} />
+        <People navigate={navigate} members={content.members} links={content.links} />
       </main>
       <Footer links={content.links} />
       {commandOpen && <CommandPalette onOpenChange={setCommandOpen} navigate={navigate} links={content.links} featuredEvent={featured ? announcementTitle(featured) : null} />}

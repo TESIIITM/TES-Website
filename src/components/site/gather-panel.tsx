@@ -1,5 +1,4 @@
-import Image from 'next/image';
-import { ArrowUpRight, GitFork } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { announcementTitle, formatStoryDate } from '@/lib/format';
 import type { Announcement, InstagramPost } from '@/lib/content/types';
 import { Eyebrow } from './eyebrow';
@@ -14,7 +13,6 @@ export function GatherPanel({ announcements, instagramPosts, instagramUrl }: Pro
   const [featured, ...earlier] = announcements;
   return (
     <div className="gather-panel">
-      <EventVisual />
       {featured ? <FeaturedAnnouncement announcement={featured} /> : <NoAnnouncements instagramUrl={instagramUrl} />}
       {earlier.length > 0 && (
         <div className="activity-strip">
@@ -28,21 +26,6 @@ export function GatherPanel({ announcements, instagramPosts, instagramUrl }: Pro
         </div>
       )}
       {instagramPosts.length > 0 && <InstagramPosts posts={instagramPosts} instagramUrl={instagramUrl} />}
-    </div>
-  );
-}
-
-function EventVisual() {
-  return (
-    <div className="event-visual" aria-hidden="true">
-      <span>THE ENIGMA SOCIETY / OPEN DISPATCH</span>
-      <div className="event-path">
-        <div className="event-path-step"><small>01</small><strong>idea</strong></div>
-        <div className="event-path-branch"><span /><div className="event-path-mark"><Image src="/assets/compass.svg" width={112} height={112} alt="" /><GitFork size={30} strokeWidth={1.25} /></div><span /></div>
-        <div className="event-path-step"><small>02</small><strong>write</strong></div>
-        <div className="event-path-step event-path-last"><small>03</small><strong>publish</strong></div>
-      </div>
-      <span>OPEN IDEAS → SHARED KNOWLEDGE</span>
     </div>
   );
 }

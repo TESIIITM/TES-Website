@@ -2,15 +2,15 @@
 
 import Image from 'next/image';
 import { motion, useReducedMotion } from 'motion/react';
-import { ArrowDown, ArrowRight, ArrowUpRight, Search } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { AmbientCompass } from './ambient-compass';
 import { Eyebrow } from './eyebrow';
 import { MagneticLink } from './magnetic-link';
 import type { Navigate } from './navigation';
 
-type Props = { navigate: Navigate; onCommand: () => void };
+type Props = { navigate: Navigate };
 
-export function Hero({ navigate, onCommand }: Props) {
+export function Hero({ navigate }: Props) {
   const reduceMotion = useReducedMotion();
   const enter = (y: number) => (reduceMotion ? false : { opacity: 0, y });
 
@@ -35,7 +35,6 @@ export function Hero({ navigate, onCommand }: Props) {
             <a className="text-action" href="#about" onClick={(event) => { event.preventDefault(); navigate('about'); }}>Explore the society <ArrowRight size={17} /></a>
           </motion.div>
           <div className="hero-proof"><span className="proof-line" /><Eyebrow>OPEN CODE <span className="mini-diamond">◇</span> SHARED KNOWLEDGE <span className="mini-diamond">◇</span> COLLECTIVE PROGRESS</Eyebrow></div>
-          <button className="hero-command" onClick={onCommand}><Search size={16} /> Explore by command <kbd>⌘ K</kbd></button>
         </div>
         <div className="hero-visual" role="group" aria-label="Contribution map">
           <div className="visual-grid" aria-hidden="true" />

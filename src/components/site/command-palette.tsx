@@ -20,12 +20,13 @@ type Props = {
 
 function buildActions(links: SiteLinks, featuredEvent: string | null): Action[] {
   return [
-    { label: 'Explore open source', detail: 'Repository, contribution guide, and domains', group: 'DISCOVER', target: 'build' },
+    { label: 'Explore open source', detail: 'Repositories, contributors, and the contribution guide', group: 'DISCOVER', target: 'build' },
     { label: 'Read the knowledge base', detail: 'Community stories and saved reading list', group: 'DISCOVER', target: 'learn' },
     featuredEvent
       ? { label: `See ${featuredEvent.replace(/\.$/, '')}`, detail: 'Current announcement and official links', group: 'DISCOVER', target: 'gather' }
       : { label: 'See events', detail: 'Announcements from the society', group: 'DISCOVER', target: 'gather' },
-    { label: 'Meet the society', detail: 'Principles, people, and the next step', group: 'DISCOVER', target: 'about' },
+    { label: 'Meet the society', detail: 'Principles and the domains we work in', group: 'DISCOVER', target: 'about' },
+    { label: 'Meet the people', detail: 'Faculty, students, and the next step', group: 'DISCOVER', target: 'people' },
     { label: 'Open GitHub', detail: 'TESIIITM on GitHub', group: 'ELSEWHERE', target: links.github, external: true },
     { label: 'Read on Medium', detail: 'The society publication', group: 'ELSEWHERE', target: links.medium, external: true },
   ];

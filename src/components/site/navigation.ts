@@ -1,7 +1,8 @@
 export type Panel = 'build' | 'learn' | 'gather';
 
 /** Hash targets the site can scroll to. Panels live inside the `explore` section. */
-export type Target = Panel | 'home' | 'about' | 'explore';
+const sections = ['home', 'about', 'explore', 'news', 'people'] as const;
+export type Target = Panel | (typeof sections)[number];
 
 export type Navigate = (target: string, scroll?: boolean) => void;
 
@@ -10,6 +11,10 @@ export const panels: { value: Panel; label: string; number: string }[] = [
   { value: 'learn', label: 'Learn', number: '02' },
   { value: 'gather', label: 'Gather', number: '03' },
 ];
+
+export function isSection(target: string): target is (typeof sections)[number] {
+  return (sections as readonly string[]).includes(target);
+}
 
 export function isPanel(target: string): target is Panel {
   return target === 'build' || target === 'learn' || target === 'gather';
