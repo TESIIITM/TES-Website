@@ -71,7 +71,7 @@ export function TechNewsForm({ item, defaultWeek, action }: Props) {
       <TextField name="title" label="Title" required maxLength={200} className="admin-field-wide" state={state} defaultValue={item?.title} />
       <TextArea name="summary" label="Summary" maxLength={400} rows={3} hint="Optional. One or two sentences on why it matters." className="admin-field-wide" state={state} defaultValue={item?.summary} />
       <TextField name="source" label="Source" maxLength={80} hint="The publication, e.g. The Verge." state={state} defaultValue={item?.source} />
-      <TextField name="weekOf" label="Week" type="date" required hint="Any day in the week; it is saved as that week’s Monday." state={state} defaultValue={item?.week_of ?? defaultWeek} />
+      <TextField name="weekOf" label="Week" type="date" required hint="Any day in the week; it is saved as the Tuesday that starts it." state={state} defaultValue={item?.week_of ?? defaultWeek} />
 
       <PreviewImageField label="Preview image" state={state} currentUrl={item?.image_url ?? null} fetched={fetchedImage} onDiscardFetched={() => setFetchedImage(null)} width={240} height={126} />
 

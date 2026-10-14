@@ -112,16 +112,16 @@ test('a tech news link appears in the latest week on the site', async ({ page, b
 
   await page.getByLabel('Link').fill('https://example.org/story');
   await page.getByLabel('Source').fill('Example Weekly');
-  // A Thursday; the row is stored under that week's Monday, which makes it the latest week.
+  // A Thursday; the row is stored under that week's Tuesday, which makes it the latest week.
   await page.getByLabel('Week').fill('2099-01-01');
   await page.getByLabel('Preview image').setInputFiles(path.join(process.cwd(), 'public/assets/team/mithul.jpg'));
   await save(page);
   const row = page.locator('tr', { hasText: 'Playwright digest link' });
-  await expect(row).toContainText('29 DEC 2098');
+  await expect(row).toContainText('30 DEC 2098');
 
   const site = await browser.newPage();
   await site.goto('/#news');
-  await expect(site.locator('#news .eyebrow')).toContainText('WEEK OF 29 DEC 2098');
+  await expect(site.locator('#news .eyebrow')).toContainText('WEEK OF 30 DEC 2098');
   const card = site.locator('.news-card', { hasText: 'Playwright digest link' });
   await expect(card).toHaveAttribute('href', 'https://example.org/story');
   await expect(card).toContainText('Example Weekly');

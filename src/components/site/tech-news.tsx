@@ -16,7 +16,7 @@ export function TechNews({ issue }: { issue: TechNewsIssue }) {
           <Eyebrow>THIS WEEK IN TECH <span className="slash">/</span> WEEK OF {formatStoryDate(issue.weekOf)}</Eyebrow>
           <h2 id="news-title">What moved<br /><em>in tech this week.</em></h2>
         </div>
-        <p>What the society is reading and talking about. Picked by members, refreshed every Monday.</p>
+        <p>What the society is reading and talking about. Picked by members, refreshed every Tuesday.</p>
       </div>
       <ol className="news-grid">
         {issue.items.map((item, index) => (

@@ -53,7 +53,7 @@ export type TechNewsItem = {
 };
 
 export type TechNewsIssue = {
-  /** ISO date of the week's Monday. */
+  /** ISO date of the Tuesday that starts the week. */
   weekOf: string;
   items: TechNewsItem[];
 };

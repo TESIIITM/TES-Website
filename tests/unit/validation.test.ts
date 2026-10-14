@@ -93,8 +93,8 @@ describe('changePasswordSchema', () => {
 describe('techNewsSchema', () => {
   const item = { url: 'https://example.com/a', title: 'A', summary: '', source: ' ', imageSourceUrl: '', weekOf: '2026-10-15', sortOrder: '0', isPublished: true };
 
-  it('stores the week as its Monday and empty optional fields as null', () => {
-    expect(techNewsSchema.parse(item)).toMatchObject({ weekOf: '2026-10-12', summary: null, source: null, imageSourceUrl: null });
+  it('stores the week as its Tuesday and empty optional fields as null', () => {
+    expect(techNewsSchema.parse(item)).toMatchObject({ weekOf: '2026-10-13', summary: null, source: null, imageSourceUrl: null });
   });
 
   it('requires https for the link and the preview image', () => {

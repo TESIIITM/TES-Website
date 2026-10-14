@@ -57,7 +57,7 @@ export const techNewsSchema = z.object({
   summary: optional(400),
   source: optional(80),
   imageSourceUrl: optionalHttpsUrl,
-  // Any day picks its week; the row stores the Monday.
+  // Any day picks its week; the row stores its Tuesday.
   weekOf: isoDate.transform(weekStart),
   sortOrder,
   isPublished: z.boolean(),

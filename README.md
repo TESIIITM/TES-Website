@@ -173,7 +173,7 @@ GitHub numbers are fetched separately and cached for an hour under the `github` 
 | `announcements` | Gather: the newest published one is featured, and up to three earlier ones are listed below it |
 | `stories` | Learn: the reading list. Each `category` becomes a filter, and `slug` keys readers' saved lists. |
 | `domains` | Build → Explore the stack, numbered in `sort_order` |
-| `tech_news` | This week in tech, between the Explorer and The People. Only the latest `week_of` (always a Monday) is shown. |
+| `tech_news` | This week in tech, between the Explorer and The People. Only the latest `week_of` (always a Tuesday) is shown. |
 | `instagram_posts` | Gather: the four newest posts as cards under the announcements |
 | `youtube_videos` | Learn: the three newest videos under the reading list |
 | `github_repos` | Build: the featured repository's card, and the rest under More projects |

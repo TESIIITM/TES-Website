@@ -33,11 +33,11 @@ describe('announcementTitle', () => {
 });
 
 describe('weekStart', () => {
-  it('returns the Monday on or before a date', () => {
-    expect(weekStart('2026-10-12')).toBe('2026-10-12');
-    expect(weekStart('2026-10-14')).toBe('2026-10-12');
-    expect(weekStart('2026-10-18')).toBe('2026-10-12');
-    expect(weekStart('2027-01-01')).toBe('2026-12-28');
+  it('returns the Tuesday on or before a date', () => {
+    expect(weekStart('2026-10-13')).toBe('2026-10-13');
+    expect(weekStart('2026-10-14')).toBe('2026-10-13');
+    expect(weekStart('2026-10-19')).toBe('2026-10-13');
+    expect(weekStart('2027-01-01')).toBe('2026-12-29');
   });
 });
 

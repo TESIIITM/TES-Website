@@ -6,10 +6,10 @@ export function formatStoryDate(isoDate: string): string {
   return `${day} ${MONTHS[Number(month) - 1]} ${year}`;
 }
 
-/** The Monday on or before a date, as `YYYY-MM-DD`. Weekly news is grouped by it. */
+/** The Tuesday on or before a date, as `YYYY-MM-DD`. Weekly news goes out on Tuesdays and is grouped by it. */
 export function weekStart(isoDate: string): string {
   const date = new Date(`${isoDate}T00:00:00Z`);
-  date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 6) % 7));
+  date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 5) % 7));
   return date.toISOString().slice(0, 10);
 }
 
