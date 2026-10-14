@@ -38,7 +38,7 @@ export function Domains({ domains }: { domains: Domain[] }) {
         <div className="domain-preview" id="domain-preview" role="tabpanel" aria-labelledby={`domain-${index}`} tabIndex={0}>
           <AnimatePresence mode="wait">
             <motion.div key={current.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.22 }}>
-              <Compass size={26} strokeWidth={1.3} /><span className="preview-index">FIELD NOTE / {code}</span><h4>{current.title}</h4><p>{current.detail}</p>
+              <Compass size={26} strokeWidth={1.3} /><span className="preview-index">{code}</span><h4>{current.title}</h4><p>{current.detail}</p>
             </motion.div>
           </AnimatePresence>
         </div>

@@ -1,24 +1,43 @@
 'use client';
 
-import { useState, type MouseEvent } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import Image from 'next/image';
-import { ArrowUpRight, Command, Menu, Moon, Sun, X } from 'lucide-react';
+import { ArrowUpRight, Menu, Moon, Search, Sun, X } from 'lucide-react';
 import { Github } from '@/components/brand-icons';
 import { useBrowserStore } from '@/lib/browser-store';
 import { themeStore } from '@/lib/theme-store';
-import type { Navigate } from './navigation';
+import type { Navigate, Panel } from './navigation';
 
 const links = [
   { target: 'about', label: 'The society' },
   { target: 'build', label: 'Projects' },
   { target: 'learn', label: 'Knowledge' },
   { target: 'gather', label: 'Events' },
+  { target: 'people', label: 'People' },
 ];
 
-type Props = { navigate: Navigate; onCommand: () => void; githubUrl: string };
+/** Sections that light up a link while they cross the middle of the screen. */
+const watched = ['home', 'about', 'explore', 'news', 'people'];
 
-export function Header({ navigate, onCommand, githubUrl }: Props) {
+type Props = { navigate: Navigate; onCommand: () => void; githubUrl: string; panel: Panel };
+
+export function Header({ navigate, onCommand, githubUrl, panel }: Props) {
   const [open, setOpen] = useState(false);
+  const [section, setSection] = useState<string | null>(null);
+  const current = section === 'explore' ? panel : section;
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      const crossing = entries.find((entry) => entry.isIntersecting);
+      if (crossing) setSection(crossing.target.id);
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    for (const id of watched) {
+      const element = document.getElementById(id);
+      if (element) observer.observe(element);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   const theme = useBrowserStore(themeStore);
   const nextTheme = theme === 'dark' ? 'light' : 'dark';
   const go = (event: MouseEvent, target: string) => {
@@ -35,11 +54,11 @@ export function Header({ navigate, onCommand, githubUrl }: Props) {
       </a>
       <nav className={`main-nav ${open ? 'is-open' : ''}`} id="main-nav" aria-label="Main navigation">
         {links.map((link) => (
-          <a key={link.target} href={`#${link.target}`} onClick={(event) => go(event, link.target)}>{link.label}</a>
+          <a key={link.target} href={`#${link.target}`} onClick={(event) => go(event, link.target)} aria-current={current === link.target ? 'true' : undefined}>{link.label}</a>
         ))}
       </nav>
       <div className="header-tools">
-        <button className="command-trigger" onClick={onCommand} aria-label="Open command menu"><Command size={15} /><span>Jump to</span><kbd>⌘ K</kbd></button>
+        <button className="command-trigger" onClick={onCommand} aria-label="Open command menu" title="Search the site (Ctrl K)"><Search size={17} /></button>
         <button className="theme-button" aria-label={`Switch to ${nextTheme} theme`} onClick={() => themeStore.set(nextTheme)}>
           {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
         </button>

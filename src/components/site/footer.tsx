@@ -1,11 +1,13 @@
 import Image from 'next/image';
-import { ArrowUpRight, GitFork } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { ArrowUpRight } from 'lucide-react';
+import { Github, Instagram, Linkedin } from '@/components/brand-icons';
 import type { SiteLinks } from '@/lib/content/types';
 import { ContactDialog } from './contact-dialog';
 import { Eyebrow } from './eyebrow';
 
-function ExternalLink({ href, children }: { href: string; children: string }) {
-  return <a href={href} target="_blank" rel="noopener noreferrer">{children} <ArrowUpRight size={16} /></a>;
+function ExternalLink({ href, icon, children }: { href: string; icon?: ReactNode; children: string }) {
+  return <a href={href} target="_blank" rel="noopener noreferrer"><span className="footer-link-label">{icon}{children}</span> <ArrowUpRight size={16} /></a>;
 }
 
 export function Footer({ links }: { links: SiteLinks }) {
@@ -29,14 +31,14 @@ export function Footer({ links }: { links: SiteLinks }) {
           </div>
           <div>
             <Eyebrow>CONNECT / 02</Eyebrow>
-            <ExternalLink href={links.github}>GitHub</ExternalLink>
-            <ExternalLink href={links.instagram}>Instagram</ExternalLink>
-            <ExternalLink href={links.linkedin}>LinkedIn</ExternalLink>
+            <ExternalLink href={links.github} icon={<Github size={17} aria-hidden />}>GitHub</ExternalLink>
+            <ExternalLink href={links.instagram} icon={<Instagram size={17} aria-hidden />}>Instagram</ExternalLink>
+            <ExternalLink href={links.linkedin} icon={<Linkedin size={17} aria-hidden />}>LinkedIn</ExternalLink>
           </div>
         </nav>
-        <div className="footer-statement"><span>THE ENIGMA SOCIETY / OPEN SOURCE COLLECTIVE</span><h2>Open code.<br /><em>Open minds.</em></h2><div><GitFork size={17} /> A shared direction. A place to begin.</div></div>
+        <div className="footer-statement"><span>THE ENIGMA SOCIETY / OPEN SOURCE COLLECTIVE</span><h2>Open code.<br /><em>Open minds.</em></h2></div>
       </div>
-      <div className="footer-bottom"><span>© {new Date().getFullYear()} THE ENIGMA SOCIETY · ABV-IIITM GWALIOR</span><span><GitFork size={14} /> BUILT IN THE OPEN</span><a href="#home">BACK TO TOP ↑</a></div>
+      <div className="footer-bottom"><span>© {new Date().getFullYear()} THE ENIGMA SOCIETY · ABV-IIITM GWALIOR</span><a href="#home">BACK TO TOP ↑</a></div>
     </footer>
   );
 }

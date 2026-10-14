@@ -24,7 +24,7 @@ export function Explorer({ panel, onPanel, content }: Props) {
   return (
     <section id="explore" className="explorer-section" aria-labelledby="explorer-title">
       <div className="section-title"><div><Eyebrow>02 / THE COLLECTIVE</Eyebrow><h2 id="explorer-title">The work is<br /><em>better together.</em></h2></div><p>Learn openly. Make something useful.<br />Leave a door open for the next person.</p></div>
-      <div className="explorer-tabs" role="tablist" aria-label="Explore the community">
+      <div id="explore-tabs" className="explorer-tabs" role="tablist" aria-label="Explore the community">
         {panels.map((item, index) => (
           <button id={`tab-${item.value}`} role="tab" aria-selected={panel === item.value} aria-controls={`panel-${item.value}`} tabIndex={panel === item.value ? 0 : -1} onClick={() => onPanel(item.value)} onKeyDown={(event) => onKeyDown(event, index)} key={item.value}>
             <span>{item.number}</span>{item.label}

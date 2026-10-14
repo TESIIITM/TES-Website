@@ -27,7 +27,8 @@ export function SiteShell({ content }: { content: SiteContent }) {
     if (isPanel(target)) setPanel(target);
     if (window.location.hash !== `#${target}`) window.history.pushState(null, '', `#${target}`);
     if (!scroll) return;
-    const section = isSection(target) ? target : 'explore';
+    // Tabs scroll to the tab row, so their content is on screen rather than the section's heading.
+    const section = isSection(target) ? target : 'explore-tabs';
     document.getElementById(section)?.scrollIntoView({ behavior: scrollBehavior() });
   };
 
@@ -38,7 +39,7 @@ export function SiteShell({ content }: { content: SiteContent }) {
       let section: string | undefined;
       if (isPanel(target)) {
         setPanel(target);
-        section = 'explore';
+        section = 'explore-tabs';
       } else if (target === '' || target === 'home') {
         setPanel('build');
         section = 'home';
@@ -77,7 +78,7 @@ export function SiteShell({ content }: { content: SiteContent }) {
   return (
     <>
       <a className="skip-link" href="#explore">Skip to content</a>
-      <Header navigate={navigate} onCommand={openCommand} githubUrl={content.links.github} />
+      <Header navigate={navigate} onCommand={openCommand} githubUrl={content.links.github} panel={panel} />
       <main>
         <Hero navigate={navigate} />
         <About domains={content.domains} />

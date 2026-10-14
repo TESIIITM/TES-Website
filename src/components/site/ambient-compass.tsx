@@ -4,8 +4,13 @@ import { useEffect, useRef } from 'react';
 
 type Particle = { baseX: number; baseY: number; x: number; y: number; vx: number; vy: number; ring: number; index: number; angle: number };
 type Vector = { x: number; y: number; vx: number; vy: number; lastX: number; lastY: number; lastTime: number };
+type Ripple = { x: number; y: number; start: number };
 
-/** A small Canvas field: pointer velocity, scroll inertia, and spring motion without React re-renders. */
+/** How long a tap's ripple takes to cross the field, and how fast its front moves. */
+const RIPPLE_MS = 1500;
+const RIPPLE_SPEED = 0.55;
+
+/** A small Canvas field: pointer velocity, scroll inertia, tap ripples, and spring motion without React re-renders. */
 export function AmbientCompass({ className = '' }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -17,6 +22,7 @@ export function AmbientCompass({ className = '' }: { className?: string }) {
     const fine = matchMedia('(pointer: fine)');
     const pointer: Vector = { x: -999, y: -999, vx: 0, vy: 0, lastX: -999, lastY: -999, lastTime: 0 };
     const particles: Particle[] = [];
+    const ripples: Ripple[] = [];
     const rings = 7;
     let width = 0;
     let height = 0;
@@ -36,6 +42,7 @@ export function AmbientCompass({ className = '' }: { className?: string }) {
       const drift = reduced.matches ? 0 : Math.sin(time * 0.00024) * 3.4;
       const chroma = distortion * 4.5;
       const ink = light ? '40, 40, 40' : '198, 198, 198';
+      while (ripples.length && time - ripples[0].start > RIPPLE_MS) ripples.shift();
       const bright = light ? '10, 10, 10' : '255, 255, 255';
 
       for (const node of particles) {
@@ -45,8 +52,20 @@ export function AmbientCompass({ className = '' }: { className?: string }) {
         const proximity = fine.matches && !reduced.matches ? Math.max(0, 1 - distance / 190) : 0;
         const turbulence = proximity * (20 + speed * 0.95);
         const swirl = (scrollVelocity * 0.075 + speed * 0.12) * (node.ring / rings);
-        const targetX = node.baseX + dx / distance * turbulence + Math.cos(node.angle + Math.PI / 2) * swirl + drift * node.ring / rings;
-        const targetY = node.baseY + dy / distance * turbulence + Math.sin(node.angle + Math.PI / 2) * swirl + scrollVelocity * 0.025 * node.ring / rings;
+        let pushX = 0;
+        let pushY = 0;
+        for (const ripple of ripples) {
+          const rx = node.baseX - ripple.x;
+          const ry = node.baseY - ripple.y;
+          const reach = Math.max(1, Math.hypot(rx, ry));
+          const age = time - ripple.start;
+          // A band around the wave front, fading as the ripple spreads.
+          const band = Math.exp(-(((reach - age * RIPPLE_SPEED) / 34) ** 2)) * (1 - age / RIPPLE_MS);
+          pushX += rx / reach * band * 26;
+          pushY += ry / reach * band * 26;
+        }
+        const targetX = node.baseX + dx / distance * turbulence + Math.cos(node.angle + Math.PI / 2) * swirl + drift * node.ring / rings + pushX;
+        const targetY = node.baseY + dy / distance * turbulence + Math.sin(node.angle + Math.PI / 2) * swirl + scrollVelocity * 0.025 * node.ring / rings + pushY;
         node.vx = (node.vx + (targetX - node.x) * 0.075) * 0.82;
         node.vy = (node.vy + (targetY - node.y) * 0.075) * 0.82;
         node.x += node.vx;
@@ -129,6 +148,12 @@ export function AmbientCompass({ className = '' }: { className?: string }) {
       pointer.y = pointer.lastY = y;
       pointer.lastTime = now;
     };
+    const onPress = (event: PointerEvent) => {
+      if (reduced.matches) return;
+      const bounds = canvas.getBoundingClientRect();
+      ripples.push({ x: event.clientX - bounds.left, y: event.clientY - bounds.top, start: performance.now() });
+      if (ripples.length > 4) ripples.shift();
+    };
     const onLeave = () => { pointer.x = pointer.y = pointer.lastX = pointer.lastY = -999; pointer.vx = pointer.vy = 0; pointer.lastTime = 0; };
     const onScroll = () => { scrollVelocity += Math.max(-90, Math.min(90, scrollY - lastScroll)); lastScroll = scrollY; };
     const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }, { threshold: 0.05 });
@@ -137,6 +162,7 @@ export function AmbientCompass({ className = '' }: { className?: string }) {
     resizer.observe(canvas);
     canvas.addEventListener('pointermove', onPointer, { passive: true });
     canvas.addEventListener('pointerleave', onLeave);
+    canvas.addEventListener('pointerdown', onPress, { passive: true });
     window.addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('visibilitychange', sync);
     reduced.addEventListener('change', sync);
@@ -148,6 +174,7 @@ export function AmbientCompass({ className = '' }: { className?: string }) {
       resizer.disconnect();
       canvas.removeEventListener('pointermove', onPointer);
       canvas.removeEventListener('pointerleave', onLeave);
+      canvas.removeEventListener('pointerdown', onPress);
       window.removeEventListener('scroll', onScroll);
       document.removeEventListener('visibilitychange', sync);
       reduced.removeEventListener('change', sync);
