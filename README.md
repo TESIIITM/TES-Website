@@ -171,14 +171,14 @@ GitHub numbers are fetched separately and cached for an hour under the `github` 
 | --- | --- |
 | `members` | Meet the collective: faculty coordinators, then student members, in `sort_order` |
 | `announcements` | Gather: the newest published one is featured, and up to three earlier ones are listed below it |
-| `stories` | Learn: the reading list. Each `category` becomes a filter, and `slug` keys readers' saved lists. |
+| `stories` | Learn: the reading list. Each `category` becomes a filter, and `slug` keys readers' saved lists. Posts in the Medium feed (from the Medium link, cached for an hour) are added automatically; a row with a post's link replaces its feed copy. |
 | `domains` | Build → Explore the stack, numbered in `sort_order` |
 | `tech_news` | This week in tech, between the Explorer and The People. Only the latest `week_of` (always a Tuesday) is shown. |
 | `instagram_posts` | Gather: the four newest posts as cards under the announcements |
 | `youtube_videos` | Learn: the three newest videos under the reading list |
 | `github_repos` | Build: the featured repository's card, and the rest under More projects |
 | `github_settings` | One row for the Build panel's contributors section: heading, intro, size, and hidden people |
-| `site_settings` | One row of social, repository, and contact links |
+| `site_settings` | One row of social, repository, and contact links, plus the Medium posts an admin hid |
 
 **Adding links from the dashboard.** For tech news, Instagram, and videos, an admin pastes a link and the form fills in the title, caption or channel, date, and image from the page's own preview (YouTube's oEmbed endpoint for videos). The image is copied into Storage when the item is saved, so the site never loads images from other hosts. Some sites refuse requests from servers; the admin then fills the fields in and uploads an image.
 

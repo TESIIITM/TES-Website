@@ -63,6 +63,9 @@ export const techNewsSchema = z.object({
   isPublished: z.boolean(),
 });
 
+/** Medium's id for a post, the hex at the end of its link. */
+export const mediumPostIdSchema = z.string().regex(/^[0-9a-f]{8,16}$/);
+
 export const linkSchema = httpsUrl;
 
 export const instagramLinkSchema = z

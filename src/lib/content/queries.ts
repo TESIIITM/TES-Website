@@ -4,6 +4,7 @@ import { createPublicClient } from '@/lib/supabase/server';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { fallbackContent } from './fallback';
 import { withGitHubData } from './github-data';
+import { withMediumStories } from './medium-data';
 import { toAnnouncement, toContributorsSection, toDomain, toInstagramPost, toMember, toRepository, toSiteLinks, toStory, toTechNewsIssue, toYouTubeVideo } from './mappers';
 import type { SiteContent } from './types';
 
@@ -15,7 +16,10 @@ const VIDEO_LIMIT = 3;
 /** Invalidated by every admin mutation. */
 export const SITE_CONTENT_TAG = 'site-content';
 
-async function fetchSiteContent(): Promise<SiteContent> {
+/** The site's content plus the Medium posts an admin hid, which only the merge with the feed needs. */
+type StoredContent = { content: SiteContent; hiddenMediumPosts: string[] };
+
+async function fetchSiteContent(): Promise<StoredContent> {
   const supabase = createPublicClient();
   const [settings, members, stories, domains, announcements, techNews, instagramPosts, videos, repositories, githubSettings] = await Promise.all([
     supabase.from('site_settings').select('*').maybeSingle(),
@@ -35,7 +39,7 @@ async function fetchSiteContent(): Promise<SiteContent> {
   const failed = [settings, members, stories, domains, announcements, techNews, instagramPosts, videos, repositories, githubSettings].find((result) => result.error);
   if (failed?.error) throw new Error(`Could not load site content: ${failed.error.message}`);
 
-  return {
+  const content: SiteContent = {
     links: settings.data ? toSiteLinks(settings.data) : fallbackContent.links,
     members: (members.data ?? []).map(toMember),
     stories: (stories.data ?? []).map(toStory),
@@ -47,14 +51,18 @@ async function fetchSiteContent(): Promise<SiteContent> {
     repositories: (repositories.data ?? []).map(toRepository),
     contributors: githubSettings.data ? toContributorsSection(githubSettings.data) : null,
   };
+  return { content, hiddenMediumPosts: settings.data?.hidden_medium_posts ?? [] };
 }
 
-const getCachedSiteContent = unstable_cache(fetchSiteContent, ['site-content'], {
+// The key changed with the cached shape, so an entry written by an older deploy is never read.
+const getCachedSiteContent = unstable_cache(fetchSiteContent, ['site-content', 'with-hidden-medium-posts'], {
   tags: [SITE_CONTENT_TAG],
   revalidate: 3600,
 });
 
-/** Content from Supabase with live GitHub numbers, or the bundled content, which never calls GitHub. */
+/** Content from Supabase with Medium posts and live GitHub numbers, or the bundled content, which never calls either. */
 export async function getSiteContent(): Promise<SiteContent> {
-  return isSupabaseConfigured() ? withGitHubData(await getCachedSiteContent()) : fallbackContent;
+  if (!isSupabaseConfigured()) return fallbackContent;
+  const { content, hiddenMediumPosts } = await getCachedSiteContent();
+  return withGitHubData(await withMediumStories(content, hiddenMediumPosts));
 }

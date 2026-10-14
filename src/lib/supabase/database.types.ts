@@ -105,14 +105,14 @@ export type Database = {
                   ]
                 },"site_settings": {
                   Row: {
-                    "contact_email": string,"contribution_guide_url": string,"github_url": string,"id": boolean,"instagram_url": string,"linkedin_url": string,"medium_url": string,"repository_url": string,"updated_at": string
+                    "contact_email": string,"contribution_guide_url": string,"github_url": string,"hidden_medium_posts": string[],"id": boolean,"instagram_url": string,"linkedin_url": string,"medium_url": string,"repository_url": string,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "contact_email": string,"contribution_guide_url": string,"github_url": string,"id"?: boolean,"instagram_url": string,"linkedin_url": string,"medium_url": string,"repository_url": string,"updated_at"?: string
+                    "contact_email": string,"contribution_guide_url": string,"github_url": string,"hidden_medium_posts"?: string[],"id"?: boolean,"instagram_url": string,"linkedin_url": string,"medium_url": string,"repository_url": string,"updated_at"?: string
                   }
                   Update: {
-                    "contact_email"?: string,"contribution_guide_url"?: string,"github_url"?: string,"id"?: boolean,"instagram_url"?: string,"linkedin_url"?: string,"medium_url"?: string,"repository_url"?: string,"updated_at"?: string
+                    "contact_email"?: string,"contribution_guide_url"?: string,"github_url"?: string,"hidden_medium_posts"?: string[],"id"?: boolean,"instagram_url"?: string,"linkedin_url"?: string,"medium_url"?: string,"repository_url"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     

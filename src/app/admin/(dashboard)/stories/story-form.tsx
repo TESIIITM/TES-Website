@@ -6,13 +6,18 @@ import { SubmitButton } from '@/components/admin/submit-button';
 import { initialFormState, type FormState } from '@/lib/admin/form-state';
 import type { Tables } from '@/lib/supabase/database.types';
 
+/** The fields the form fills in, from a saved story or a post in the Medium feed. */
+export type StoryValues = Pick<Tables<'stories'>, 'title' | 'url' | 'summary' | 'category' | 'published_on' | 'slug' | 'is_published'>;
+
 type Props = {
-  story?: Tables<'stories'>;
+  story?: StoryValues;
+  /** True when `story` is a Medium post that hasn't been saved yet. */
+  isNew?: boolean;
   categories: string[];
   action: (previous: FormState, formData: FormData) => Promise<FormState>;
 };
 
-export function StoryForm({ story, categories, action }: Props) {
+export function StoryForm({ story, isNew = !story, categories, action }: Props) {
   const [state, formAction] = useActionState(action, initialFormState);
   return (
     <form className="admin-form" action={formAction} noValidate>
@@ -34,7 +39,7 @@ export function StoryForm({ story, categories, action }: Props) {
         defaultValue={story?.slug}
       />
       <Checkbox name="isPublished" label="Show on the site" state={state} defaultChecked={story?.is_published ?? true} />
-      <div className="admin-form-actions"><SubmitButton>{story ? 'Save changes' : 'Add story'}</SubmitButton></div>
+      <div className="admin-form-actions"><SubmitButton>{isNew ? 'Add story' : 'Save changes'}</SubmitButton></div>
     </form>
   );
 }
