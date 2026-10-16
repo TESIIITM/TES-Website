@@ -62,6 +62,7 @@ export async function saveTechNews(id: string | null, _previous: FormState, form
     : await supabase.from('tech_news').insert(row);
 
   if (error) {
+    console.error('Tech news save failed:', error.code, error.message);
     if (image.url) await removeImage(supabase, BUCKET, image.url);
     return failed('The link could not be saved. Try again.', values);
   }

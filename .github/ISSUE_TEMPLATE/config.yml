@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/TESIIITM/TES-Website/security/advisories/new
+    about: Please report security problems privately, never in a public issue.
+  - name: Ask about the society, events, or joining TES
+    url: https://www.instagram.com/tes_iiitm
+    about: Questions about The Enigma Society rather than this code. You can also write to tes@iiitm.ac.in.
+  - name: Read the contributing guide
+    url: https://github.com/TESIIITM/TES-Website/blob/main/CONTRIBUTING.md
+    about: How to set up the project, claim an issue, and open a pull request.

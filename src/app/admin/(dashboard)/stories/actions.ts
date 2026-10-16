@@ -27,7 +27,10 @@ export async function saveStory(id: string | null, _previous: FormState, formDat
     : await supabase.from('stories').insert(row);
 
   if (error?.code === UNIQUE_VIOLATION) return failed('Another story already uses this slug.', values, 'slug');
-  if (error) return failed('The story could not be saved. Try again.', values);
+  if (error) {
+    console.error('Story save failed:', error.code, error.message);
+    return failed('The story could not be saved. Try again.', values);
+  }
 
   // A hidden story must also hide its feed copy, which visitors would otherwise see.
   const postId = mediumPostId(url);

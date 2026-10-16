@@ -63,6 +63,7 @@ export async function saveInstagramPost(id: string | null, _previous: FormState,
   if (error) {
     if (image.url) await removeImage(supabase, BUCKET, image.url);
     if (error.code === UNIQUE_VIOLATION) return failed('This post has already been added.', values, 'url');
+    console.error('Instagram post save failed:', error.code, error.message);
     return failed('The post could not be saved. Try again.', values);
   }
   await removeImage(supabase, BUCKET, previous);

@@ -10,6 +10,28 @@ body:
       value: |
         ## Feature Request
         Please describe your feature idea clearly to help us evaluate and prioritize it.
+        Changes to the public design are discussed here before anyone writes code.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you file
+      options:
+        - label: I searched the existing issues and this has not been suggested yet.
+          required: true
+        - label: I agree to follow this project's [Code of Conduct](https://github.com/TESIIITM/TES-Website/blob/main/CODE_OF_CONDUCT.md).
+          required: true
+
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: Would you like to build it?
+      options:
+        - Yes, assign it to me once the approach is agreed
+        - Maybe, with some guidance
+        - No, I am only suggesting it
+    validations:
+      required: true
 
   - type: input
     id: summary

@@ -1,10 +1,10 @@
 ## Summary
 
-<!-- Explain what changed and why. -->
+<!-- What changed and why. -->
 
 ## Related issue
 
-<!-- Example: Fixes #30 -->
+<!-- e.g. Fixes #30 -->
 
 ## Validation
 
@@ -13,13 +13,14 @@
 - [ ] `pnpm typecheck`
 - [ ] `pnpm test`
 - [ ] `pnpm build`, then `pnpm test:e2e`
-- [ ] New migration? `pnpm db:reset` applies it cleanly and `pnpm db:types` output is committed
-- [ ] Desktop and mobile interaction checks
+- [ ] Changed the dashboard? `pnpm test:e2e admin` passes against a local database
+- [ ] New migration? It applies with `pnpm exec supabase migration up --local` and the `pnpm db:types` output is committed (it also needs to reach the hosted project before deploy)
+- [ ] Checked on desktop and mobile
 
 ## Screenshots
 
-<!-- Add before/after or desktop/mobile images for UI changes, including the admin dashboard. -->
+<!-- Before/after, desktop/mobile, for any UI change (including the dashboard). -->
 
 ## Reviewer notes
 
-<!-- Call out anything that needs special attention. -->
+<!-- Anything reviewers should look at closely. -->

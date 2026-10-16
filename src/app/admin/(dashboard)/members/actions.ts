@@ -48,6 +48,7 @@ export async function saveMember(id: string | null, _previous: FormState, formDa
     : await supabase.from('members').insert(row);
 
   if (error) {
+    console.error('Member save failed:', error.code, error.message);
     if (portraitUrl) await removePortrait(supabase, portraitUrl);
     return failed('The member could not be saved. Try again.', values);
   }
