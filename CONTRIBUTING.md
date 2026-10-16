@@ -1,4 +1,4 @@
-# Contributing to TES Frontend
+# Contributing to the TES website
 
 First off, thanks for taking the time to contribute. TES is built by the community, for the community. You do not need any role or position to contribute. Anyone can get involved.
 
@@ -34,10 +34,11 @@ You do not need to be a core member to contribute. Here are some ways you can he
 git clone https://github.com/YOUR-USERNAME/TES-Website.git
 
 # 3. Move into the project
-cd TES-Website/TES-frontend
+cd TES-Website
 
 # 4. Install dependencies
-npm ci
+corepack enable
+pnpm install
 
 # 5. Create a new branch
 git checkout -b feat/your-feature-name
@@ -82,7 +83,7 @@ Examples:
 * fix: broken navigation link
 * ui: improve mobile layout
 * docs: update setup instructions
-* refactor: clean up Background.jsx
+* refactor: split the learn panel filters
 
 Write in lowercase and present tense.
 
@@ -92,9 +93,10 @@ Write in lowercase and present tense.
 
 Before opening a PR:
 
-* Use Node.js 22 and make sure the project runs (`npm run dev`)
-* Run `npm run lint`, `npm run typecheck`, `npm run verify:licenses`, `npm run verify:security`, `npm run build`, and `npm test` from `TES-frontend/`
-* Run `npm run test:install` once, then `npm test` after building; verify desktop and mobile
+* Use Node.js 22 and make sure the project runs (`pnpm dev`)
+* Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm verify:licenses`, and `pnpm verify:security`
+* Run `pnpm test:install` once, then `pnpm build` and `pnpm test:e2e`; verify desktop and mobile
+* If you change the database, add a new file under `supabase/migrations/` (never edit one that has shipped), apply it with `pnpm db:reset` or `pnpm exec supabase migration up --local`, and commit the output of `pnpm db:types`. Say in the PR that the migration must reach the hosted project before the code deploys
 * Pull latest changes from `main`
 * Write a clear title and description
 * Do not include unnecessary files like `.env` or `node_modules`
@@ -105,8 +107,9 @@ PRs will be reviewed by the team. Feedback will be direct and helpful.
 
 ## Code Style
 
-* Use functional React components with hooks
-* Reuse the existing custom CSS variables and component styles
+* Use functional React components with hooks. Keep components on the server unless they need state or browser APIs
+* Reuse the existing custom CSS variables and component styles. The public design is meant to match the original site, so discuss visual changes in an issue first. Leave `src/styles/site.css` as it is; a new section gets its own stylesheet
+* Validate admin input with the schemas in `src/lib/validation.ts`, and start every Server Action with `requireAdmin()`
 * Keep components small and focused
 * Use clear variable and function names
 * Remove `console.log` before pushing
@@ -128,11 +131,9 @@ When opening an issue, include:
 
 ## Content Contributions
 
-If you want to update content like team members, events, or articles:
+Team members, announcements, stories, tech news, Instagram posts, videos, domains, GitHub repositories, and links are managed by maintainers in the admin dashboard at `/admin`, so they no longer need a pull request. To suggest a change, open an issue or contact the society.
 
-* Open a PR with the changes
-* Make sure the information is correct
-* For team members, include name and role
+If you change the bundled sample content, update `supabase/seed.sql` and `src/lib/content/fallback.ts` together.
 
 If you create something good outside this repo, share it. TES highlights good work and gives proper credit.
 

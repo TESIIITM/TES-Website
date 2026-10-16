@@ -1,0 +1,10 @@
+.env
+.env*.local
+.next/
+playwright-report/
+test-results/
+coverage/
+AGENTS.md
+CLAUDE.md
+HANDOFF.md
+.notes/

@@ -8,16 +8,17 @@
 
 ## Validation
 
-- [ ] `cd TES-frontend && npm ci`
-- [ ] `npm run lint`
-- [ ] `npm run typecheck`
-- [ ] `npm run verify:licenses`
-- [ ] `npm run build`
+- [ ] `pnpm install --frozen-lockfile`
+- [ ] `pnpm lint`
+- [ ] `pnpm typecheck`
+- [ ] `pnpm test`
+- [ ] `pnpm build`, then `pnpm test:e2e`
+- [ ] New migration? `pnpm db:reset` applies it cleanly and `pnpm db:types` output is committed
 - [ ] Desktop and mobile interaction checks
 
 ## Screenshots
 
-<!-- Add before/after or desktop/mobile images for UI changes. -->
+<!-- Add before/after or desktop/mobile images for UI changes, including the admin dashboard. -->
 
 ## Reviewer notes
 

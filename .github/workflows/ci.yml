@@ -1,4 +1,4 @@
-name: Enigma CI
+name: CI
 
 on:
   push:
@@ -9,45 +9,29 @@ on:
 permissions:
   contents: read
 
-defaults:
-  run:
-    working-directory: TES-frontend
-
 jobs:
   verify:
-    name: Lint, security, build, browser regressions
+    name: Lint, types, tests, build, browser regressions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
-          cache: npm
-          cache-dependency-path: TES-frontend/package-lock.json
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm run verify:licenses
-      - run: npm run verify:security
-      - run: npm run build
-      - run: npm run test:install
-      - run: npm test
-
-  container:
-    name: Non-root container and HTTP security headers
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm verify:licenses
+      - run: pnpm verify:security
+      # Built without Supabase variables, so the browser tests use the bundled content.
+      - run: pnpm build
+      - run: pnpm test:install
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: failure()
         with:
-          node-version: '22'
-      - run: docker build -t tes-website .
-      - run: docker run -d --read-only --tmpfs /tmp:rw,noexec,nosuid,size=32m --cap-drop=ALL --security-opt=no-new-privileges --name tes-smoke -p 127.0.0.1:8080:8080 tes-website
-      - run: test "$(docker exec tes-smoke id -u)" = 101
-      - run: node scripts/test-container.mjs
-      - run: docker exec tes-smoke wget -q -O /dev/null http://127.0.0.1:8080/
-      - name: Container logs and cleanup
-        if: always()
-        run: |
-          docker logs tes-smoke || true
-          docker rm -f tes-smoke || true
+          name: playwright-report
+          path: test-results/
+          retention-days: 7

@@ -1,17 +1,16 @@
 version: 2
 updates:
+  # Dependabot's npm ecosystem also maintains pnpm lockfiles.
   - package-ecosystem: npm
-    directory: /TES-frontend
+    directory: /
     schedule:
       interval: weekly
     groups:
       development:
         dependency-type: development
+      supabase:
+        patterns: ['@supabase/*', 'supabase']
   - package-ecosystem: github-actions
     directory: /
-    schedule:
-      interval: weekly
-  - package-ecosystem: docker
-    directory: /TES-frontend
     schedule:
       interval: weekly

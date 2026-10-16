@@ -1,0 +1,155 @@
+import { describe, expect, it } from 'vitest';
+import { announcementSchema, changePasswordSchema, memberSchema, newPasswordSchema, settingsSchema, storySchema, techNewsSchema, instagramPostSchema, youtubeVideoSchema, githubRepoSchema, githubSettingsSchema } from '@/lib/validation';
+
+const member = { name: 'Rohinth S', role: 'Club head', group: 'student', linkedinUrl: '', sortOrder: '2', isPublished: true };
+
+describe('memberSchema', () => {
+  it('trims text, coerces order, and turns an empty link into null', () => {
+    const result = memberSchema.parse({ ...member, name: '  Rohinth S  ' });
+    expect(result).toMatchObject({ name: 'Rohinth S', sortOrder: 2, linkedinUrl: null });
+  });
+
+  it('accepts only https profile links', () => {
+    expect(memberSchema.safeParse({ ...member, linkedinUrl: 'http://linkedin.com/in/x' }).success).toBe(false);
+    expect(memberSchema.safeParse({ ...member, linkedinUrl: 'javascript:alert(1)' }).success).toBe(false);
+    expect(memberSchema.safeParse({ ...member, linkedinUrl: 'https://www.linkedin.com/in/srohinth/' }).success).toBe(true);
+  });
+
+  it('rejects unknown sections and fractional order', () => {
+    expect(memberSchema.safeParse({ ...member, group: 'alumni' }).success).toBe(false);
+    expect(memberSchema.safeParse({ ...member, sortOrder: '1.5' }).success).toBe(false);
+  });
+});
+
+describe('storySchema', () => {
+  const story = { slug: 'gsoc', title: 'GSoC', category: 'Open source', summary: 'A path in.', url: 'https://medium.com/x', publishedOn: '2026-06-01', isPublished: true };
+
+  it('normalises the slug case and rejects malformed slugs', () => {
+    expect(storySchema.parse({ ...story, slug: 'GSoC-26' }).slug).toBe('gsoc-26');
+    for (const slug of ['has space', '-leading', 'double--hyphen', '']) {
+      expect(storySchema.safeParse({ ...story, slug }).success).toBe(false);
+    }
+  });
+
+  it('requires a real calendar date', () => {
+    expect(storySchema.safeParse({ ...story, publishedOn: '2026-02-30' }).success).toBe(false);
+  });
+});
+
+describe('announcementSchema', () => {
+  const announcement = {
+    label: 'Community announcement', title: 'Tech', titleEmphasis: 'Lekhan.', summary: 'Write.', details: '',
+    primaryLabel: '', primaryUrl: '', secondaryLabel: '', secondaryUrl: '', publishedOn: '2026-09-01', isPublished: true,
+  };
+
+  it('allows an announcement without buttons', () => {
+    expect(announcementSchema.parse(announcement)).toMatchObject({ details: null, primaryUrl: null, secondaryLabel: null });
+  });
+
+  it('reports a button with a label but no link on the link field', () => {
+    const result = announcementSchema.safeParse({ ...announcement, primaryLabel: 'Register' });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues.map((issue) => issue.path[0])).toEqual(['primaryUrl']);
+  });
+
+  it('reports a link without a label on the label field', () => {
+    const result = announcementSchema.safeParse({ ...announcement, secondaryUrl: 'https://example.org/rules' });
+    expect(result.error?.issues.map((issue) => issue.path[0])).toEqual(['secondaryLabel']);
+  });
+});
+
+describe('settingsSchema', () => {
+  it('requires every link and a valid email', () => {
+    const links = { github: 'https://github.com/TESIIITM', repository: 'https://github.com/TESIIITM/TES-Website', contributionGuide: 'https://github.com/x', medium: 'https://medium.com/x', instagram: 'https://instagram.com/x', linkedin: 'https://linkedin.com/x', email: 'tes@iiitm.ac.in' };
+    expect(settingsSchema.safeParse(links).success).toBe(true);
+    expect(settingsSchema.safeParse({ ...links, email: 'not-an-email' }).success).toBe(false);
+    expect(settingsSchema.safeParse({ ...links, medium: '' }).success).toBe(false);
+  });
+});
+
+describe('newPasswordSchema', () => {
+  it('requires at least 12 characters and a matching confirmation', () => {
+    expect(newPasswordSchema.safeParse({ password: 'short', confirmPassword: 'short' }).success).toBe(false);
+    const mismatch = newPasswordSchema.safeParse({ password: 'a long enough password', confirmPassword: 'a long enough passw0rd' });
+    expect(mismatch.error?.issues.map((issue) => issue.path[0])).toEqual(['confirmPassword']);
+    expect(newPasswordSchema.safeParse({ password: 'a long enough password', confirmPassword: 'a long enough password' }).success).toBe(true);
+  });
+
+  it('rejects passwords bcrypt would silently truncate', () => {
+    const tooLong = 'é'.repeat(37); // 37 characters, 74 bytes
+    expect(newPasswordSchema.safeParse({ password: tooLong, confirmPassword: tooLong }).success).toBe(false);
+  });
+});
+
+describe('changePasswordSchema', () => {
+  it('needs the current password as well as a valid new one', () => {
+    const change = { currentPassword: 'old password value', password: 'a long enough password', confirmPassword: 'a long enough password' };
+    expect(changePasswordSchema.safeParse(change).success).toBe(true);
+    expect(changePasswordSchema.safeParse({ ...change, currentPassword: '' }).error?.issues.map((issue) => issue.path[0])).toEqual(['currentPassword']);
+    expect(changePasswordSchema.safeParse({ ...change, confirmPassword: 'something else' }).error?.issues.map((issue) => issue.path[0])).toEqual(['confirmPassword']);
+  });
+});
+
+describe('techNewsSchema', () => {
+  const item = { url: 'https://example.com/a', title: 'A', summary: '', source: ' ', imageSourceUrl: '', weekOf: '2026-10-15', sortOrder: '0', isPublished: true };
+
+  it('stores the week as its Tuesday and empty optional fields as null', () => {
+    expect(techNewsSchema.parse(item)).toMatchObject({ weekOf: '2026-10-13', summary: null, source: null, imageSourceUrl: null });
+  });
+
+  it('requires https for the link and the preview image', () => {
+    expect(techNewsSchema.safeParse({ ...item, url: 'http://example.com' }).success).toBe(false);
+    expect(techNewsSchema.safeParse({ ...item, imageSourceUrl: 'http://example.com/a.png' }).success).toBe(false);
+  });
+});
+
+describe('instagramPostSchema', () => {
+  const post = { url: 'https://instagram.com/tes_iiitm/p/DeFjXczE841/?igsh=x', caption: '', imageSourceUrl: '', postedOn: '2026-10-04', isPublished: true };
+
+  it('stores the post link in one form', () => {
+    expect(instagramPostSchema.parse(post)).toMatchObject({ url: 'https://www.instagram.com/p/DeFjXczE841/', caption: null });
+  });
+
+  it('refuses links that are not Instagram posts', () => {
+    const result = instagramPostSchema.safeParse({ ...post, url: 'https://www.instagram.com/tes_iiitm/' });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe('Paste a link to an Instagram post or reel.');
+  });
+});
+
+describe('youtubeVideoSchema', () => {
+  const video = { url: 'https://youtu.be/jNQXAC9IVRw?si=x', title: 'Me at the zoo', channel: '', imageSourceUrl: '', publishedOn: '2026-10-13', isPublished: true };
+
+  it('stores the video ID', () => {
+    expect(youtubeVideoSchema.parse(video)).toMatchObject({ url: 'jNQXAC9IVRw', channel: null });
+  });
+
+  it('refuses links that are not videos', () => {
+    expect(youtubeVideoSchema.safeParse({ ...video, url: 'https://www.youtube.com/@tes_iiitm' }).error?.issues[0].message).toBe('Paste a link to a YouTube video.');
+  });
+});
+
+describe('githubRepoSchema', () => {
+  const repo = { repository: 'https://github.com/TESIIITM/TES-Website', title: '', description: '', headline: '', headlineEmphasis: '', isFeatured: true, sortOrder: '1', isPublished: true };
+
+  it('stores owner/name and empty copy as null', () => {
+    expect(githubRepoSchema.parse(repo)).toMatchObject({ repository: 'TESIIITM/TES-Website', title: null, headline: null, sortOrder: 1 });
+  });
+
+  it('refuses something that is not a repository', () => {
+    expect(githubRepoSchema.safeParse({ ...repo, repository: 'https://github.com/TESIIITM' }).success).toBe(false);
+  });
+});
+
+describe('githubSettingsSchema', () => {
+  const settings = { showContributors: true, heading: 'Built in the open.', intro: '', hiddenLogins: '@ada, lin', maxContributors: '24' };
+
+  it('reads the hidden logins as a list', () => {
+    expect(githubSettingsSchema.parse(settings)).toMatchObject({ hiddenLogins: ['ada', 'lin'], intro: null, maxContributors: 24 });
+  });
+
+  it('names logins that are not valid and keeps the limit to 100', () => {
+    expect(githubSettingsSchema.safeParse({ ...settings, hiddenLogins: 'ok bad!' }).error?.issues[0].message).toBe('Not a GitHub username: bad!');
+    expect(githubSettingsSchema.safeParse({ ...settings, maxContributors: '101' }).success).toBe(false);
+  });
+});

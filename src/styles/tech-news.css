@@ -1,0 +1,19 @@
+/* The weekly tech news section. Built from the tokens and patterns in site.css,
+   which stays a verbatim copy of the original stylesheet. */
+.news-section { padding: clamp(65px, 8vw, 112px) 5% 0; }
+.news-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 1480px; margin: 0 auto; padding: 0; list-style: none; }
+.news-card { display: flex; flex-direction: column; height: 100%; border: 1px solid var(--border); transition: border-color .25s, background .25s; }
+.news-card:hover, .news-card:focus-visible { border-color: color-mix(in oklch, var(--accent), transparent 52%); background: var(--accent-soft); }
+.news-image { position: relative; aspect-ratio: 1.91; overflow: hidden; border-bottom: 1px solid var(--border); background: var(--bg-soft); }
+.news-image img { object-fit: cover; filter: grayscale(1); transition: filter .5s, transform .55s; }
+.news-card:hover .news-image img { filter: grayscale(0); transform: scale(1.04); }
+.news-image > span { display: grid; place-items: center; width: 100%; height: 100%; color: var(--accent); font: 64px var(--serif); text-transform: uppercase; }
+.news-meta { margin: 22px 24px 0; color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; overflow-wrap: anywhere; }
+.news-card h3 { margin: 12px 24px 0; font-family: var(--serif); font-size: clamp(21px, 1.7vw, 26px); font-weight: 600; line-height: 1.2; letter-spacing: -.035em; }
+.news-card h3 svg { display: inline; vertical-align: -2px; color: var(--accent); opacity: .48; transition: transform .25s, opacity .25s; }
+.news-card:hover h3 svg { transform: translate(3px, -3px); opacity: 1; }
+.news-card p { display: -webkit-box; margin: 10px 24px 26px; overflow: hidden; color: var(--muted); font-size: 13px; line-height: 1.65; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; }
+.news-card h3:last-child { margin-bottom: 26px; }
+@media (max-width: 1100px) { .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .news-section { padding-top: 65px; } .news-grid { grid-template-columns: 1fr; gap: 10px; } .news-meta { margin: 18px 20px 0; } .news-card h3 { margin: 10px 20px 0; font-size: 21px; } .news-card p { margin: 8px 20px 22px; } .news-card h3:last-child { margin-bottom: 22px; } }
+@media (prefers-reduced-motion: reduce) { .news-image img, .news-card h3 svg { transition: none; } .news-card:hover .news-image img { transform: none; } }
