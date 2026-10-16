@@ -5,12 +5,29 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
     groups:
       development:
         dependency-type: development
       supabase:
         patterns: ['@supabase/*', 'supabase']
+    ignore:
+      # The project targets Node.js 22; Node's types follow the runtime, not the latest release.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      # TypeScript majors wait until typescript-eslint and eslint-config-next support them.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      actions:
+        patterns: ['*']

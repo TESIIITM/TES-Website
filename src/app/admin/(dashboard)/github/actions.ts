@@ -43,14 +43,20 @@ export async function saveRepository(id: string | null, _previous: FormState, fo
   if (isFeatured) {
     const others = supabase.from('github_repos').update({ is_featured: false }).eq('is_featured', true);
     const { error } = await (id ? others.neq('id', id) : others);
-    if (error) return failed('The repository could not be saved. Try again.', values);
+    if (error) {
+      console.error('Repository unfeature failed:', error.code, error.message);
+      return failed('The repository could not be saved. Try again.', values);
+    }
   }
   const { error } = id
     ? await supabase.from('github_repos').update(row).eq('id', id)
     : await supabase.from('github_repos').insert(row);
 
   if (error?.code === UNIQUE_VIOLATION) return failed('That repository has already been added.', values, 'repository');
-  if (error) return failed('The repository could not be saved. Try again.', values);
+  if (error) {
+    console.error('Repository save failed:', error.code, error.message);
+    return failed('The repository could not be saved. Try again.', values);
+  }
 
   publishChanges(LIST);
   refreshGitHubData(LIST);
@@ -78,7 +84,10 @@ export async function saveGitHubSettings(_previous: FormState, formData: FormDat
     hidden_logins: hiddenLogins,
     max_contributors: maxContributors,
   });
-  if (error) return failed('The contributors section could not be saved. Try again.', values);
+  if (error) {
+    console.error('Contributors section save failed:', error.code, error.message);
+    return failed('The contributors section could not be saved. Try again.', values);
+  }
 
   publishChanges(LIST);
   return { status: 'saved', message: 'Contributors section saved. The site is up to date.', values: { ...values, hiddenLogins: hiddenLogins.join(', ') } };

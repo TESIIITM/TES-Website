@@ -70,6 +70,7 @@ export async function saveVideo(id: string | null, _previous: FormState, formDat
   if (error) {
     if (image.url) await removeImage(supabase, BUCKET, image.url);
     if (error.code === UNIQUE_VIOLATION) return failed('This video has already been added.', values, 'url');
+    console.error('Video save failed:', error.code, error.message);
     return failed('The video could not be saved. Try again.', values);
   }
   await removeImage(supabase, BUCKET, previous);

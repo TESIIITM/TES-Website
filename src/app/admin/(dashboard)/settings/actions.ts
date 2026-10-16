@@ -24,7 +24,10 @@ export async function saveSettings(_previous: FormState, formData: FormData): Pr
     linkedin_url: links.linkedin,
     contact_email: links.email,
   });
-  if (error) return failed('The links could not be saved. Try again.', values);
+  if (error) {
+    console.error('Links save failed:', error.code, error.message);
+    return failed('The links could not be saved. Try again.', values);
+  }
 
   publishChanges('/admin/settings');
   return { status: 'saved', message: 'Links saved. The site is up to date.', values };

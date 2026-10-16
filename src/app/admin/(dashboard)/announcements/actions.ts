@@ -37,7 +37,10 @@ export async function saveAnnouncement(id: string | null, _previous: FormState, 
   const { error } = id
     ? await supabase.from('announcements').update(row).eq('id', id)
     : await supabase.from('announcements').insert(row);
-  if (error) return failed('The announcement could not be saved. Try again.', values);
+  if (error) {
+    console.error('Announcement save failed:', error.code, error.message);
+    return failed('The announcement could not be saved. Try again.', values);
+  }
 
   publishChanges(LIST);
   redirect(LIST);

@@ -20,7 +20,10 @@ export async function saveDomain(id: string | null, _previous: FormState, formDa
   const { error } = id
     ? await supabase.from('domains').update(row).eq('id', id)
     : await supabase.from('domains').insert(row);
-  if (error) return failed('The domain could not be saved. Try again.', values);
+  if (error) {
+    console.error('Domain save failed:', error.code, error.message);
+    return failed('The domain could not be saved. Try again.', values);
+  }
 
   publishChanges(LIST);
   redirect(LIST);

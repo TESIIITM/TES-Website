@@ -1,12 +1,15 @@
 # The Enigma Society website
 
+[![CI](https://github.com/TESIIITM/TES-Website/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/TESIIITM/TES-Website/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+Live at [the-enigma-society.vercel.app](https://the-enigma-society.vercel.app/).
+
 The website of The Enigma Society (TES) at ABV-IIITM Gwalior, with a content dashboard for the people who run it.
 
-This is the **Next.js and Supabase migration** of [TESIIITM/TES-Website](https://github.com/TESIIITM/TES-Website). The original is a static React and Vite app whose content lives in `src/data.ts`. Here the same site reads its content from a Postgres database. Society maintainers can add faculty coordinators and members, post announcements, curate the reading list, and update links from `/admin`, without editing code.
+Content lives in a Postgres database on [Supabase](https://supabase.com), so maintainers can update members, announcements, the reading list, tech news, Instagram posts, videos, GitHub projects, and links from `/admin` without touching code. Optional sections only show up once they have content.
 
-Beyond the original, the dashboard also runs a weekly tech news digest, Instagram post and YouTube video previews, and the GitHub repositories and contributors shown under Build. Each of those sections appears only once it has content, so an empty one leaves the page as it was.
-
-The public site is meant to look and behave exactly like the original. Its stylesheet is carried over unchanged, and the original browser regression suite runs here without modification.
+v3 replaced the old static React + Vite site (where content was hardcoded in `src/data.ts`). The public design and its browser tests were kept as they were.
 
 ## Stack
 
@@ -38,6 +41,8 @@ cp .env.example .env.local
 ```
 
 Put the API URL and publishable key printed by `db:start` into `.env.local`, then restart `pnpm dev`. Studio runs at http://127.0.0.1:54323.
+
+Your local data stays in Docker between runs, and `db:start` won't apply migrations that were added after you first created it. After pulling, run `pnpm exec supabase migration up --local` (or `pnpm db:reset` to start fresh). If a dashboard form keeps saying it "could not be saved", this is usually why. The terminal running the server will show the actual database error.
 
 ### Creating an admin
 
@@ -208,6 +213,14 @@ The original `/about/` and `/articles/` URLs redirect to their sections.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). The source is MIT licensed. The browser reset keeps its Tailwind Preflight notice in `public/licenses/tailwind-preflight.txt`. Society media comes from the original repository; check image rights before reusing it outside TES.
+Anyone can contribute. Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md), then grab a [`good first issue`](https://github.com/TESIIITM/TES-Website/labels/good%20first%20issue). Security issues go through [SECURITY.md](SECURITY.md), not public issues.
 
-Contact: [tes@iiitm.ac.in](mailto:tes@iiitm.ac.in)
+## Maintainer
+
+**Dhananjay Agrawal** ([@dhananjay-123](https://github.com/dhananjay-123)) maintains the repo and reviews PRs. If you have a doubt about the code, open an issue or tag me in your issue/PR. For anything about the society itself, email [tes@iiitm.ac.in](mailto:tes@iiitm.ac.in) or message [@tes_iiitm](https://www.instagram.com/tes_iiitm) on Instagram. More in [SUPPORT.md](SUPPORT.md).
+
+Thanks to [everyone who's contributed](https://github.com/TESIIITM/TES-Website/graphs/contributors).
+
+## License
+
+Code is [MIT licensed](LICENSE). The Tailwind Preflight notice for the CSS reset is in `public/licenses/tailwind-preflight.txt`. Photos and logos under `public/assets` belong to TES, so check before reusing them elsewhere.
