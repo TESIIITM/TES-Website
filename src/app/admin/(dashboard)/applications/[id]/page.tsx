@@ -6,7 +6,7 @@ import { SubmitButton } from '@/components/admin/submit-button';
 import { requireAdmin } from '@/lib/auth';
 import { readEvaluation } from '@/lib/recruitment/ai-prompt';
 import { readEvidence } from '@/lib/recruitment/evidence';
-import { commitmentLabel, yearLabel } from '@/lib/recruitment/options';
+import { commitmentLabel, isStalled, yearLabel } from '@/lib/recruitment/options';
 import { importanceOf, IMPORTANCE_LABELS, readScores } from '@/lib/recruitment/rubric';
 import { scoreApplication } from '@/lib/recruitment/score';
 import { loadCriteria } from '@/lib/recruitment/server';
@@ -44,6 +44,9 @@ export default async function ApplicationPage({ params }: PageProps<'/admin/appl
   const resume = application.resume_path
     ? (await supabase.storage.from('resumes').createSignedUrl(application.resume_path, 600)).data?.signedUrl ?? null
     : null;
+  const stalled = isStalled(application.updated_at);
+  const canSendEmail = application.email_status !== 'pending' || stalled;
+  const canRunAi = application.ai_status !== 'pending' || stalled;
 
   const rubricRows = criteria.map((criterion) => ({
     key: criterion.key,
@@ -73,7 +76,7 @@ export default async function ApplicationPage({ params }: PageProps<'/admin/appl
           <span className="eyebrow">Confirmation email</span>
           <strong className="admin-stat-text">{EMAIL_STATUS[application.email_status] ?? application.email_status}</strong>
           {application.email_error && <small title={application.email_error}>{application.email_error.slice(0, 80)}</small>}
-          {application.email_status !== 'pending' && (
+          {canSendEmail && (
             <form action={resendConfirmation.bind(null, application.id)}><SubmitButton pendingLabel="Sending…">{application.email_status === 'sent' ? 'Send again' : 'Retry email'}</SubmitButton></form>
           )}
         </div>
@@ -81,8 +84,8 @@ export default async function ApplicationPage({ params }: PageProps<'/admin/appl
           <span className="eyebrow">AI evaluation</span>
           <strong className="admin-stat-text">{AI_STATUS[application.ai_status] ?? application.ai_status}</strong>
           {application.ai_error && <small title={application.ai_error}>{application.ai_error.slice(0, 80)}</small>}
-          {application.ai_status !== 'pending' && (
-            <form action={rerunEvaluation.bind(null, application.id)}><SubmitButton pendingLabel="Starting…">{application.ai_status === 'done' ? 'Run again' : 'Run AI'}</SubmitButton></form>
+          {canRunAi && (
+            <form action={rerunEvaluation.bind(null, application.id)}><SubmitButton pendingLabel="Starting…">{application.ai_status === 'done' ? 'Run again' : application.ai_status === 'pending' ? 'Retry' : 'Run AI'}</SubmitButton></form>
           )}
         </div>
       </div>

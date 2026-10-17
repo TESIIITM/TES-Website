@@ -206,6 +206,8 @@ The **Join TES** buttons in the header and the closing band lead to `/join`, a p
 
 **After a submission** the applicant sees the confirmation at once. The automatic checks, the confirmation email, and the AI run afterwards, and each records its own outcome on the application (`email_status`, `ai_status`), so a failure in one never loses the submission. Admins can retry the email or rerun the AI from the application's page. One application is allowed per roll number and per email address.
 
+To take it live, follow [Deploying JOIN TES](docs/deploying-recruitment.md): the email and AI keys, the migration, the Vercel settings, and a checklist for running a recruitment round.
+
 **Email** is sent over SMTP. For the official Google Workspace account, use `smtp.gmail.com` on port 465 with an App Password (the account needs 2-Step Verification, and the Workspace admin must allow App Passwords). Without `SMTP_HOST`, emails are skipped and marked as not set up.
 
 To try it locally, add the secret key that `pnpm db:start` prints as `SUPABASE_SECRET_KEY` in `.env.local`. For email, run a test inbox such as Mailpit (`docker run -p 1025:1025 -p 8026:8025 axllent/mailpit`), set `SMTP_HOST=127.0.0.1`, `SMTP_PORT=1025`, and `MAIL_FROM`, and read the messages at http://127.0.0.1:8026.
@@ -229,7 +231,7 @@ Any Next.js host works. On Vercel:
 4. Under **Authentication → Emails**, replace the **Invite user** and **Reset password** templates with `supabase/templates/invite.html` and `recovery.html`. The defaults sign people in without asking for a password.
 5. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in the Vercel project.
 6. Optionally set `GITHUB_TOKEN`, a fine-grained token with no permissions. Without it GitHub allows 60 requests an hour per IP, which a shared host can use up; the Build panel then shows no numbers until the limit resets. When the token expires, replace it.
-7. For the JOIN TES form, set `SUPABASE_SECRET_KEY` (Project Settings → API Keys → Secret keys) as a server-only variable. Never prefix it with `NEXT_PUBLIC_`. For confirmation emails, set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `MAIL_FROM`; for the optional AI evaluation, `AI_EVAL_ENABLED=true` and `GEMINI_API_KEY`. See [Recruitment](#recruitment-join-tes).
+7. For the JOIN TES form, set `SUPABASE_SECRET_KEY` (Project Settings → API Keys → Secret keys) as a server-only variable. Never prefix it with `NEXT_PUBLIC_`. For confirmation emails, set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `MAIL_FROM`; for the optional AI evaluation, `AI_EVAL_ENABLED=true` and `GEMINI_API_KEY`. See [Deploying JOIN TES](docs/deploying-recruitment.md).
 8. Deploy.
 
 When a later change adds a migration, apply it to the hosted project (`supabase db push`, or paste it into the SQL editor) **before** deploying the code that reads the new tables, or the home page will fail to load.

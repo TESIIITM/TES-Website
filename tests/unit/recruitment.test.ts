@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildPrompt, readEvaluation, redact, verifyEvaluation, type EvaluationInput, type RawEvaluation } from '@/lib/recruitment/ai-prompt';
 import { confirmationEmail } from '@/lib/recruitment/email-template';
 import { automaticAssessment, extractLinks, githubLogins } from '@/lib/recruitment/evidence';
+import { isStalled } from '@/lib/recruitment/options';
 import { importanceOf, readScores, resolveScores, summarizeScore, type Criterion } from '@/lib/recruitment/rubric';
 import { scoreApplication } from '@/lib/recruitment/score';
 import { applicationReviewSchema, applicationSchema, recruitmentSettingsSchema } from '@/lib/validation';
@@ -201,5 +202,13 @@ describe('review and settings schemas', () => {
     expect(schema.parse({ isOpen: true, departments: ' Web \n\nDesign\nWeb ', weight_resume: '2' })).toEqual({ isOpen: true, departments: ['Web', 'Design'], weight_resume: 2 });
     expect(schema.safeParse({ isOpen: true, departments: '  ', weight_resume: '2' }).success).toBe(false);
     expect(schema.safeParse({ isOpen: true, departments: 'Web', weight_resume: '12' }).success).toBe(false);
+  });
+});
+
+describe('isStalled', () => {
+  it('offers a retry once a background step has been pending for five minutes', () => {
+    const updated = '2026-10-17T10:00:00Z';
+    expect(isStalled(updated, Date.parse('2026-10-17T10:04:59Z'))).toBe(false);
+    expect(isStalled(updated, Date.parse('2026-10-17T10:05:01Z'))).toBe(true);
   });
 });

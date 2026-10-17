@@ -40,3 +40,14 @@ export function statusLabel(value: ApplicationStatus): string {
 /** Answers are capped so one application cannot fill the database or the AI's context. */
 export const ANSWER_MAX = 3000;
 export const RESUME_MAX_BYTES = 2 * 1024 * 1024;
+
+const STALLED_AFTER_MS = 5 * 60 * 1000;
+
+/**
+ * Work that runs after a response can be cut off, e.g. when the host stops the
+ * function. A step still pending this long after the row last changed is
+ * offered for retry.
+ */
+export function isStalled(updatedAt: string, now = Date.now()): boolean {
+  return now - new Date(updatedAt).getTime() > STALLED_AFTER_MS;
+}
