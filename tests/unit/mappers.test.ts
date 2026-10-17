@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { toAnnouncement, toContributorsSection, toRepository, toTechNewsIssue } from '@/lib/content/mappers';
 import type { Tables } from '@/lib/supabase/database.types';
 
