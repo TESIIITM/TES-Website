@@ -11,6 +11,8 @@ const exceptions = {
     'LGPL-3.0-or-later': /^@img\/sharp-libvips-/,
     // Browser support data read at build time; not served as site content.
     'CC-BY-4.0': /^caniuse-lite$/,
+    // MIT without the attribution clause, so more permissive than MIT. Sends the JOIN TES confirmation email.
+    'MIT-0': /^nodemailer$/,
   },
   development: {
     'Python-2.0': /^argparse$/,

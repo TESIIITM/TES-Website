@@ -10,3 +10,12 @@ export function getSupabaseEnv(): SupabaseEnv | null {
 export function isSupabaseConfigured(): boolean {
   return getSupabaseEnv() !== null;
 }
+
+/**
+ * The project's secret key, for server code that has to write rows no visitor
+ * may write themselves, such as recruitment applications. Never expose it to
+ * the browser: it bypasses row level security.
+ */
+export function getSupabaseSecretKey(): string | null {
+  return process.env.SUPABASE_SECRET_KEY || null;
+}
