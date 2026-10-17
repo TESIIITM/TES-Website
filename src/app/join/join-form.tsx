@@ -52,8 +52,10 @@ function Question({ number, name, label, state, hint, level, note, optional, chi
         <Weight level={level} />
         {note && <span className="join-weight join-weight-note">{note}</span>}
       </div>
-      {hint && <p className="join-hint" id={`${name}-hint`}>{hint}</p>}
+      {/* Short fields sit side by side, so their hints go below to keep the inputs level. */}
+      {hint && wide && <p className="join-hint" id={`${name}-hint`}>{hint}</p>}
       {children(describedBy, Boolean(error))}
+      {hint && !wide && <p className="join-hint" id={`${name}-hint`}>{hint}</p>}
       {error && <p className="join-error" id={`${name}-error`}>{error}</p>}
     </div>
   );
