@@ -7,7 +7,9 @@ export type EvaluationResult =
   | { status: 'disabled' }
   | { status: 'failed'; error: string; model: string };
 
-const DEFAULT_MODEL = 'gemini-2.5-flash';
+// Google's alias for the current Flash-Lite model, so a retired model name never breaks
+// reviews. On the free tier it answers in seconds; full Flash can queue for minutes.
+const DEFAULT_MODEL = 'gemini-flash-lite-latest';
 const TIMEOUT_MS = 60_000;
 const ATTEMPTS = 3;
 
