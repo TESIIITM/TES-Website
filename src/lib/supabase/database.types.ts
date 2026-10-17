@@ -33,6 +33,20 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"applications": {
+                  Row: {
+                    "additional_info": string | null,"admin_notes": string | null,"admin_scores": NonNullable<Json>,"ai_error": string | null,"ai_evaluated_at": string | null,"ai_evaluation": Json | null,"ai_model": string | null,"ai_status": string,"auto_evidence": NonNullable<Json>,"auto_scores": NonNullable<Json>,"commitment": Database["public"]['Enums']["commitment_preference"],"contributions": string,"created_at": string,"department": string,"email": string,"email_error": string | null,"email_sent_at": string | null,"email_status": string,"id": string,"knowledge": string,"links": (string)[],"name": string,"plan": string,"resume_path": string | null,"role": string,"roll_number": string,"showcase": string,"status": Database["public"]['Enums']["application_status"],"updated_at": string,"weekly_hours": number,"year_of_study": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "additional_info"?: string | null,"admin_notes"?: string | null,"admin_scores"?: NonNullable<Json>,"ai_error"?: string | null,"ai_evaluated_at"?: string | null,"ai_evaluation"?: Json | null,"ai_model"?: string | null,"ai_status"?: string,"auto_evidence"?: NonNullable<Json>,"auto_scores"?: NonNullable<Json>,"commitment": Database["public"]['Enums']["commitment_preference"],"contributions": string,"created_at"?: string,"department": string,"email": string,"email_error"?: string | null,"email_sent_at"?: string | null,"email_status"?: string,"id"?: string,"knowledge": string,"links"?: (string)[],"name": string,"plan": string,"resume_path"?: string | null,"role": string,"roll_number": string,"showcase": string,"status"?: Database["public"]['Enums']["application_status"],"updated_at"?: string,"weekly_hours": number,"year_of_study": string
+                  }
+                  Update: {
+                    "additional_info"?: string | null,"admin_notes"?: string | null,"admin_scores"?: NonNullable<Json>,"ai_error"?: string | null,"ai_evaluated_at"?: string | null,"ai_evaluation"?: Json | null,"ai_model"?: string | null,"ai_status"?: string,"auto_evidence"?: NonNullable<Json>,"auto_scores"?: NonNullable<Json>,"commitment"?: Database["public"]['Enums']["commitment_preference"],"contributions"?: string,"created_at"?: string,"department"?: string,"email"?: string,"email_error"?: string | null,"email_sent_at"?: string | null,"email_status"?: string,"id"?: string,"knowledge"?: string,"links"?: (string)[],"name"?: string,"plan"?: string,"resume_path"?: string | null,"role"?: string,"roll_number"?: string,"showcase"?: string,"status"?: Database["public"]['Enums']["application_status"],"updated_at"?: string,"weekly_hours"?: number,"year_of_study"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"domains": {
                   Row: {
                     "created_at": string,"detail": string,"id": string,"sort_order": number,"title": string,"updated_at": string
@@ -103,16 +117,44 @@ export type Database = {
                   Relationships: [
                     
                   ]
-                },"site_settings": {
+                },"recruitment_criteria": {
                   Row: {
-                    "contact_email": string,"contribution_guide_url": string,"github_url": string,"hidden_medium_posts": string[],"id": boolean,"instagram_url": string,"linkedin_url": string,"medium_url": string,"repository_url": string,"updated_at": string
+                    "guidance": string,"key": string,"label": string,"sort_order": number,"updated_at": string,"weight": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "contact_email": string,"contribution_guide_url": string,"github_url": string,"hidden_medium_posts"?: string[],"id"?: boolean,"instagram_url": string,"linkedin_url": string,"medium_url": string,"repository_url": string,"updated_at"?: string
+                    "guidance": string,"key": string,"label": string,"sort_order"?: number,"updated_at"?: string,"weight": number
                   }
                   Update: {
-                    "contact_email"?: string,"contribution_guide_url"?: string,"github_url"?: string,"hidden_medium_posts"?: string[],"id"?: boolean,"instagram_url"?: string,"linkedin_url"?: string,"medium_url"?: string,"repository_url"?: string,"updated_at"?: string
+                    "guidance"?: string,"key"?: string,"label"?: string,"sort_order"?: number,"updated_at"?: string,"weight"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"recruitment_settings": {
+                  Row: {
+                    "departments": (string)[],"id": boolean,"is_open": boolean,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "departments"?: (string)[],"id"?: boolean,"is_open"?: boolean,"updated_at"?: string
+                  }
+                  Update: {
+                    "departments"?: (string)[],"id"?: boolean,"is_open"?: boolean,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"site_settings": {
+                  Row: {
+                    "contact_email": string,"contribution_guide_url": string,"github_url": string,"hidden_medium_posts": (string)[],"id": boolean,"instagram_url": string,"linkedin_url": string,"medium_url": string,"repository_url": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "contact_email": string,"contribution_guide_url": string,"github_url": string,"hidden_medium_posts"?: (string)[],"id"?: boolean,"instagram_url": string,"linkedin_url": string,"medium_url": string,"repository_url": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "contact_email"?: string,"contribution_guide_url"?: string,"github_url"?: string,"hidden_medium_posts"?: (string)[],"id"?: boolean,"instagram_url"?: string,"linkedin_url"?: string,"medium_url"?: string,"repository_url"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     
@@ -170,7 +212,7 @@ export type Database = {
                            }
           }
           Enums: {
-            "member_group": "faculty"|"student"
+            "application_status": "pending"|"shortlisted"|"selected"|"rejected","commitment_preference": "long_term"|"short_term"|"mixed","member_group": "faculty"|"student"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -286,7 +328,7 @@ export type CompositeTypes<
 export const Constants = {
   "public": {
           Enums: {
-            "member_group": ["faculty", "student"]
+            "application_status": ["pending", "shortlisted", "selected", "rejected"],"commitment_preference": ["long_term", "short_term", "mixed"],"member_group": ["faculty", "student"]
           }
         }
 } as const

@@ -62,6 +62,7 @@ export function Header({ navigate, onCommand, githubUrl, panel }: Props) {
         <button className="theme-button" aria-label={`Switch to ${nextTheme} theme`} onClick={() => themeStore.set(nextTheme)}>
           {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
         </button>
+        <a className="header-join" href="/join">Join TES</a>
         <a className="header-github" href={githubUrl} target="_blank" rel="noopener noreferrer"><Github size={17} /><span>GitHub</span><ArrowUpRight size={16} /></a>
         <button className="menu-button" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="main-nav" onClick={() => setOpen(!open)}>
           {open ? <X size={21} /> : <Menu size={21} />}

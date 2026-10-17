@@ -15,6 +15,7 @@ const items = [
   { href: '/admin/domains', label: 'Domains' },
   { href: '/admin/github', label: 'GitHub' },
   { href: '/admin/settings', label: 'Links' },
+  { href: '/admin/applications', label: 'Applications' },
 ];
 
 export function AdminNav() {

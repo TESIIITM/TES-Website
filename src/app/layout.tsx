@@ -9,6 +9,7 @@ import '@/styles/instagram-posts.css';
 import '@/styles/videos.css';
 import '@/styles/github.css';
 import '@/styles/layout.css';
+import '@/styles/join.css';
 import { themeInitScript } from '@/lib/theme';
 
 export const metadata: Metadata = {

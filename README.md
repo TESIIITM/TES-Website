@@ -143,14 +143,16 @@ To apply a new migration without wiping a local stack (and its admin accounts), 
 src/
   app/
     page.tsx                 Public site: loads content on the server, renders <SiteShell>
+    join/                    The JOIN TES application form and its Server Action
     admin/login/             Sign in
     admin/(dashboard)/       Members, announcements, stories, tech news, Instagram, videos,
-                             domains, GitHub, links, and the admin's own password
+                             domains, GitHub, links, applications, and the admin's own password
   components/site/           The public site, one component per section
   components/admin/          Form fields, tables, dialogs, and the preview image picker
   lib/admin/                 Link previews, safe fetching of pasted links, image uploads
   lib/content/               Content types, Supabase queries, GitHub data, fallback content
   lib/github.ts              GitHub REST API client
+  lib/recruitment/           The rubric and scoring, automatic checks, email, and the optional AI review
   lib/supabase/              Clients for the server, the proxy, and cached public reads
   lib/validation.ts          Zod schemas shared by every admin form
   proxy.ts                   Per-request CSP nonce, session refresh, and /admin gate
@@ -184,8 +186,29 @@ GitHub numbers are fetched separately and cached for an hour under the `github` 
 | `github_repos` | Build: the featured repository's card, and the rest under More projects |
 | `github_settings` | One row for the Build panel's contributors section: heading, intro, size, and hidden people |
 | `site_settings` | One row of social, repository, and contact links, plus the Medium posts an admin hid |
+| `applications` | Never shown publicly. Submissions from the JOIN TES form at `/join`, reviewed under Applications in the dashboard |
+| `recruitment_criteria` | The rubric: one row per scored question, with its private weight |
+| `recruitment_settings` | One row: whether the form is open, and the departments it offers |
 
 **Adding links from the dashboard.** For tech news, Instagram, and videos, an admin pastes a link and the form fills in the title, caption or channel, date, and image from the page's own preview (YouTube's oEmbed endpoint for videos). The image is copied into Storage when the item is saved, so the site never loads images from other hosts. Some sites refuse requests from servers; the admin then fills the fields in and uploads an image.
+
+## Recruitment (JOIN TES)
+
+The **Join TES** buttons in the header and the closing band lead to `/join`, a page of its own that can be shared as a link anywhere. The dashboard's Applications page has a **Copy form link** button.
+
+**Open weights.** Each scored question has a weight from 0 to 10, set under **Applications → Form & rubric**. Applicants see only the label it maps to (7 and up is High, 4 to 6 Medium, below 4 Low), never the number. A criterion's score runs from 0 to 10, and an application's score is the weighted percentage over the criteria scored so far, shown with how many are scored. Changing a weight rescores every application at once.
+
+**Where scores come from.** For each criterion, a reviewer's score beats the AI's, which beats the automatic one:
+
+- *Automatic* scores cover only what can be checked: weekly hours, whether a resume is attached, and contributions that GitHub confirms for accounts linked in the answers (against the repositories shown under Build).
+- *AI* scores are optional. When `AI_EVAL_ENABLED=true` and `GEMINI_API_KEY` are set, each application is sent to Google's Gemini API, without the applicant's name, roll number, or email, and the model returns a summary, strengths, concerns, quoted evidence, suitability, a suggested role, and a score per criterion. Quotes it invents are flagged; answers that try to instruct the model are flagged too. The prompt tells it to reward evidence, not length or polish. The AI never changes an application's status.
+- *Reviewers* can override any score, set the status (Pending, Shortlisted, Selected, Rejected), and keep notes.
+
+**After a submission** the applicant sees the confirmation at once. The automatic checks, the confirmation email, and the AI run afterwards, and each records its own outcome on the application (`email_status`, `ai_status`), so a failure in one never loses the submission. Admins can retry the email or rerun the AI from the application's page. One application is allowed per roll number and per email address.
+
+**Email** is sent over SMTP. For the official Google Workspace account, use `smtp.gmail.com` on port 465 with an App Password (the account needs 2-Step Verification, and the Workspace admin must allow App Passwords). Without `SMTP_HOST`, emails are skipped and marked as not set up.
+
+To try it locally, add the secret key that `pnpm db:start` prints as `SUPABASE_SECRET_KEY` in `.env.local`. For email, run a test inbox such as Mailpit (`docker run -p 1025:1025 -p 8026:8025 axllent/mailpit`), set `SMTP_HOST=127.0.0.1`, `SMTP_PORT=1025`, and `MAIL_FROM`, and read the messages at http://127.0.0.1:8026.
 
 ## Security
 
@@ -193,7 +216,8 @@ GitHub numbers are fetched separately and cached for an hour under the `github` 
 - Uploaded images are checked by file signature (JPEG, PNG, or WebP) and limited to 2 MB, in the app and again in each bucket's configuration.
 - Links pasted in the dashboard are fetched only for admins, only over https, with timeouts and size limits, and every redirect is checked so a link cannot point the server at a private or internal address.
 - The only third-party frame allowed is the `youtube-nocookie.com` player, and it loads only when a visitor presses play.
-- No service-role key is used anywhere. The app only ever holds the publishable key and the signed-in admin's session.
+- The secret key (`SUPABASE_SECRET_KEY`) is used in one place: the server code behind the JOIN TES form, which validates every field before it writes. Applications and resumes have no public policies at all, so visitors can neither read nor write them with the publishable key; admins read them through their own session. Everything else only ever uses the publishable key and the signed-in admin's session.
+- Resumes are PDFs only, checked by file signature, capped at 2 MB, and kept in a private bucket. Admins open them through links that expire after ten minutes.
 
 ## Deployment
 
@@ -205,7 +229,8 @@ Any Next.js host works. On Vercel:
 4. Under **Authentication → Emails**, replace the **Invite user** and **Reset password** templates with `supabase/templates/invite.html` and `recovery.html`. The defaults sign people in without asking for a password.
 5. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in the Vercel project.
 6. Optionally set `GITHUB_TOKEN`, a fine-grained token with no permissions. Without it GitHub allows 60 requests an hour per IP, which a shared host can use up; the Build panel then shows no numbers until the limit resets. When the token expires, replace it.
-7. Deploy.
+7. For the JOIN TES form, set `SUPABASE_SECRET_KEY` (Project Settings → API Keys → Secret keys) as a server-only variable. Never prefix it with `NEXT_PUBLIC_`. For confirmation emails, set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `MAIL_FROM`; for the optional AI evaluation, `AI_EVAL_ENABLED=true` and `GEMINI_API_KEY`. See [Recruitment](#recruitment-join-tes).
+8. Deploy.
 
 When a later change adds a migration, apply it to the hosted project (`supabase db push`, or paste it into the SQL editor) **before** deploying the code that reads the new tables, or the home page will fail to load.
 
