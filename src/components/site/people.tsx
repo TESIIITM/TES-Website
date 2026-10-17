@@ -41,9 +41,11 @@ export function People({ navigate, members, links }: Props) {
             <li><span>01</span>Explore the projects</li>
             <li><span>02</span>Read the contribution guide</li>
             <li><span>03</span>Make your first change</li>
+            <li><span>04</span>Apply to join the team</li>
           </ol>
           <div className="join-actions">
-            <MagneticLink className="button join-primary" href="#build" onClick={(event) => { event.preventDefault(); navigate('build'); }}>Explore projects <ArrowUpRight size={18} /></MagneticLink>
+            <MagneticLink className="button join-primary" href="/join">Join TES <ArrowUpRight size={18} /></MagneticLink>
+            <MagneticLink className="button join-apply" href="#build" onClick={(event) => { event.preventDefault(); navigate('build'); }}>Explore projects <ArrowUpRight size={18} /></MagneticLink>
             <a className="join-secondary" href={links.contributionGuide} target="_blank" rel="noopener noreferrer">Contribution guide <ArrowUpRight size={16} /></a>
           </div>
         </div>

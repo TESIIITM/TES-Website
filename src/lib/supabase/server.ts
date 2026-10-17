@@ -3,7 +3,7 @@ import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import type { Database } from './database.types';
-import { getSupabaseEnv } from './env';
+import { getSupabaseEnv, getSupabaseSecretKey } from './env';
 
 function requireEnv() {
   const env = getSupabaseEnv();
@@ -36,6 +36,20 @@ export async function createSessionClient() {
 export function createPublicClient() {
   const { url, key } = requireEnv();
   return createClient<Database>(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+
+/**
+ * A client with the secret key, which bypasses row level security. Only for
+ * server code that checks its own input, such as the public application form.
+ * Returns `null` when the key is not set.
+ */
+export function createServiceClient() {
+  const env = getSupabaseEnv();
+  const secretKey = getSupabaseSecretKey();
+  if (!env || !secretKey) return null;
+  return createClient<Database>(env.url, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }

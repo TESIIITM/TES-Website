@@ -3,6 +3,7 @@ import { instagramPostUrl } from './admin/instagram-post';
 import { youtubeVideoId } from './youtube';
 import { weekStart } from './format';
 import { parseLogins, parseRepositoryName } from './github-names';
+import { ANSWER_MAX, COMMITMENTS, STATUSES, YEARS, type ApplicationStatus, type Commitment } from './recruitment/options';
 
 const required = (max: number) =>
   z.string().trim().min(1, 'Required.').max(max, `Keep this under ${max} characters.`);
@@ -177,3 +178,71 @@ export const newPasswordSchema = z.object(newPasswordFields).refine(passwordsMat
 export const changePasswordSchema = z
   .object({ currentPassword: z.string().min(1, 'Enter your current password.'), ...newPasswordFields })
   .refine(passwordsMatch, mismatch);
+
+// Recruitment ----------------------------------------------------------------
+
+const answer = z
+  .string()
+  .trim()
+  .min(20, 'Write at least a sentence or two.')
+  .max(ANSWER_MAX, `Keep this under ${ANSWER_MAX} characters.`);
+
+/** Built per request, since admins choose the departments on offer. */
+export function applicationSchema(departments: string[]) {
+  return z.object({
+    name: required(120),
+    rollNumber: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .regex(/^[A-Z0-9/_-]{3,30}$/, 'Use your roll number as printed on your ID card, e.g. 2024IMT-045.'),
+    yearOfStudy: z.enum(YEARS.map((year) => year.value), { error: 'Choose your year of study.' }),
+    email: z.string().trim().toLowerCase().pipe(z.email('Enter an email address you check.').max(254)),
+    knowledge: answer,
+    contributions: answer,
+    showcase: answer,
+    plan: answer,
+    department: z.string({ error: 'Choose a department.' }).refine((value) => departments.includes(value), 'Choose a department.'),
+    role: required(120),
+    weeklyHours: z.coerce
+      .number({ error: 'Enter a number of hours.' })
+      .int('Use a whole number of hours.')
+      .min(1, 'Enter at least one hour.')
+      .max(40, 'Keep this to 40 hours or fewer.'),
+    commitment: z.enum(COMMITMENTS.map((commitment) => commitment.value) as [Commitment, ...Commitment[]], { error: 'Choose one.' }),
+    additionalInfo: optional(2000),
+    consent: z.literal(true, { error: 'Please confirm to send your application.' }),
+  });
+}
+
+const score = z
+  .string()
+  .trim()
+  .transform((value) => (value === '' ? null : Number(value)))
+  .pipe(z.number().int('Use a whole number from 0 to 10.').min(0, 'Use 0 to 10.').max(10, 'Use 0 to 10.').nullable());
+
+/** A reviewer's decision. Scores arrive as `score_<criterion>` fields; an empty box means "not scored". */
+export function applicationReviewSchema(criterionKeys: string[]) {
+  return z.object({
+    status: z.enum(STATUSES.map((status) => status.value) as [ApplicationStatus, ...ApplicationStatus[]], { error: 'Choose a status.' }),
+    adminNotes: optional(5000),
+    ...Object.fromEntries(criterionKeys.map((key) => [`score_${key}`, score])),
+  });
+}
+
+export function recruitmentSettingsSchema(criterionKeys: string[]) {
+  return z.object({
+    isOpen: z.boolean(),
+    departments: z.string().transform((value, ctx) => {
+      const list = [...new Set(value.split('\n').map((line) => line.trim()).filter(Boolean))];
+      if (list.length === 0) ctx.addIssue({ code: 'custom', message: 'Add at least one department.' });
+      if (list.length > 30) ctx.addIssue({ code: 'custom', message: 'Keep this to 30 departments.' });
+      if (list.some((entry) => entry.length > 80)) ctx.addIssue({ code: 'custom', message: 'Keep each department under 80 characters.' });
+      return list;
+    }),
+    ...Object.fromEntries(criterionKeys.map((key) => [
+      `weight_${key}`,
+      z.coerce.number({ error: 'Use a whole number.' }).int('Use a whole number.').min(0, 'Use 0 to 10.').max(10, 'Use 0 to 10.'),
+    ])),
+  });
+}

@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: 'Overview' };
 export default async function OverviewPage() {
   const { supabase } = await requireAdmin();
   const countOnly = { count: 'exact', head: true } as const;
-  const [members, hiddenMembers, stories, announcements, drafts, domains, news] = await Promise.all([
+  const [members, hiddenMembers, stories, announcements, drafts, domains, news, applications, pendingApplications] = await Promise.all([
     supabase.from('members').select('*', countOnly).eq('is_published', true),
     supabase.from('members').select('*', countOnly).eq('is_published', false),
     supabase.from('stories').select('*', countOnly).eq('is_published', true),
@@ -17,6 +17,8 @@ export default async function OverviewPage() {
     supabase.from('announcements').select('*', countOnly).eq('is_published', false),
     supabase.from('domains').select('*', countOnly),
     supabase.from('tech_news').select('week_of').eq('is_published', true).order('week_of', { ascending: false }).limit(1).maybeSingle(),
+    supabase.from('applications').select('*', countOnly),
+    supabase.from('applications').select('*', countOnly).eq('status', 'pending'),
   ]);
 
   const cards = [
@@ -25,6 +27,7 @@ export default async function OverviewPage() {
     { href: '/admin/stories', label: 'Stories', value: stories.count, note: 'In the reading list' },
     { href: '/admin/news', label: 'Tech news', value: news.data ? formatStoryDate(news.data.week_of).slice(0, 6) : '—', note: news.data ? 'Latest week shown' : 'Nothing this week yet' },
     { href: '/admin/domains', label: 'Domains', value: domains.count, note: 'Under Explore the stack' },
+    { href: '/admin/applications', label: 'Applications', value: applications.count, note: pendingApplications.count ? `${pendingApplications.count} to review` : 'From the JOIN TES form' },
   ];
 
   return (
@@ -50,6 +53,7 @@ export default async function OverviewPage() {
           <li><Link href="/admin/videos/new">Add a YouTube video under Learn</Link></li>
           <li><Link href="/admin/github">Choose the repositories and contributors under Build</Link></li>
           <li><Link href="/admin/settings">Update social and contact links</Link></li>
+          <li><Link href="/admin/applications">Review applications from the JOIN TES form</Link></li>
         </ul>
       </section>
     </>
