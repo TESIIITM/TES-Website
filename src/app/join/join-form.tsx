@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useFormStatus } from 'react-dom';
 import { ArrowRight, Check, FileText } from 'lucide-react';
 import { initialFormState, type FormState } from '@/lib/admin/form-state';
-import { ANSWER_MAX, COMMITMENTS, YEARS } from '@/lib/recruitment/options';
+import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, YEARS } from '@/lib/recruitment/options';
 import { IMPORTANCE_LABELS, type Importance } from '@/lib/recruitment/rubric';
 import { submitApplication } from './actions';
 
@@ -61,7 +61,7 @@ function Question({ number, name, label, state, hint, level, note, optional, chi
   );
 }
 
-function Answer({ name, state, describedBy, invalid, rows = 5, max = ANSWER_MAX, placeholder }: { name: string; state: FormState; describedBy?: string; invalid: boolean; rows?: number; max?: number; placeholder?: string }) {
+function Answer({ name, state, describedBy, invalid, rows = 5, min = ANSWER_MIN, max = ANSWER_MAX, placeholder }: { name: string; state: FormState; describedBy?: string; invalid: boolean; rows?: number; min?: number; max?: number; placeholder?: string }) {
   const [length, setLength] = useState(value(state, name).length);
   return (
     <div className="join-answer">
@@ -76,7 +76,7 @@ function Answer({ name, state, describedBy, invalid, rows = 5, max = ANSWER_MAX,
         aria-invalid={invalid || undefined}
         onChange={(event) => setLength(event.target.value.length)}
       />
-      <span className="join-count" aria-hidden="true">{length} / {max}</span>
+      <span className="join-count" aria-hidden="true">{length > 0 && length < min ? `${length} / ${min} minimum` : `${length} / ${max}`}</span>
     </div>
   );
 }
@@ -239,7 +239,7 @@ export function JoinForm({ departments, importance }: Props) {
         <fieldset className="join-section">
           <legend><span>04</span> Additional information</legend>
           <Question number="13" name="additionalInfo" label="Anything else you’d like us to know?" state={state} optional wide>
-            {(describedBy, invalid) => <Answer name="additionalInfo" state={state} describedBy={describedBy} invalid={invalid} rows={3} max={2000} />}
+            {(describedBy, invalid) => <Answer name="additionalInfo" state={state} describedBy={describedBy} invalid={invalid} rows={3} min={0} max={2000} />}
           </Question>
           <Question number="14" name="resume" label="Resume" level={importance.resume} state={state} optional wide hint="A PDF up to 2 MB.">
             {(describedBy, invalid) => (

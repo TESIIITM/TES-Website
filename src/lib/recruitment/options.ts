@@ -37,6 +37,8 @@ export function statusLabel(value: ApplicationStatus): string {
   return STATUSES.find((status) => status.value === value)?.label ?? value;
 }
 
+/** The shortest answer that still says something, about one full sentence. */
+export const ANSWER_MIN = 20;
 /** Answers are capped so one application cannot fill the database or the AI's context. */
 export const ANSWER_MAX = 3000;
 export const RESUME_MAX_BYTES = 2 * 1024 * 1024;
