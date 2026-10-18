@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildPrompt, readEvaluation, redact, verifyEvaluation, type EvaluationInput, type RawEvaluation } from '@/lib/recruitment/ai-prompt';
 import { confirmationEmail } from '@/lib/recruitment/email-template';
 import { automaticAssessment, extractLinks, githubLogins } from '@/lib/recruitment/evidence';
-import { isStalled } from '@/lib/recruitment/options';
+import { domainsFor, isStalled, placement, rolesFor } from '@/lib/recruitment/options';
 import { importanceOf, readScores, resolveScores, summarizeScore, type Criterion } from '@/lib/recruitment/rubric';
 import { scoreApplication } from '@/lib/recruitment/score';
 import { applicationReviewSchema, applicationSchema, recruitmentSettingsSchema } from '@/lib/validation';
@@ -172,20 +172,58 @@ describe('applicationSchema', () => {
   const valid = {
     name: ' Asha Verma ', rollNumber: '2024imt-045', yearOfStudy: '2', email: ' Asha@Example.COM ',
     knowledge: answer, contributions: answer, showcase: answer, plan: answer,
-    department: 'Design', role: 'UI designer', weeklyHours: '6', commitment: 'mixed', additionalInfo: '', consent: true,
+    role: 'technical', department: 'Design', weeklyHours: '6', commitment: 'mixed', additionalInfo: '', consent: true,
   };
 
   it('normalises the roll number and email for the duplicate check', () => {
     expect(schema.parse(valid)).toMatchObject({ name: 'Asha Verma', rollNumber: '2024IMT-045', email: 'asha@example.com', weeklyHours: 6, additionalInfo: null });
   });
 
-  it('rejects departments not on offer, empty answers, and unrealistic hours', () => {
+  it('rejects domains not on offer, empty answers, and unrealistic hours', () => {
     expect(schema.safeParse({ ...valid, department: 'Marketing' }).success).toBe(false);
     expect(schema.safeParse({ ...valid, plan: 'idk' }).success).toBe(false);
     expect(schema.safeParse({ ...valid, weeklyHours: '0' }).success).toBe(false);
     expect(schema.safeParse({ ...valid, weeklyHours: '60' }).success).toBe(false);
     expect(schema.safeParse({ ...valid, rollNumber: 'roll 45; drop' }).success).toBe(false);
     expect(schema.safeParse({ ...valid, consent: false }).success).toBe(false);
+  });
+
+  it('keeps roles to the years they are open to', () => {
+    const errors = (input: object) => schema.safeParse(input).error?.flatten().fieldErrors ?? {};
+    expect(errors({ ...valid, yearOfStudy: '1', role: 'mentor', department: 'Web Development' }).role).toBeDefined();
+    expect(errors({ ...valid, yearOfStudy: '2', role: 'domain_lead', department: 'Web Development' }).role).toBeDefined();
+    expect(schema.safeParse({ ...valid, yearOfStudy: '3', role: 'domain_lead', department: 'Web Development' }).success).toBe(true);
+    expect(schema.safeParse({ ...valid, yearOfStudy: 'pg', role: 'domain_lead', department: 'Web Development' }).success).toBe(true);
+    // Shown alongside other mistakes, not after they are fixed.
+    expect(errors({ ...valid, name: '', yearOfStudy: '1', role: 'mentor' })).toHaveProperty('role');
+  });
+
+  it('asks for a domain only for technical roles', () => {
+    expect(schema.safeParse({ ...valid, department: '' }).error?.flatten().fieldErrors).toHaveProperty('department');
+    expect(schema.parse({ ...valid, role: 'operations', department: 'Design' })).toMatchObject({ role: 'operations', department: null });
+    expect(schema.parse({ ...valid, role: 'mentor', department: 'General mentorship' })).toMatchObject({ department: 'General mentorship' });
+    expect(schema.safeParse({ ...valid, role: 'technical', department: 'General mentorship' }).success).toBe(false);
+  });
+});
+
+describe('roles', () => {
+  it('opens mentoring from 2nd year and leading from 3rd year', () => {
+    expect(rolesFor('')).toEqual([]);
+    expect(rolesFor('1').map((role) => role.value)).toEqual(['technical', 'operations', 'design', 'promotions']);
+    expect(rolesFor('2').map((role) => role.value)).toContain('mentor');
+    expect(rolesFor('2').map((role) => role.value)).not.toContain('domain_lead');
+    expect(rolesFor('3').map((role) => role.value)).toContain('domain_lead');
+  });
+
+  it('offers general mentorship to mentors only', () => {
+    expect(domainsFor('mentor', ['Web'])).toEqual(['General mentorship', 'Web']);
+    expect(domainsFor('domain_lead', ['Web'])).toEqual(['Web']);
+    expect(domainsFor('design', ['Web'])).toEqual([]);
+  });
+
+  it('stores the area and the role in it', () => {
+    expect(placement('mentor', 'AI / ML')).toEqual({ department: 'AI / ML', role: 'Mentor' });
+    expect(placement('promotions', null)).toEqual({ department: 'Promotions', role: 'Team member' });
   });
 });
 

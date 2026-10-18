@@ -3,7 +3,7 @@
 import { after } from 'next/server';
 import { failed, invalid, readValues, type FormState } from '@/lib/admin/form-state';
 import { extractLinks } from '@/lib/recruitment/evidence';
-import { RESUME_MAX_BYTES } from '@/lib/recruitment/options';
+import { RESUME_MAX_BYTES, placement } from '@/lib/recruitment/options';
 import { loadRecruitmentConfig, processApplication } from '@/lib/recruitment/server';
 import { createServiceClient } from '@/lib/supabase/server';
 import { applicationSchema } from '@/lib/validation';
@@ -11,7 +11,7 @@ import { applicationSchema } from '@/lib/validation';
 const FIELDS = [
   'name', 'rollNumber', 'yearOfStudy', 'email',
   'knowledge', 'contributions', 'showcase', 'plan',
-  'department', 'role', 'weeklyHours', 'commitment',
+  'role', 'department', 'weeklyHours', 'commitment',
   'additionalInfo', 'consent',
 ] as const;
 
@@ -74,8 +74,7 @@ export async function submitApplication(_previous: FormState, formData: FormData
     showcase: data.showcase,
     plan: data.plan,
     links: extractLinks([data.showcase, data.contributions, data.plan, data.knowledge, data.additionalInfo]),
-    department: data.department,
-    role: data.role,
+    ...placement(data.role, data.department),
     weekly_hours: data.weeklyHours,
     commitment: data.commitment,
     additional_info: data.additionalInfo,

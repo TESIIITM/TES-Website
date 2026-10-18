@@ -100,7 +100,7 @@ Open the pull request, let CI pass, and merge. Vercel builds `main` and publishe
 
 - **Share the form** with the **Copy form link** button on the Applications page. The link is `https://the-enigma-society.vercel.app/join`.
 - **Open or close it** under **Applications → Form & rubric → Accept applications**. Closing takes effect at once, and the page tells visitors applications are closed.
-- **Departments** and **rubric weights** are on the same page. Weights run from 0 to 10; applicants see only High (7+), Medium (4–6), or Low (below 4). Changing a weight rescores every application.
+- **Technical domains** and **rubric weights** are on the same page. Applicants first pick a role: technical team (any year), mentor (2nd year and up), domain lead (3rd year and up), or Operations, Design, or Promotions (any year). Only the first three are asked for a domain; mentors can also choose General mentorship. Weights run from 0 to 10; applicants see only High (7+), Medium (4–6), or Low (below 4). Changing a weight rescores every application.
 - **Reviewing**: an admin's score for a criterion always beats the AI's and the automatic one. The AI never changes a status; only people do. Treat its scores as a first pass: it tends to be generous.
 - **Linked GitHub accounts** are checked for contributions to the TES repositories, but the check cannot prove the account belongs to the applicant. Confirm ownership before relying on it.
 - **Applicants are not emailed** when their status changes. Contact shortlisted and selected students yourselves.

@@ -34,7 +34,7 @@ export function RecruitmentSettingsForm({ isOpen, departments, criteria }: Props
     <form className="admin-form admin-form-single" action={formAction} noValidate>
       <FormMessage state={state} />
       <Checkbox name="isOpen" label="Accept applications" hint="When off, the form at /join says applications are closed." state={state} defaultChecked={isOpen} />
-      <TextArea name="departments" label="Departments" rows={8} state={state} defaultValue={departments.join('\n')} hint="One per line, in the order applicants see them." />
+      <TextArea name="departments" label="Technical domains" rows={8} state={state} defaultValue={departments.join('\n')} hint="One per line, in the order applicants see them. Asked of technical team, mentor, and domain lead applicants; mentors can also pick General mentorship. Operations, Design, and Promotions are roles of their own." />
 
       <fieldset className="admin-fieldset">
         <legend>Rubric</legend>

@@ -5,14 +5,18 @@ import Link from 'next/link';
 import { useFormStatus } from 'react-dom';
 import { ArrowRight, Check, FileText } from 'lucide-react';
 import { initialFormState, type FormState } from '@/lib/admin/form-state';
-import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, YEARS } from '@/lib/recruitment/options';
+import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, YEARS, domainsFor, findRole, rolesFor } from '@/lib/recruitment/options';
 import { IMPORTANCE_LABELS, type Importance } from '@/lib/recruitment/rubric';
 import { submitApplication } from './actions';
+import { CommitmentGlyph, JoinSidebar, SectionHeading, Signature } from './form-art';
+import { DomainPicker, RolePicker } from './pickers';
 
 type Props = { departments: string[]; importance: Record<string, Importance> };
 
-/** Fields that must be filled, for the progress bar. */
-const REQUIRED = ['name', 'rollNumber', 'yearOfStudy', 'email', 'knowledge', 'contributions', 'showcase', 'plan', 'department', 'role', 'weeklyHours', 'commitment', 'consent'];
+/** Fields that must be filled, for the progress bar. The domain question joins them when the role asks it. */
+const REQUIRED = ['name', 'rollNumber', 'yearOfStudy', 'email', 'knowledge', 'contributions', 'showcase', 'plan', 'role', 'weeklyHours', 'commitment', 'consent'];
+/** The required fields in each section, to mark a section done. */
+const SECTIONS = [['name', 'rollNumber', 'yearOfStudy', 'email'], ['knowledge', 'contributions', 'showcase', 'plan'], ['role', 'department', 'weeklyHours', 'commitment'], ['consent']];
 
 function value(state: FormState, name: string) {
   return state.values?.[name] ?? '';
@@ -29,7 +33,6 @@ function Weight({ level }: { level?: Importance }) {
 }
 
 type QuestionProps = {
-  number: string;
   name: string;
   label: string;
   state: FormState;
@@ -41,14 +44,13 @@ type QuestionProps = {
   wide?: boolean;
 };
 
-function Question({ number, name, label, state, hint, level, note, optional, children, wide }: QuestionProps) {
+function Question({ name, label, state, hint, level, note, optional, children, wide }: QuestionProps) {
   const error = state.fieldErrors?.[name]?.[0];
   const describedBy = [hint && `${name}-hint`, error && `${name}-error`].filter(Boolean).join(' ') || undefined;
   return (
     <div className={`join-question ${wide ? 'join-question-wide' : ''}`} data-invalid={error ? '' : undefined}>
       <div className="join-question-head">
-        <span className="join-question-number">{number}</span>
-        <label htmlFor={name}>{label}{optional && <span className="join-optional"> (optional)</span>}</label>
+        <label htmlFor={name} id={`${name}-label`}>{label}{optional && <span className="join-optional"> (optional)</span>}</label>
         <Weight level={level} />
         {note && <span className="join-weight join-weight-note">{note}</span>}
       </div>
@@ -85,7 +87,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <button className="button button-primary join-submit" type="submit" disabled={pending} aria-disabled={pending}>
-      {pending ? 'Sending…' : 'Send application'} <ArrowRight size={18} />
+      {pending ? 'Sending…' : 'Send application'}
     </button>
   );
 }
@@ -93,28 +95,45 @@ function SubmitButton() {
 export function JoinForm({ departments, importance }: Props) {
   const [state, formAction] = useActionState(submitApplication, initialFormState);
   const formRef = useRef<HTMLFormElement>(null);
-  const [filled, setFilled] = useState(0);
+  const [filled, setFilled] = useState({ done: 0, total: REQUIRED.length, sections: SECTIONS.map(() => false) });
   const [resumeName, setResumeName] = useState<string | null>(null);
+  // The role question depends on the year, and the domain question on the role.
+  const [year, setYear] = useState(value(state, 'yearOfStudy'));
+  const [role, setRole] = useState(value(state, 'role'));
+  const [domain, setDomain] = useState(value(state, 'department'));
   // A returned form keeps what was typed, but browsers clear file inputs.
   const [shownState, setShownState] = useState(state);
   if (shownState !== state) {
     setShownState(state);
     setResumeName(null);
+    setYear(value(state, 'yearOfStudy'));
+    setRole(value(state, 'role'));
+    setDomain(value(state, 'department'));
   }
+
+  const roles = rolesFor(year);
+  const chosenRole = roles.find((option) => option.value === role);
+  const domains = chosenRole ? domainsFor(chosenRole.value, departments) : [];
 
   const measure = () => {
     const form = formRef.current;
     if (!form) return;
     const data = new FormData(form);
-    setFilled(REQUIRED.filter((name) => String(data.get(name) ?? '').trim() !== '').length);
+    const required = domainsFor(String(data.get('role') ?? ''), departments).length ? [...REQUIRED, 'department'] : REQUIRED;
+    const answered = (name: string) => String(data.get(name) ?? '').trim() !== '';
+    setFilled({
+      done: required.filter(answered).length,
+      total: required.length,
+      sections: SECTIONS.map((names) => names.filter((name) => required.includes(name)).every(answered)),
+    });
   };
-  useEffect(measure, [state]);
+  // Runs after the domain question appears or goes, so the count includes it.
+  useEffect(measure, [state, role, year, departments]);
 
   if (state.status === 'saved') {
     return (
       <section className="join-done" role="status">
         <span className="join-done-mark"><Check size={28} /></span>
-        <span className="eyebrow">APPLICATION RECEIVED</span>
         <h1>Thank you{state.message ? `, ${state.message.split(/\s+/)[0]}` : ''}.</h1>
         <p>We’ve received your application. Our team will review it, and you’ll hear from us about the next steps. A confirmation email is on its way.</p>
         <p>Until then, keep building and contributing.</p>
@@ -123,13 +142,12 @@ export function JoinForm({ departments, importance }: Props) {
     );
   }
 
-  const progress = Math.round((filled / REQUIRED.length) * 100);
+  const progress = Math.round((filled.done / filled.total) * 100);
 
   return (
     <div className="join-layout">
       <aside className="join-intro">
-        <span className="eyebrow">RECRUITMENT <span className="slash">/</span> OPEN WEIGHTS</span>
-        <h1>Join the <br /><em>society.</em></h1>
+        <h1>Add yourself <br />to the README.</h1>
         <p className="join-lead">Tell us what you know, what you have built, and what you want to build with us. There is no experience threshold.</p>
         <div className="join-legend">
           <h2>How we read this</h2>
@@ -141,6 +159,7 @@ export function JoinForm({ departments, importance }: Props) {
           </ul>
           <p>We look for evidence, not polish. A short answer with a link to real work beats a long one without. Write in your own words.</p>
         </div>
+        <JoinSidebar done={filled.done} total={filled.total} sections={filled.sections} />
         <div className="join-progress" aria-hidden="true">
           <span>{progress}% complete</span>
           <div><i style={{ width: `${progress}%` }} /></div>
@@ -157,69 +176,66 @@ export function JoinForm({ departments, importance }: Props) {
           <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
         </div>
 
-        <fieldset className="join-section">
-          <legend><span>01</span> Basic details</legend>
+        <fieldset className="join-section" id="section-1" data-done={filled.sections[0] || undefined}>
+          <SectionHeading index={0}>Basic details</SectionHeading>
           <div className="join-grid">
-            <Question number="1" name="name" label="Name" state={state}>
+            <Question name="name" label="Name" state={state}>
               {(describedBy, invalid) => <input id="name" name="name" autoComplete="name" maxLength={120} required defaultValue={value(state, 'name')} aria-describedby={describedBy} aria-invalid={invalid || undefined} />}
             </Question>
-            <Question number="2" name="rollNumber" label="Roll number" state={state}>
+            <Question name="rollNumber" label="Roll number" state={state}>
               {(describedBy, invalid) => <input id="rollNumber" name="rollNumber" maxLength={30} required placeholder="2024IMT-045" autoCapitalize="characters" defaultValue={value(state, 'rollNumber')} aria-describedby={describedBy} aria-invalid={invalid || undefined} />}
             </Question>
-            <Question number="3" name="yearOfStudy" label="Year of study" state={state}>
+            <Question name="yearOfStudy" label="Year of study" state={state}>
               {(describedBy, invalid) => (
-                <select id="yearOfStudy" name="yearOfStudy" required defaultValue={value(state, 'yearOfStudy')} aria-describedby={describedBy} aria-invalid={invalid || undefined}>
+                <select id="yearOfStudy" name="yearOfStudy" required defaultValue={value(state, 'yearOfStudy')} onChange={(event) => setYear(event.target.value)} aria-describedby={describedBy} aria-invalid={invalid || undefined}>
                   <option value="" disabled>Choose your year</option>
                   {YEARS.map((year) => <option key={year.value} value={year.value}>{year.label}</option>)}
                 </select>
               )}
             </Question>
-            <Question number="4" name="email" label="Contact email" state={state} hint="We send your confirmation here.">
+            <Question name="email" label="Contact email" state={state} hint="We send your confirmation here.">
               {(describedBy, invalid) => <input id="email" name="email" type="email" autoComplete="email" maxLength={254} required defaultValue={value(state, 'email')} aria-describedby={describedBy} aria-invalid={invalid || undefined} />}
             </Question>
           </div>
         </fieldset>
 
-        <fieldset className="join-section">
-          <legend><span>02</span> Understanding &amp; contribution</legend>
-          <Question number="5" name="knowledge" label="What do you know about TES?" level={importance.knowledge} state={state} wide>
+        <fieldset className="join-section" id="section-2" data-done={filled.sections[1] || undefined}>
+          <SectionHeading index={1}>Understanding &amp; contribution</SectionHeading>
+          <Question name="knowledge" label="What do you know about TES?" level={importance.knowledge} state={state} wide>
             {(describedBy, invalid) => <Answer name="knowledge" state={state} describedBy={describedBy} invalid={invalid} rows={4} />}
           </Question>
-          <Question number="6" name="contributions" label="What contributions have you made to TES so far?" level={importance.contributions} state={state} wide
+          <Question name="contributions" label="What contributions have you made to TES so far?" level={importance.contributions} state={state} wide
             hint="Pull requests, issues, events you helped with, posts you wrote. New here? That’s fine: tell us what you’ve explored so far and what drew you in.">
             {(describedBy, invalid) => <Answer name="contributions" state={state} describedBy={describedBy} invalid={invalid} />}
           </Question>
-          <Question number="7" name="showcase" label="What work would you like to showcase?" level={importance.showcase} state={state} wide
+          <Question name="showcase" label="What work would you like to showcase?" level={importance.showcase} state={state} wide
             hint="Paste links to projects, GitHub, designs, articles, or events, and say what you did in each.">
             {(describedBy, invalid) => <Answer name="showcase" state={state} describedBy={describedBy} invalid={invalid} placeholder={'https://github.com/you/project: built the API and the tests'} />}
           </Question>
-          <Question number="8" name="plan" label="How would you like to contribute to TES?" level={importance.plan} state={state} wide
+          <Question name="plan" label="How would you like to contribute to TES?" level={importance.plan} state={state} wide
             hint="Be specific: an idea, an initiative, or a problem you want to solve, and your first step.">
             {(describedBy, invalid) => <Answer name="plan" state={state} describedBy={describedBy} invalid={invalid} />}
           </Question>
         </fieldset>
 
-        <fieldset className="join-section">
-          <legend><span>03</span> Role preferences &amp; commitment</legend>
+        <fieldset className="join-section" id="section-3" data-done={filled.sections[2] || undefined}>
+          <SectionHeading index={2}>Role preferences &amp; commitment</SectionHeading>
+          <Question name="role" label="Which role are you applying for?" level={importance.department_fit} state={state} wide
+            hint={year ? 'Mentors are 2nd year or above, and domain leads 3rd year or above.' : undefined}>
+            {(describedBy, invalid) => <RolePicker roles={roles} disabled={!year} value={chosenRole ? role : ''} onChange={setRole} describedBy={describedBy} invalid={invalid} />}
+          </Question>
+          {domains.length > 0 && (
+            <Question name="department" label={findRole(role)?.domainQuestion ?? ''} state={state} wide>
+              {(describedBy, invalid) => <DomainPicker domains={domains} value={domains.includes(domain) ? domain : ''} onChange={setDomain} describedBy={describedBy} invalid={invalid} />}
+            </Question>
+          )}
           <div className="join-grid">
-            <Question number="9" name="department" label="Which department would you like to join?" level={importance.department_fit} state={state}>
-              {(describedBy, invalid) => (
-                <select id="department" name="department" required defaultValue={value(state, 'department')} aria-describedby={describedBy} aria-invalid={invalid || undefined}>
-                  <option value="" disabled>Choose a department</option>
-                  {departments.map((department) => <option key={department} value={department}>{department}</option>)}
-                </select>
-              )}
-            </Question>
-            <Question number="10" name="role" label="Which specific role interests you?" state={state} hint="e.g. Frontend developer, UI designer, event lead.">
-              {(describedBy, invalid) => <input id="role" name="role" maxLength={120} required defaultValue={value(state, 'role')} aria-describedby={describedBy} aria-invalid={invalid || undefined} />}
-            </Question>
-            <Question number="11" name="weeklyHours" label="How many hours can you realistically give each week?" level={importance.availability} state={state} hint="Be honest. Steady beats ambitious.">
+            <Question name="weeklyHours" label="How many hours can you realistically give each week?" level={importance.availability} state={state} hint="Be honest. Steady beats ambitious.">
               {(describedBy, invalid) => <input id="weeklyHours" name="weeklyHours" type="number" inputMode="numeric" min={1} max={40} step={1} required defaultValue={value(state, 'weeklyHours')} aria-describedby={describedBy} aria-invalid={invalid || undefined} />}
             </Question>
           </div>
           <div className="join-question join-question-wide" data-invalid={state.fieldErrors?.commitment ? '' : undefined}>
             <div className="join-question-head" id="commitment-label">
-              <span className="join-question-number">12</span>
               <span className="join-label">Would you prefer long-term responsibilities, short-term tasks, or a mix?</span>
               <span className="join-weight join-weight-note">Not scored</span>
             </div>
@@ -228,7 +244,7 @@ export function JoinForm({ departments, importance }: Props) {
               {COMMITMENTS.map((commitment) => (
                 <label key={commitment.value} className="join-choice">
                   <input type="radio" name="commitment" value={commitment.value} defaultChecked={value(state, 'commitment') === commitment.value} />
-                  <span><b>{commitment.label}</b><small>{commitment.hint}</small></span>
+                  <span><b>{commitment.label}</b><small>{commitment.hint}</small><CommitmentGlyph value={commitment.value} /></span>
                 </label>
               ))}
             </div>
@@ -236,12 +252,12 @@ export function JoinForm({ departments, importance }: Props) {
           </div>
         </fieldset>
 
-        <fieldset className="join-section">
-          <legend><span>04</span> Additional information</legend>
-          <Question number="13" name="additionalInfo" label="Anything else you’d like us to know?" state={state} optional wide>
+        <fieldset className="join-section" id="section-4" data-done={filled.sections[3] || undefined}>
+          <SectionHeading index={3}>Additional information</SectionHeading>
+          <Question name="additionalInfo" label="Anything else you’d like us to know?" state={state} optional wide>
             {(describedBy, invalid) => <Answer name="additionalInfo" state={state} describedBy={describedBy} invalid={invalid} rows={3} min={0} max={2000} />}
           </Question>
-          <Question number="14" name="resume" label="Resume" level={importance.resume} state={state} optional wide hint="A PDF up to 2 MB.">
+          <Question name="resume" label="Resume" level={importance.resume} state={state} optional wide hint="A PDF up to 2 MB.">
             {(describedBy, invalid) => (
               <label className="join-file" htmlFor="resume">
                 <FileText size={18} />
@@ -260,6 +276,7 @@ export function JoinForm({ departments, importance }: Props) {
             <p className="join-hint" id="consent-hint">Your answers are seen only by the TES review team. Reviewers may use an AI tool to help summarise them, without your name, roll number, or email; people make every decision.</p>
             {state.fieldErrors?.consent && <p className="join-error" id="consent-error">{state.fieldErrors.consent[0]}</p>}
           </div>
+          <Signature />
           <SubmitButton />
         </div>
       </form>
