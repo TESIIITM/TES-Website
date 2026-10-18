@@ -3,7 +3,7 @@ import { instagramPostUrl } from './admin/instagram-post';
 import { youtubeVideoId } from './youtube';
 import { weekStart } from './format';
 import { parseLogins, parseRepositoryName } from './github-names';
-import { ANSWER_MAX, COMMITMENTS, STATUSES, YEARS, type ApplicationStatus, type Commitment } from './recruitment/options';
+import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, STATUSES, YEARS, type ApplicationStatus, type Commitment } from './recruitment/options';
 
 const required = (max: number) =>
   z.string().trim().min(1, 'Required.').max(max, `Keep this under ${max} characters.`);
@@ -184,7 +184,7 @@ export const changePasswordSchema = z
 const answer = z
   .string()
   .trim()
-  .min(20, 'Write at least a sentence or two.')
+  .min(ANSWER_MIN, `Write at least ${ANSWER_MIN} characters, about a full sentence.`)
   .max(ANSWER_MAX, `Keep this under ${ANSWER_MAX} characters.`);
 
 /** Built per request, since admins choose the departments on offer. */

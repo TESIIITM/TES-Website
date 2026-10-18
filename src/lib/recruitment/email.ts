@@ -45,6 +45,10 @@ export async function sendConfirmation(to: string, name: string): Promise<EmailR
     return { status: 'sent' };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    // The raw 535 reply gets cut off in the dashboard, so lead with the fix.
+    if ((error as { code?: string }).code === 'EAUTH') {
+      return { status: 'failed', error: `SMTP login rejected: set SMTP_PASS to an App Password for SMTP_USER, redeploy, then retry. (${message})`.slice(0, 500) };
+    }
     return { status: 'failed', error: message.slice(0, 500) };
   }
 }
