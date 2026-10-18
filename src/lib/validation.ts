@@ -3,7 +3,7 @@ import { instagramPostUrl } from './admin/instagram-post';
 import { youtubeVideoId } from './youtube';
 import { weekStart } from './format';
 import { parseLogins, parseRepositoryName } from './github-names';
-import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, STATUSES, YEARS, type ApplicationStatus, type Commitment } from './recruitment/options';
+import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, ROLES, STATUSES, YEARS, domainsFor, rolesFor, type ApplicationStatus, type Commitment, type Role } from './recruitment/options';
 
 const required = (max: number) =>
   z.string().trim().min(1, 'Required.').max(max, `Keep this under ${max} characters.`);
@@ -189,7 +189,7 @@ const answer = z
 
 /** Built per request, since admins choose the departments on offer. */
 export function applicationSchema(departments: string[]) {
-  return z.object({
+  const base = z.object({
     name: required(120),
     rollNumber: z
       .string()
@@ -202,8 +202,8 @@ export function applicationSchema(departments: string[]) {
     contributions: answer,
     showcase: answer,
     plan: answer,
-    department: z.string({ error: 'Choose a department.' }).refine((value) => departments.includes(value), 'Choose a department.'),
-    role: required(120),
+    role: z.enum(ROLES.map((role) => role.value) as [Role, ...Role[]], { error: 'Choose a role.' }),
+    department: z.string().trim().default(''),
     weeklyHours: z.coerce
       .number({ error: 'Enter a number of hours.' })
       .int('Use a whole number of hours.')
@@ -213,6 +213,19 @@ export function applicationSchema(departments: string[]) {
     additionalInfo: optional(2000),
     consent: z.literal(true, { error: 'Please confirm to send your application.' }),
   });
+  // Checked even when other fields are wrong, so every problem shows at once.
+  const when = (fields: { yearOfStudy?: true; role: true; department?: true }) => (payload: { value: unknown }) => base.pick(fields).safeParse(payload.value).success;
+  return base
+    .refine((data) => rolesFor(data.yearOfStudy).some((role) => role.value === data.role), {
+      path: ['role'],
+      message: 'This role is open from a later year. Choose another.',
+      when: when({ yearOfStudy: true, role: true }),
+    })
+    .refine((data) => {
+      const domains = domainsFor(data.role, departments);
+      return domains.length === 0 || domains.includes(data.department);
+    }, { path: ['department'], message: 'Choose one.', when: when({ role: true, department: true }) })
+    .transform((data) => ({ ...data, department: domainsFor(data.role, departments).length ? data.department : null }));
 }
 
 const score = z
@@ -235,9 +248,9 @@ export function recruitmentSettingsSchema(criterionKeys: string[]) {
     isOpen: z.boolean(),
     departments: z.string().transform((value, ctx) => {
       const list = [...new Set(value.split('\n').map((line) => line.trim()).filter(Boolean))];
-      if (list.length === 0) ctx.addIssue({ code: 'custom', message: 'Add at least one department.' });
-      if (list.length > 30) ctx.addIssue({ code: 'custom', message: 'Keep this to 30 departments.' });
-      if (list.some((entry) => entry.length > 80)) ctx.addIssue({ code: 'custom', message: 'Keep each department under 80 characters.' });
+      if (list.length === 0) ctx.addIssue({ code: 'custom', message: 'Add at least one domain.' });
+      if (list.length > 30) ctx.addIssue({ code: 'custom', message: 'Keep this to 30 domains.' });
+      if (list.some((entry) => entry.length > 80)) ctx.addIssue({ code: 'custom', message: 'Keep each domain under 80 characters.' });
       return list;
     }),
     ...Object.fromEntries(criterionKeys.map((key) => [

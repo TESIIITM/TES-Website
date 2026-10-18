@@ -2,11 +2,15 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { connection } from 'next/server';
+import { Bricolage_Grotesque, IBM_Plex_Mono } from 'next/font/google';
 import { ArrowLeft } from 'lucide-react';
 import { importanceOf, type Importance } from '@/lib/recruitment/rubric';
 import { loadRecruitmentConfig, type RecruitmentConfig } from '@/lib/recruitment/server';
 import { JoinForm } from './join-form';
 import { ShareLink } from '@/components/share-link';
+
+const bricolage = Bricolage_Grotesque({ subsets: ['latin'], variable: '--f-bricolage' });
+const plex = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--f-plex' });
 
 const title = 'Join TES — The Enigma Society';
 const description = 'Apply to join The Enigma Society at ABV-IIITM Gwalior. Tell us what you have built and what you want to build with us.';
@@ -33,7 +37,7 @@ export default async function JoinPage() {
   const importance: Record<string, Importance> = Object.fromEntries((config?.criteria ?? []).map((criterion) => [criterion.key, importanceOf(criterion.weight)]));
 
   return (
-    <div className="join-page">
+    <div className={`join-page ${bricolage.variable} ${plex.variable}`}>
       <header className="join-topbar">
         <Link className="brand" href="/" aria-label="The Enigma Society, home">
           <Image className="brand-compass" src="/assets/compass.svg" width={38} height={38} alt="" />
@@ -49,8 +53,7 @@ export default async function JoinPage() {
           <JoinForm departments={config.departments} importance={importance} />
         ) : (
           <section className="join-closed">
-            <span className="eyebrow">RECRUITMENT</span>
-            <h1>Applications are <em>closed.</em></h1>
+            <h1>Applications are closed.</h1>
             <p>We are not taking applications right now. You can still contribute to TES projects on GitHub, and follow us on Instagram to hear when the next round opens.</p>
             <Link className="text-action" href="/#build">Explore the projects</Link>
           </section>

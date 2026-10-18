@@ -188,7 +188,7 @@ GitHub numbers are fetched separately and cached for an hour under the `github` 
 | `site_settings` | One row of social, repository, and contact links, plus the Medium posts an admin hid |
 | `applications` | Never shown publicly. Submissions from the JOIN TES form at `/join`, reviewed under Applications in the dashboard |
 | `recruitment_criteria` | The rubric: one row per scored question, with its private weight |
-| `recruitment_settings` | One row: whether the form is open, and the departments it offers |
+| `recruitment_settings` | One row: whether the form is open, and the technical domains it offers |
 
 **Adding links from the dashboard.** For tech news, Instagram, and videos, an admin pastes a link and the form fills in the title, caption or channel, date, and image from the page's own preview (YouTube's oEmbed endpoint for videos). The image is copied into Storage when the item is saved, so the site never loads images from other hosts. Some sites refuse requests from servers; the admin then fills the fields in and uploads an image.
 

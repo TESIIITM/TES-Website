@@ -18,7 +18,7 @@ export default async function RecruitmentSettingsPage() {
       <PageHeader
         eyebrow="11 / RECRUITMENT"
         title="Form & rubric"
-        description="Open or close the form, choose the departments on offer, and set how much each question counts."
+        description="Open or close the form, choose the technical domains on offer, and set how much each question counts."
         back={{ href: '/admin/applications', label: 'Applications' }}
       />
       <RecruitmentSettingsForm isOpen={settings?.is_open ?? false} departments={settings?.departments ?? []} criteria={criteria} />
