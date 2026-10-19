@@ -4,7 +4,7 @@ import { EmptyState, PageHeader } from '@/components/admin/page-header';
 import { ShareLink } from '@/components/share-link';
 import { requireAdmin } from '@/lib/auth';
 import { readEvaluation } from '@/lib/recruitment/ai-prompt';
-import { commitmentLabel, STATUSES, statusLabel, yearLabel, type ApplicationStatus } from '@/lib/recruitment/options';
+import { commitmentLabel, describeChoices, STATUSES, statusLabel, yearLabel, type ApplicationStatus } from '@/lib/recruitment/options';
 import { scoreApplication } from '@/lib/recruitment/score';
 import { loadCriteria } from '@/lib/recruitment/server';
 import { getSupabaseSecretKey } from '@/lib/supabase/env';
@@ -27,7 +27,7 @@ export default async function ApplicationsPage({ searchParams }: PageProps<'/adm
   const { supabase } = await requireAdmin();
   const [criteria, applications, settings] = await Promise.all([
     loadCriteria(supabase),
-    supabase.from('applications').select('id, name, roll_number, year_of_study, department, role, weekly_hours, commitment, status, auto_scores, admin_scores, ai_evaluation, ai_status, email_status, created_at').order('created_at', { ascending: sort === 'oldest' }),
+    supabase.from('applications').select('id, name, roll_number, year_of_study, roles, domains, department, role, weekly_hours, commitment, status, auto_scores, admin_scores, ai_evaluation, ai_status, email_status, created_at').order('created_at', { ascending: sort === 'oldest' }),
     supabase.from('recruitment_settings').select('is_open').maybeSingle(),
   ]);
   if (applications.error) throw applications.error;
@@ -37,8 +37,9 @@ export default async function ApplicationsPage({ searchParams }: PageProps<'/adm
 
   const needle = query.toLowerCase();
   const rows = applications.data
+    .map((application) => ({ ...application, choices: describeChoices(application) }))
     .filter((application) => !status || application.status === status)
-    .filter((application) => !needle || [application.name, application.roll_number, application.department, application.role].some((field) => field.toLowerCase().includes(needle)))
+    .filter((application) => !needle || [application.name, application.roll_number, application.choices.roles, application.choices.domains].some((field) => field.toLowerCase().includes(needle)))
     .map((application) => ({ ...application, ...scoreApplication(application, criteria), evaluation: readEvaluation(application.ai_evaluation) }));
   if (sort === 'score') rows.sort((a, b) => (b.summary.score ?? -1) - (a.summary.score ?? -1));
 
@@ -81,7 +82,7 @@ export default async function ApplicationsPage({ searchParams }: PageProps<'/adm
       <form className="admin-toolbar" action="/admin/applications">
         {status && <input type="hidden" name="status" value={status} />}
         <label className="sr-only" htmlFor="q">Search applications</label>
-        <input id="q" name="q" type="search" placeholder="Search name, roll number, department, role" defaultValue={query} />
+        <input id="q" name="q" type="search" placeholder="Search name, roll number, role, domain" defaultValue={query} />
         <label className="sr-only" htmlFor="sort">Sort</label>
         <select id="sort" name="sort" defaultValue={sort}>
           {Object.entries(SORTS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
@@ -97,7 +98,7 @@ export default async function ApplicationsPage({ searchParams }: PageProps<'/adm
             <tr>
               <th scope="col">Applicant</th>
               <th scope="col">Year</th>
-              <th scope="col">Department and role</th>
+              <th scope="col">Roles and domains</th>
               <th scope="col">Availability</th>
               <th scope="col">Score</th>
               <th scope="col">AI summary</th>
@@ -109,7 +110,7 @@ export default async function ApplicationsPage({ searchParams }: PageProps<'/adm
               <tr key={row.id}>
                 <td><Link href={`/admin/applications/${row.id}`}>{row.name}</Link><small className="admin-mono">{row.roll_number}</small></td>
                 <td className="admin-nowrap">{yearLabel(row.year_of_study)}</td>
-                <td>{row.department}<small>{row.role}</small></td>
+                <td>{row.choices.roles}<small>{row.choices.domains}</small></td>
                 <td className="admin-nowrap">{row.weekly_hours} h / week<small>{commitmentLabel(row.commitment)}</small></td>
                 <td className="admin-nowrap">
                   <strong className="admin-score">{row.summary.score ?? '—'}</strong>

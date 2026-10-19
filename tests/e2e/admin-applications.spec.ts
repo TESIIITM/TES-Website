@@ -32,10 +32,13 @@ async function fillApplication(page: Page) {
   await page.getByLabel('What contributions have you made to TES so far?').fill('None yet. I have read the contribution guide and set up the site locally.');
   await page.getByLabel('What work would you like to showcase?').fill('https://example.org/portfolio: a site I built for my hostel fest.');
   await page.getByLabel('How would you like to contribute to TES?').fill('Add keyboard shortcuts help to the command menu. First step: open an issue.');
-  await page.getByRole('radiogroup', { name: 'Which role are you applying for?' }).getByText('Technical team').click();
-  await page.getByRole('radiogroup', { name: 'Which domain would you like to work in?' }).getByText('Web Development').click();
+  await page.getByRole('group', { name: 'Which roles are you applying for?' }).getByText('Technical team').click();
+  await page.getByRole('group', { name: 'Which roles are you applying for?' }).getByText('Design').click();
+  await page.getByRole('group', { name: 'Which domain would you like to work in?' }).getByText('Web Development').click();
   await page.getByLabel('How many hours can you realistically give each week?').fill('5');
   await page.getByText('A mix of both').click();
+  await page.getByRole('radiogroup', { name: 'Are you part of any other club?' }).getByText('Yes').click();
+  await page.getByLabel('Which clubs, and what do you do there?').fill('Robotics club, events team');
   await page.getByLabel(/I confirm these answers are my own/).check();
 }
 
@@ -49,16 +52,18 @@ test('an applicant sees what is missing, then sends the form once', async ({ pag
   await page.getByRole('button', { name: 'Send application' }).click();
   await expect(page.locator('.join-message')).toHaveText('Check the highlighted fields.');
   await expect(page.locator('#name-error')).toHaveText('Required.');
-  await expect(page.locator('#role-error')).toHaveText('Choose a role.');
+  await expect(page.locator('#roles-error')).toHaveText('Choose at least one role.');
 
   await fillApplication(page);
   await page.getByLabel('Name').fill('');
   await page.getByRole('button', { name: 'Send application' }).click();
   await expect(page.locator('#name-error')).toHaveText('Required.');
   // What was typed and chosen survives the round trip.
-  await expect(page.getByRole('radio', { name: 'Technical team' })).toBeChecked();
-  await expect(page.getByRole('radio', { name: 'Web Development' })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: /Technical team/ })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: /^Design/ })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'Web Development' })).toBeChecked();
   await expect(page.getByLabel('Year of study')).toHaveValue('2');
+  await expect(page.getByLabel('Which clubs, and what do you do there?')).toHaveValue('Robotics club, events team');
   await page.getByLabel('Name').fill(applicant);
   await page.getByLabel('Resume').setInputFiles({ name: 'resume.pdf', mimeType: 'application/pdf', buffer: pdf });
   await page.getByRole('button', { name: 'Send application' }).click();
@@ -77,6 +82,7 @@ test('admins review an application, override a score, and delete it', async ({ p
   await page.goto('/admin/applications');
   const row = page.locator('tr', { hasText: applicant });
   await expect(row).toContainText(roll);
+  await expect(row).toContainText('Technical team, Design');
   await expect(row).toContainText('Web Development');
   await expect(row).toContainText('5 h / week');
   await expect(row).toContainText('Pending');
@@ -85,6 +91,7 @@ test('admins review an application, override a score, and delete it', async ({ p
   await row.getByRole('link', { name: applicant }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(applicant);
   await expect(page.locator('main')).toContainText('a site I built for my hostel fest');
+  await expect(page.locator('main')).toContainText('Other clubs: Yes: Robotics club, events team');
   await expect(page.getByRole('link', { name: 'https://example.org/portfolio' })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open resume/ })).toBeVisible();
   // The email and checks run after the response; give them a moment.

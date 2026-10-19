@@ -26,16 +26,18 @@ const ROLE_NOTES: Record<string, string> = {
   promotions: 'Tell people about it',
 };
 
-type PickerProps = { value: string; onChange: (value: string) => void; describedBy?: string; invalid: boolean };
+type PickerProps = { value: string[]; onChange: (value: string[]) => void; describedBy?: string };
 
-/** Only the roles open to the chosen year are offered; none until a year is chosen. */
-export function RolePicker({ roles, disabled, value, onChange, describedBy, invalid }: PickerProps & { roles: { value: string; label: string }[]; disabled: boolean }) {
-  if (disabled) return <p className="join-picker-empty" id="role">Choose your year of study to see the roles open to you.</p>;
+const toggle = (list: string[], item: string) => (list.includes(item) ? list.filter((entry) => entry !== item) : [...list, item]);
+
+/** Only the roles open to the chosen year are offered; none until a year is chosen. Any number can be picked. */
+export function RolePicker({ roles, disabled, value, onChange, describedBy }: PickerProps & { roles: { value: string; label: string }[]; disabled: boolean }) {
+  if (disabled) return <p className="join-picker-empty" id="roles">Choose your year of study to see the roles open to you.</p>;
   return (
-    <div className="join-roles" id="role" role="radiogroup" aria-labelledby="role-label" aria-describedby={describedBy} aria-invalid={invalid || undefined}>
+    <div className="join-roles" id="roles" role="group" aria-labelledby="roles-label" aria-describedby={describedBy}>
       {roles.map((role) => (
         <label key={role.value} className="join-role">
-          <input type="radio" name="role" value={role.value} checked={value === role.value} onChange={() => onChange(role.value)} />
+          <input type="checkbox" name="roles" value={role.value} checked={value.includes(role.value)} onChange={() => onChange(toggle(value, role.value))} />
           {ROLE_ICONS[role.value]}
           <b>{role.label}</b>
           <small>{ROLE_NOTES[role.value]}</small>
@@ -45,15 +47,20 @@ export function RolePicker({ roles, disabled, value, onChange, describedBy, inva
   );
 }
 
-export function DomainPicker({ domains, value, onChange, describedBy, invalid }: PickerProps & { domains: string[] }) {
+/** Up to `max` domains; once that many are picked, the rest wait until one is unpicked. */
+export function DomainPicker({ domains, max, value, onChange, describedBy }: PickerProps & { domains: string[]; max: number }) {
+  const full = value.length >= max;
   return (
-    <div className="join-domains" id="department" role="radiogroup" aria-labelledby="department-label" aria-describedby={describedBy} aria-invalid={invalid || undefined}>
-      {domains.map((domain) => (
-        <label key={domain} className="join-domain">
-          <input type="radio" name="department" value={domain} checked={value === domain} onChange={() => onChange(domain)} />
-          <span>{domain}</span>
-        </label>
-      ))}
+    <div className="join-domains" id="domains" role="group" aria-labelledby="domains-label" aria-describedby={describedBy}>
+      {domains.map((domain) => {
+        const checked = value.includes(domain);
+        return (
+          <label key={domain} className="join-domain">
+            <input type="checkbox" name="domains" value={domain} checked={checked} disabled={full && !checked} onChange={() => onChange(toggle(value, domain))} />
+            <span>{domain}</span>
+          </label>
+        );
+      })}
     </div>
   );
 }

@@ -49,17 +49,35 @@ export function rolesFor(year: string): RoleOption[] {
   return rank ? ROLES.filter((role) => role.minYear <= rank) : [];
 }
 
-/** The answers to the follow-up question for a role, or none when the role has no follow-up. */
-export function domainsFor(role: string, domains: string[]): string[] {
-  const option = findRole(role);
-  if (!option?.domainQuestion) return [];
-  return option.general ?[GENERAL_MENTORSHIP, ...domains] : domains;
+/** Applicants pick at most this many domains, whatever their roles. */
+export const MAX_DOMAINS = 3;
+
+/** The domains offered for a set of roles: none unless one is technical, and general mentorship only to mentors. */
+export function domainsFor(roles: readonly string[], domains: string[]): string[] {
+  const options = roles.map(findRole);
+  if (!options.some((option) => option?.domainQuestion)) return [];
+  return options.some((option) => option?.general) ? [GENERAL_MENTORSHIP, ...domains] : domains;
 }
 
-/** What is stored: the area applied to (a domain, or the team itself) and the role in it. */
-export function placement(role: Role, domain: string | null): { department: string; role: string } {
-  const option = findRole(role)!;
-  return domain ? { department: domain, role: option.label } : { department: option.label, role: 'Team member' };
+/** The domain question, worded for the one technical role picked, or general when there are several. */
+export function domainQuestion(roles: readonly string[]): string {
+  const asking = roles.map(findRole).filter((option) => option?.domainQuestion);
+  return asking.length === 1 ? asking[0]!.domainQuestion! : 'Which domains interest you?';
+}
+
+/** The other-clubs answer as reviewers read it. */
+export function describeOtherClubs(application: { other_clubs: boolean | null; other_clubs_detail: string | null }): string {
+  if (application.other_clubs === null) return 'Not asked';
+  return application.other_clubs ? `Yes: ${application.other_clubs_detail ?? ''}` : 'No';
+}
+
+/** Roles and domains as reviewers read them. Applications from before fixed roles keep their own words. */
+export function describeChoices(application: { roles: string[]; domains: string[]; role: string | null; department: string | null }): { roles: string; domains: string } {
+  if (application.roles.length === 0) return { roles: application.role ?? '', domains: application.department ?? '' };
+  return {
+    roles: application.roles.map((role) => findRole(role)?.label ?? role).join(', '),
+    domains: application.domains.join(', '),
+  };
 }
 
 export const COMMITMENTS: { value: Commitment; label: string; hint: string }[] = [

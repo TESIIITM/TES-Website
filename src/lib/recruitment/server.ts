@@ -6,6 +6,7 @@ import type { Database, Json, Tables, TablesUpdate } from '@/lib/supabase/databa
 import { evaluateApplication } from './ai';
 import { sendConfirmation } from './email';
 import { automaticAssessment, githubLogins, type VerifiedContribution } from './evidence';
+import { describeChoices, describeOtherClubs } from './options';
 import type { Criterion } from './rubric';
 
 type ServiceClient = NonNullable<ReturnType<typeof createServiceClient>>;
@@ -132,10 +133,10 @@ async function runEvaluation(client: ServiceClient, application: Tables<'applica
     contributions: application.contributions,
     showcase: application.showcase,
     plan: application.plan,
-    department: application.department,
-    role: application.role,
+    ...describeChoices(application),
     weeklyHours: application.weekly_hours,
     commitment: application.commitment,
+    otherClubs: describeOtherClubs(application),
     additionalInfo: application.additional_info,
     links: application.links,
     verifiedFacts,

@@ -3,7 +3,7 @@ import { instagramPostUrl } from './admin/instagram-post';
 import { youtubeVideoId } from './youtube';
 import { weekStart } from './format';
 import { parseLogins, parseRepositoryName } from './github-names';
-import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, ROLES, STATUSES, YEARS, domainsFor, rolesFor, type ApplicationStatus, type Commitment, type Role } from './recruitment/options';
+import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, MAX_DOMAINS, ROLES, STATUSES, YEARS, domainsFor, rolesFor, type ApplicationStatus, type Commitment, type Role } from './recruitment/options';
 
 const required = (max: number) =>
   z.string().trim().min(1, 'Required.').max(max, `Keep this under ${max} characters.`);
@@ -187,7 +187,10 @@ const answer = z
   .min(ANSWER_MIN, `Write at least ${ANSWER_MIN} characters, about a full sentence.`)
   .max(ANSWER_MAX, `Keep this under ${ANSWER_MAX} characters.`);
 
-/** Built per request, since admins choose the departments on offer. */
+/** Several picks arrive as one value per line; repeats and blanks are dropped. */
+const picks = z.string().default('').transform((value) => [...new Set(value.split('\n').map((line) => line.trim()).filter(Boolean))]);
+
+/** Built per request, since admins choose the domains on offer. */
 export function applicationSchema(departments: string[]) {
   const base = z.object({
     name: required(120),
@@ -202,30 +205,40 @@ export function applicationSchema(departments: string[]) {
     contributions: answer,
     showcase: answer,
     plan: answer,
-    role: z.enum(ROLES.map((role) => role.value) as [Role, ...Role[]], { error: 'Choose a role.' }),
-    department: z.string().trim().default(''),
+    roles: picks.pipe(z.array(z.enum(ROLES.map((role) => role.value) as [Role, ...Role[]], { error: 'Choose from the roles shown.' })).min(1, 'Choose at least one role.')),
+    domains: picks,
     weeklyHours: z.coerce
       .number({ error: 'Enter a number of hours.' })
       .int('Use a whole number of hours.')
       .min(1, 'Enter at least one hour.')
       .max(40, 'Keep this to 40 hours or fewer.'),
     commitment: z.enum(COMMITMENTS.map((commitment) => commitment.value) as [Commitment, ...Commitment[]], { error: 'Choose one.' }),
+    otherClubs: z.enum(['yes', 'no'], { error: 'Choose yes or no.' }),
+    otherClubsDetail: optional(300),
     additionalInfo: optional(2000),
     consent: z.literal(true, { error: 'Please confirm to send your application.' }),
   });
   // Checked even when other fields are wrong, so every problem shows at once.
-  const when = (fields: { yearOfStudy?: true; role: true; department?: true }) => (payload: { value: unknown }) => base.pick(fields).safeParse(payload.value).success;
+  const when = (fields: string[]) => (payload: { issues: readonly { path?: readonly PropertyKey[] }[] }) =>
+    !payload.issues.some((issue) => fields.includes(String(issue.path?.[0])));
+  const offered = (roles: Role[]) => domainsFor(roles, departments);
   return base
-    .refine((data) => rolesFor(data.yearOfStudy).some((role) => role.value === data.role), {
-      path: ['role'],
-      message: 'This role is open from a later year. Choose another.',
-      when: when({ yearOfStudy: true, role: true }),
+    .refine((data) => data.roles.every((role) => rolesFor(data.yearOfStudy).some((option) => option.value === role)), {
+      path: ['roles'],
+      message: 'Mentor opens in 2nd year and domain lead in 3rd year. Remove the role your year cannot take.',
+      when: when(['yearOfStudy', 'roles']),
     })
-    .refine((data) => {
-      const domains = domainsFor(data.role, departments);
-      return domains.length === 0 || domains.includes(data.department);
-    }, { path: ['department'], message: 'Choose one.', when: when({ role: true, department: true }) })
-    .transform((data) => ({ ...data, department: domainsFor(data.role, departments).length ? data.department : null }));
+    .refine((data) => offered(data.roles).length === 0 || data.domains.length > 0, { path: ['domains'], message: 'Choose at least one domain.', when: when(['roles', 'domains']) })
+    .refine((data) => offered(data.roles).length === 0 || data.domains.length <= MAX_DOMAINS, { path: ['domains'], message: `Choose up to ${MAX_DOMAINS} domains.`, when: when(['roles', 'domains']) })
+    .refine((data) => offered(data.roles).length === 0 || data.domains.every((domain) => offered(data.roles).includes(domain)), { path: ['domains'], message: 'Choose from the domains shown.', when: when(['roles', 'domains']) })
+    .refine((data) => data.otherClubs === 'no' || data.otherClubsDetail, { path: ['otherClubsDetail'], message: 'Name the clubs you are in.', when: when(['otherClubs', 'otherClubsDetail']) })
+    .transform((data) => ({
+      ...data,
+      // Domains only mean something next to a technical role.
+      domains: offered(data.roles).length ? data.domains : [],
+      otherClubs: data.otherClubs === 'yes',
+      otherClubsDetail: data.otherClubs === 'yes' ? data.otherClubsDetail : null,
+    }));
 }
 
 const score = z

@@ -3,7 +3,7 @@
 import { after } from 'next/server';
 import { failed, invalid, readValues, type FormState } from '@/lib/admin/form-state';
 import { extractLinks } from '@/lib/recruitment/evidence';
-import { RESUME_MAX_BYTES, placement } from '@/lib/recruitment/options';
+import { RESUME_MAX_BYTES } from '@/lib/recruitment/options';
 import { loadRecruitmentConfig, processApplication } from '@/lib/recruitment/server';
 import { createServiceClient } from '@/lib/supabase/server';
 import { applicationSchema } from '@/lib/validation';
@@ -11,11 +11,15 @@ import { applicationSchema } from '@/lib/validation';
 const FIELDS = [
   'name', 'rollNumber', 'yearOfStudy', 'email',
   'knowledge', 'contributions', 'showcase', 'plan',
-  'role', 'department', 'weeklyHours', 'commitment',
+  'weeklyHours', 'commitment', 'otherClubs', 'otherClubsDetail',
   'additionalInfo', 'consent',
 ] as const;
 
 const CLOSED = 'Applications are not open right now. Follow TES on Instagram to hear when they are.';
+
+function picked(formData: FormData, key: string): string {
+  return formData.getAll(key).filter((value) => typeof value === 'string').join('\n');
+}
 
 async function readResume(formData: FormData): Promise<{ file: File | null; error?: string }> {
   const file = formData.get('resume');
@@ -41,7 +45,8 @@ export async function submitApplication(_previous: FormState, formData: FormData
   const client = createServiceClient();
   if (!config || !client || !config.isOpen) return failed(CLOSED);
 
-  const values = readValues(formData, FIELDS);
+  // Checkboxes send one value per pick; they travel as one line each.
+  const values: Record<string, string> = { ...readValues(formData, FIELDS), roles: picked(formData, 'roles'), domains: picked(formData, 'domains') };
   const parsed = applicationSchema(config.departments).safeParse({ ...values, consent: values.consent === 'on' });
   const resume = await readResume(formData);
   if (!parsed.success) {
@@ -74,9 +79,12 @@ export async function submitApplication(_previous: FormState, formData: FormData
     showcase: data.showcase,
     plan: data.plan,
     links: extractLinks([data.showcase, data.contributions, data.plan, data.knowledge, data.additionalInfo]),
-    ...placement(data.role, data.department),
+    roles: data.roles,
+    domains: data.domains,
     weekly_hours: data.weeklyHours,
     commitment: data.commitment,
+    other_clubs: data.otherClubs,
+    other_clubs_detail: data.otherClubsDetail,
     additional_info: data.additionalInfo,
     resume_path: resumePath,
   });

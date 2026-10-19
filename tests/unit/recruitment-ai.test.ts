@@ -5,7 +5,7 @@ const { evaluateApplication } = await import('@/lib/recruitment/ai');
 
 const input = {
   yearOfStudy: '1', knowledge: 'TES runs the website.', contributions: 'None yet.', showcase: 'https://example.org',
-  plan: 'Write docs.', department: 'Design', role: 'Designer', weeklyHours: 4, commitment: 'short_term' as const,
+  plan: 'Write docs.', roles: 'Design', domains: '', weeklyHours: 4, commitment: 'short_term' as const, otherClubs: 'No',
   additionalInfo: null, links: [], verifiedFacts: [],
 };
 const criteria = [{ key: 'knowledge', label: 'Understanding', guidance: 'Facts.', weight: 5 }];

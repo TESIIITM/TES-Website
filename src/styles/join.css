@@ -139,16 +139,20 @@
 .join-role:has(input:checked) { border-color: var(--gh-blue); background: var(--gh-blue-soft); box-shadow: inset 0 0 0 1px var(--gh-blue); }
 .join-role:has(input:checked) .join-role-icon { color: var(--gh-blue-fg); }
 .join-role:has(input:focus-visible), .join-domain:has(input:focus-visible) { outline: 2px solid var(--gh-blue); outline-offset: 2px; }
-[data-invalid] .join-role { border-color: var(--gh-red-fg); }
+[data-invalid] .join-roles:not(:has(input:checked)) .join-role { border-color: var(--gh-red-fg); }
 .join-picker-empty { padding: 18px; border: 1px dashed var(--gh-border); border-radius: 6px; color: var(--gh-muted); font-size: 14px; }
 .join-domains { display: flex; flex-wrap: wrap; gap: 8px; }
 .join-domain { position: relative; padding: 7px 14px; border: 1px solid transparent; border-radius: 999px; background: var(--gh-blue-soft); color: var(--gh-blue-fg); font-size: 13px; font-weight: 550; cursor: pointer; transition: background .2s, border-color .2s; }
 .join-domain:hover { border-color: var(--gh-blue-border); }
 .join-domain:has(input:checked) { background: var(--gh-blue); color: #fff; }
-[data-invalid] .join-domain { border-color: var(--gh-red-fg); }
+/* At the limit, the rest wait until one is unpicked. */
+.join-domain:has(input:disabled) { opacity: .45; cursor: not-allowed; }
+.join-domain:has(input:disabled):hover { border-color: transparent; }
+[data-invalid] .join-domains:not(:has(input:checked)) .join-domain { border-color: var(--gh-red-fg); }
 
 /* Commitment choices */
 .join-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.join-choices-two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 420px; }
 .join-choice { position: relative; display: flex; gap: 12px; padding: 16px; border: 1px solid var(--gh-border); border-radius: 6px; background: var(--gh-doc); cursor: pointer; transition: border-color .2s, background .2s; }
 .join-choice:hover { border-color: var(--gh-faint); }
 .join-choice input { flex: none; width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--gh-blue); }
