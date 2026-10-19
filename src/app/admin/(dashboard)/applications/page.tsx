@@ -56,7 +56,7 @@ export default async function ApplicationsPage({ searchParams }: PageProps<'/adm
   return (
     <>
       <PageHeader
-        eyebrow="11 / RECRUITMENT"
+        eyebrow="11 / APPLICATIONS"
         title="Applications"
         description="Everyone who applied through the JOIN TES form. Scores and AI notes help you read; you decide."
         action={{ href: '/admin/applications/settings', label: 'Form & rubric' }}

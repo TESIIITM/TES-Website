@@ -17,7 +17,7 @@ export default async function EditAnnouncementPage({ params }: PageProps<'/admin
   return (
     <>
       <PageHeader
-        eyebrow="03 / EVENTS"
+        eyebrow="03 / ANNOUNCEMENTS"
         title={announcementTitle({ title: announcement.title, titleEmphasis: announcement.title_emphasis })}
         back={{ href: '/admin/announcements', label: 'Announcements' }}
       />

@@ -19,7 +19,7 @@ export default async function EditStoryPage({ params }: PageProps<'/admin/storie
 
   return (
     <>
-      <PageHeader eyebrow="04 / KNOWLEDGE" title="Edit story" back={{ href: '/admin/stories', label: 'Stories' }} />
+      <PageHeader eyebrow="04 / STORIES" title="Edit story" back={{ href: '/admin/stories', label: 'Stories' }} />
       <StoryForm story={story} categories={categories} action={saveStory.bind(null, story.id)} />
     </>
   );

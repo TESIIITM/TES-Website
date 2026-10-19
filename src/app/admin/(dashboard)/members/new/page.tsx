@@ -10,7 +10,7 @@ export default async function NewMemberPage() {
   await requireAdmin();
   return (
     <>
-      <PageHeader eyebrow="02 / PEOPLE" title="Add member" back={{ href: '/admin/members', label: 'Members' }} />
+      <PageHeader eyebrow="02 / MEMBERS" title="Add member" back={{ href: '/admin/members', label: 'Members' }} />
       <MemberForm action={saveMember.bind(null, null)} />
     </>
   );
