@@ -220,6 +220,11 @@ describe('applicationSchema', () => {
     expect(errors({ ...valid, otherClubs: 'yes' }).otherClubsDetail).toEqual(['Name the clubs you are in.']);
     expect(schema.parse({ ...valid, otherClubs: 'yes', otherClubsDetail: ' Robotics club ' })).toMatchObject({ otherClubs: true, otherClubsDetail: 'Robotics club' });
     expect(schema.parse({ ...valid, otherClubs: 'no', otherClubsDetail: 'Robotics club' })).toMatchObject({ otherClubs: false, otherClubsDetail: null });
+    // The detail input is not on the page after a no, so the browser leaves it out.
+    const withoutDetail: Record<string, unknown> = { ...valid };
+    delete withoutDetail.otherClubsDetail;
+    expect(schema.parse(withoutDetail)).toMatchObject({ otherClubs: false, otherClubsDetail: null });
+    expect(errors({ ...withoutDetail, otherClubs: 'yes' }).otherClubsDetail).toEqual(['Name the clubs you are in.']);
   });
 
   it('offers general mentorship only alongside mentoring', () => {

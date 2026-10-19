@@ -214,7 +214,8 @@ export function applicationSchema(departments: string[]) {
       .max(40, 'Keep this to 40 hours or fewer.'),
     commitment: z.enum(COMMITMENTS.map((commitment) => commitment.value) as [Commitment, ...Commitment[]], { error: 'Choose one.' }),
     otherClubs: z.enum(['yes', 'no'], { error: 'Choose yes or no.' }),
-    otherClubsDetail: optional(300),
+    // Not sent at all after a no, since the form only shows it after a yes.
+    otherClubsDetail: z.string().default('').pipe(optional(300)),
     additionalInfo: optional(2000),
     consent: z.literal(true, { error: 'Please confirm to send your application.' }),
   });

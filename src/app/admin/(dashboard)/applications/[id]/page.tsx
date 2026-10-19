@@ -6,7 +6,7 @@ import { SubmitButton } from '@/components/admin/submit-button';
 import { requireAdmin } from '@/lib/auth';
 import { readEvaluation } from '@/lib/recruitment/ai-prompt';
 import { readEvidence } from '@/lib/recruitment/evidence';
-import { commitmentLabel, describeChoices, describeOtherClubs, isStalled, yearLabel } from '@/lib/recruitment/options';
+import { commitmentLabel, describeChoices, describeOtherClubs, domainQuestion, domainsFor, GENERAL_MENTORSHIP, isStalled, yearLabel } from '@/lib/recruitment/options';
 import { importanceOf, IMPORTANCE_LABELS, readScores } from '@/lib/recruitment/rubric';
 import { scoreApplication } from '@/lib/recruitment/score';
 import { loadCriteria } from '@/lib/recruitment/server';
@@ -23,7 +23,7 @@ const AI_STATUS: Record<string, string> = { pending: 'Running…', done: 'Done',
 function Answer({ number, question, children }: { number: number; question: string; children: string | null }) {
   return (
     <div className="admin-answer">
-      <h3><span>{number}</span>{question}</h3>
+      <h3><span>{String(number).padStart(2, '0')}</span>{question}</h3>
       {children ? <p>{children}</p> : <p className="admin-muted">No answer.</p>}
     </div>
   );
@@ -39,6 +39,24 @@ export default async function ApplicationPage({ params }: PageProps<'/admin/appl
   if (!application) notFound();
 
   const choices = describeChoices(application);
+  // Every question in the order the form asks it. The domain question is only asked next to a technical role.
+  const askedDomains = domainsFor(application.roles, [GENERAL_MENTORSHIP]).length > 0 || Boolean(choices.domains);
+  const answers: [string, string | null][] = [
+    ['Name', application.name],
+    ['Roll number', application.roll_number],
+    ['Year of study', yearLabel(application.year_of_study)],
+    ['Contact email', application.email],
+    ['What do you know about TES?', application.knowledge],
+    ['What contributions have you made to TES so far?', application.contributions],
+    ['What work would you like to showcase?', application.showcase],
+    ['How would you like to contribute to TES?', application.plan],
+    ['Which roles are you applying for?', choices.roles || null],
+    ...(askedDomains ? [[domainQuestion(application.roles), choices.domains || null] as [string, string | null]] : []),
+    ['How many hours can you realistically give each week?', `${application.weekly_hours} hours`],
+    ['Would you prefer long-term responsibilities, short-term tasks, or a mix?', commitmentLabel(application.commitment)],
+    ['Are you part of any other club?', describeOtherClubs(application)],
+    ['Anything else you’d like us to know?', application.additional_info],
+  ];
   const evaluation = readEvaluation(application.ai_evaluation);
   const evidence = readEvidence(application.auto_evidence);
   const { resolved, summary } = scoreApplication(application, criteria);
@@ -94,11 +112,7 @@ export default async function ApplicationPage({ params }: PageProps<'/admin/appl
       <div className="admin-application">
         <section className="admin-panel" aria-labelledby="answers-title">
           <h2 id="answers-title">Answers</h2>
-          <Answer number={5} question="What do you know about TES?">{application.knowledge}</Answer>
-          <Answer number={6} question="What contributions have you made to TES so far?">{application.contributions}</Answer>
-          <Answer number={7} question="What work would you like to showcase?">{application.showcase}</Answer>
-          <Answer number={8} question="How would you like to contribute to TES?">{application.plan}</Answer>
-          <Answer number={13} question="Anything else you’d like us to know?">{application.additional_info}</Answer>
+          {answers.map(([question, answer], index) => <Answer key={question} number={index + 1} question={question}>{answer}</Answer>)}
 
           <div className="admin-answer">
             <h3><span>↗</span>Portfolio links</h3>
@@ -109,7 +123,7 @@ export default async function ApplicationPage({ params }: PageProps<'/admin/appl
             ) : <p className="admin-muted">No links found in the answers.</p>}
           </div>
           <div className="admin-answer">
-            <h3><span>14</span>Resume</h3>
+            <h3><span>{String(answers.length + 1).padStart(2, '0')}</span>Resume</h3>
             {resume ? <p><a className="admin-link" href={resume} target="_blank" rel="noopener noreferrer">Open resume (PDF, link valid for 10 minutes) ↗</a></p> : <p className="admin-muted">{application.resume_path ? 'The resume could not be opened.' : 'No resume attached.'}</p>}
           </div>
         </section>
