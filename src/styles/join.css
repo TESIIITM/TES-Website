@@ -207,6 +207,8 @@
   .join-section-art { display: none; }
   .join-back span, .join-topbar-actions .join-back { font-size: 0; gap: 0; }
   .join-topbar-actions .join-back svg { width: 18px; height: 18px; }
+  .join-back, .join-share { min-height: 36px; }
+  .join-topbar-actions .join-back { min-width: 36px; justify-content: center; }
   .join-topbar .brand-wordmark { display: none; }
   .join-submit { flex: 1 1 100%; }
 }

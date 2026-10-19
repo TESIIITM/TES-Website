@@ -24,7 +24,7 @@ export default async function NewStoryPage({ searchParams }: PageProps<'/admin/s
   const [categories, draft] = await Promise.all([getStoryCategories(supabase), searchParams.then(({ medium }) => fromMedium(supabase, medium))]);
   return (
     <>
-      <PageHeader eyebrow="04 / KNOWLEDGE" title="Add story" back={{ href: '/admin/stories', label: 'Stories' }} />
+      <PageHeader eyebrow="04 / STORIES" title="Add story" back={{ href: '/admin/stories', label: 'Stories' }} />
       <StoryForm story={draft} isNew categories={categories} action={saveStory.bind(null, null)} />
     </>
   );

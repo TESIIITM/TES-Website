@@ -20,6 +20,12 @@
 .map-node-build { left: calc(50% + 22px); top: 14.3%; transform: translateY(-50%); }
 .map-node-build:hover, .map-node-build:focus-visible { transform: translateY(-50%); }
 .map-node-share { right: calc(11.4% - 8px); left: auto; top: calc(50% + 20px); text-align: right; align-items: flex-end; }
+/* Phones: the side labels sit close together, so their captions wrap
+   instead of running into each other or off the screen. */
+@media (max-width: 620px) {
+  .map-node small { max-width: 9.5em; font-size: 11px; white-space: normal; }
+  .map-node-build small { max-width: 8em; }
+}
 
 /* Desktop hero: one screen tall, with the map kept inside the content edge.
    Sizes follow the window's height as well as its width. */

@@ -15,7 +15,7 @@ export default async function EditTechNewsPage({ params }: PageProps<'/admin/new
 
   return (
     <>
-      <PageHeader eyebrow="05 / DIGEST" title="Edit link" back={{ href: '/admin/news', label: 'Tech news' }} />
+      <PageHeader eyebrow="05 / TECH NEWS" title="Edit link" back={{ href: '/admin/news', label: 'Tech news' }} />
       <TechNewsForm item={item} defaultWeek={item.week_of} action={saveTechNews.bind(null, item.id)} />
     </>
   );

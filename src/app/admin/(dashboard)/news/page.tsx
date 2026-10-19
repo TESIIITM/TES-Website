@@ -20,7 +20,7 @@ export default async function TechNewsPage() {
 
   return (
     <>
-      <PageHeader eyebrow="05 / DIGEST" title="Tech news" description="This week’s links, shown above The People. Only the latest week is on the site." action={{ href: '/admin/news/new', label: 'Add link' }} />
+      <PageHeader eyebrow="05 / TECH NEWS" title="Tech news" description="This week’s links, shown above The People. Only the latest week is on the site." action={{ href: '/admin/news/new', label: 'Add link' }} />
       {items.length === 0 ? (
         <EmptyState>No links yet. <Link href="/admin/news/new">Add this week’s first one</Link>.</EmptyState>
       ) : (

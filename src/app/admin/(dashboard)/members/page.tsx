@@ -16,7 +16,7 @@ export default async function MembersPage() {
 
   return (
     <>
-      <PageHeader eyebrow="02 / PEOPLE" title="Members" description="Faculty coordinators and student members shown under Meet the collective." action={{ href: '/admin/members/new', label: 'Add member' }} />
+      <PageHeader eyebrow="02 / MEMBERS" title="Members" description="Faculty coordinators and student members shown under Meet the collective." action={{ href: '/admin/members/new', label: 'Add member' }} />
       {members.length === 0 ? (
         <EmptyState>No members yet. <Link href="/admin/members/new">Add the first one</Link>.</EmptyState>
       ) : (

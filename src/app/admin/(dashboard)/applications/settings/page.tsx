@@ -16,7 +16,7 @@ export default async function RecruitmentSettingsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="11 / RECRUITMENT"
+        eyebrow="11 / APPLICATIONS"
         title="Form & rubric"
         description="Open or close the form, choose the technical domains on offer, and set how much each question counts."
         back={{ href: '/admin/applications', label: 'Applications' }}

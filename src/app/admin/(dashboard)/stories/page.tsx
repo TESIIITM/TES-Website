@@ -29,7 +29,7 @@ export default async function StoriesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="04 / KNOWLEDGE"
+        eyebrow="04 / STORIES"
         title="Stories"
         description="The reading list under Learn. New posts on Medium appear on their own within an hour. Edit one to change its category or summary."
         action={{ href: '/admin/stories/new', label: 'Add story' }}

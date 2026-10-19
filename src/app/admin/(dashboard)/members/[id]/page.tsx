@@ -15,7 +15,7 @@ export default async function EditMemberPage({ params }: PageProps<'/admin/membe
 
   return (
     <>
-      <PageHeader eyebrow="02 / PEOPLE" title={member.name} back={{ href: '/admin/members', label: 'Members' }} />
+      <PageHeader eyebrow="02 / MEMBERS" title={member.name} back={{ href: '/admin/members', label: 'Members' }} />
       <MemberForm member={member} action={saveMember.bind(null, member.id)} />
     </>
   );

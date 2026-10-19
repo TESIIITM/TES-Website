@@ -17,10 +17,10 @@ export default async function AnnouncementsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="03 / EVENTS"
+        eyebrow="03 / ANNOUNCEMENTS"
         title="Announcements"
         description="The newest published announcement is featured under Gather. The next three are listed below it."
-        action={{ href: '/admin/announcements/new', label: 'New announcement' }}
+        action={{ href: '/admin/announcements/new', label: 'Add announcement' }}
       />
       {announcements.length === 0 ? (
         <EmptyState>Nothing announced yet. <Link href="/admin/announcements/new">Post the first announcement</Link>.</EmptyState>

@@ -32,4 +32,10 @@
   .project-grid { grid-template-columns: 1fr; gap: 10px; }
   .contributor-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
 }
+/* The narrowest phones fit two stats a row. */
+@media (max-width: 380px) {
+  .repo-stats { grid-template-columns: repeat(2, auto); }
+  .repo-stats > div:nth-child(n) { padding: 0 18px; border-left: 1px solid var(--border); }
+  .repo-stats > div:nth-child(odd) { padding-left: 0; border-left: 0; }
+}
 @media (prefers-reduced-motion: reduce) { .project-card h4 svg, .contributor-grid img { transition: none; } .project-card:hover h4 svg { transform: none; } }

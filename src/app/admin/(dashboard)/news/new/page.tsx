@@ -12,7 +12,7 @@ export default async function NewTechNewsPage() {
   const today = new Date().toISOString().slice(0, 10);
   return (
     <>
-      <PageHeader eyebrow="05 / DIGEST" title="Add link" back={{ href: '/admin/news', label: 'Tech news' }} />
+      <PageHeader eyebrow="05 / TECH NEWS" title="Add link" back={{ href: '/admin/news', label: 'Tech news' }} />
       <TechNewsForm defaultWeek={weekStart(today)} action={saveTechNews.bind(null, null)} />
     </>
   );

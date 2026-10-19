@@ -42,7 +42,7 @@ export function AnnouncementForm({ announcement: item, today, action }: Props) {
       </fieldset>
 
       <Checkbox name="isPublished" label="Publish on the site" hint="Leave unchecked to keep it as a draft." state={state} defaultChecked={item?.is_published ?? false} />
-      <div className="admin-form-actions"><SubmitButton>{item ? 'Save changes' : 'Create announcement'}</SubmitButton></div>
+      <div className="admin-form-actions"><SubmitButton>{item ? 'Save changes' : 'Add announcement'}</SubmitButton></div>
     </form>
   );
 }
