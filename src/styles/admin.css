@@ -93,6 +93,14 @@
 .admin-field-hint { color: var(--muted); font-size: 12px; line-height: 1.5; }
 .admin-field-error { color: oklch(.7 .17 25); font-size: 12px; }
 :root[data-theme="light"] .admin-field-error { color: oklch(.5 .19 25); }
+
+/* Password field visibility toggle */
+.admin-password-control { position: relative; }
+.admin-password-control input { padding-right: 48px !important; }
+.admin-password-toggle { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; border: 0; background: transparent; color: var(--muted); cursor: pointer; transition: color .2s; }
+.admin-password-toggle:hover { color: var(--text); }
+.admin-password-toggle:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; border-radius: 3px; }
+
 .admin-checkbox { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 10px; }
 .admin-checkbox input { width: 18px; height: 18px; accent-color: var(--text); }
 .admin-checkbox label { font-size: 14px; }
