@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useFormStatus } from 'react-dom';
 import { ArrowRight, Check, FileText } from 'lucide-react';
 import { initialFormState, type FormState } from '@/lib/admin/form-state';
-import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, YEARS, domainsFor, findRole, rolesFor } from '@/lib/recruitment/options';
+import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, MAX_DOMAINS, YEARS, domainQuestion, domainsFor, rolesFor } from '@/lib/recruitment/options';
 import { IMPORTANCE_LABELS, type Importance } from '@/lib/recruitment/rubric';
 import { submitApplication } from './actions';
 import { CommitmentGlyph, JoinSidebar, SectionHeading, Signature } from './form-art';
@@ -13,13 +13,18 @@ import { DomainPicker, RolePicker } from './pickers';
 
 type Props = { departments: string[]; importance: Record<string, Importance> };
 
-/** Fields that must be filled, for the progress bar. The domain question joins them when the role asks it. */
-const REQUIRED = ['name', 'rollNumber', 'yearOfStudy', 'email', 'knowledge', 'contributions', 'showcase', 'plan', 'role', 'weeklyHours', 'commitment', 'consent'];
+/** Fields that must be filled, for the progress bar. The domain question joins them when a technical role is picked. */
+const REQUIRED = ['name', 'rollNumber', 'yearOfStudy', 'email', 'knowledge', 'contributions', 'showcase', 'plan', 'roles', 'weeklyHours', 'commitment', 'otherClubs', 'consent'];
 /** The required fields in each section, to mark a section done. */
-const SECTIONS = [['name', 'rollNumber', 'yearOfStudy', 'email'], ['knowledge', 'contributions', 'showcase', 'plan'], ['role', 'department', 'weeklyHours', 'commitment'], ['consent']];
+const SECTIONS = [['name', 'rollNumber', 'yearOfStudy', 'email'], ['knowledge', 'contributions', 'showcase', 'plan'], ['roles', 'domains', 'weeklyHours', 'commitment', 'otherClubs', 'otherClubsDetail'], ['consent']];
 
 function value(state: FormState, name: string) {
   return state.values?.[name] ?? '';
+}
+
+/** Checkbox picks come back from the server one per line. */
+function picks(state: FormState, name: string) {
+  return value(state, name).split('\n').filter(Boolean);
 }
 
 function Weight({ level }: { level?: Importance }) {
@@ -97,29 +102,47 @@ export function JoinForm({ departments, importance }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [filled, setFilled] = useState({ done: 0, total: REQUIRED.length, sections: SECTIONS.map(() => false) });
   const [resumeName, setResumeName] = useState<string | null>(null);
-  // The role question depends on the year, and the domain question on the role.
+  // The roles offered depend on the year, and the domains on the roles picked.
   const [year, setYear] = useState(value(state, 'yearOfStudy'));
-  const [role, setRole] = useState(value(state, 'role'));
-  const [domain, setDomain] = useState(value(state, 'department'));
+  const [pickedRoles, setPickedRoles] = useState(picks(state, 'roles'));
+  const [pickedDomains, setPickedDomains] = useState(picks(state, 'domains'));
+  // Which clubs is asked only after a yes.
+  const [otherClubs, setOtherClubs] = useState(value(state, 'otherClubs'));
   // A returned form keeps what was typed, but browsers clear file inputs.
   const [shownState, setShownState] = useState(state);
   if (shownState !== state) {
     setShownState(state);
     setResumeName(null);
     setYear(value(state, 'yearOfStudy'));
-    setRole(value(state, 'role'));
-    setDomain(value(state, 'department'));
+    setPickedRoles(picks(state, 'roles'));
+    setPickedDomains(picks(state, 'domains'));
+    setOtherClubs(value(state, 'otherClubs'));
   }
 
   const roles = rolesFor(year);
-  const chosenRole = roles.find((option) => option.value === role);
-  const domains = chosenRole ? domainsFor(chosenRole.value, departments) : [];
+  const chosenRoles = pickedRoles.filter((role) => roles.some((option) => option.value === role));
+  const domains = domainsFor(chosenRoles, departments);
+  const chosenDomains = pickedDomains.filter((domain) => domains.includes(domain));
+
+  // A pick the year or roles no longer allow is dropped for good, so it cannot come back unseen.
+  const pickRoles = (next: string[]) => {
+    setPickedRoles(next);
+    setPickedDomains((current) => current.filter((domain) => domainsFor(next, departments).includes(domain)));
+  };
+  const pickYear = (next: string) => {
+    setYear(next);
+    pickRoles(chosenRoles.filter((role) => rolesFor(next).some((option) => option.value === role)));
+  };
 
   const measure = () => {
     const form = formRef.current;
     if (!form) return;
     const data = new FormData(form);
-    const required = domainsFor(String(data.get('role') ?? ''), departments).length ? [...REQUIRED, 'department'] : REQUIRED;
+    const required = [
+      ...REQUIRED,
+      ...(domainsFor(data.getAll('roles').map(String), departments).length ? ['domains'] : []),
+      ...(data.get('otherClubs') === 'yes' ? ['otherClubsDetail'] : []),
+    ];
     const answered = (name: string) => String(data.get(name) ?? '').trim() !== '';
     setFilled({
       done: required.filter(answered).length,
@@ -128,7 +151,7 @@ export function JoinForm({ departments, importance }: Props) {
     });
   };
   // Runs after the domain question appears or goes, so the count includes it.
-  useEffect(measure, [state, role, year, departments]);
+  useEffect(measure, [state, pickedRoles, year, otherClubs, departments]);
 
   if (state.status === 'saved') {
     return (
@@ -187,7 +210,7 @@ export function JoinForm({ departments, importance }: Props) {
             </Question>
             <Question name="yearOfStudy" label="Year of study" state={state}>
               {(describedBy, invalid) => (
-                <select id="yearOfStudy" name="yearOfStudy" required defaultValue={value(state, 'yearOfStudy')} onChange={(event) => setYear(event.target.value)} aria-describedby={describedBy} aria-invalid={invalid || undefined}>
+                <select id="yearOfStudy" name="yearOfStudy" required defaultValue={value(state, 'yearOfStudy')} onChange={(event) => pickYear(event.target.value)} aria-describedby={describedBy} aria-invalid={invalid || undefined}>
                   <option value="" disabled>Choose your year</option>
                   {YEARS.map((year) => <option key={year.value} value={year.value}>{year.label}</option>)}
                 </select>
@@ -220,13 +243,14 @@ export function JoinForm({ departments, importance }: Props) {
 
         <fieldset className="join-section" id="section-3" data-done={filled.sections[2] || undefined}>
           <SectionHeading index={2}>Role preferences &amp; commitment</SectionHeading>
-          <Question name="role" label="Which role are you applying for?" level={importance.department_fit} state={state} wide
-            hint={year ? 'Mentors are 2nd year or above, and domain leads 3rd year or above.' : undefined}>
-            {(describedBy, invalid) => <RolePicker roles={roles} disabled={!year} value={chosenRole ? role : ''} onChange={setRole} describedBy={describedBy} invalid={invalid} />}
+          <Question name="roles" label="Which roles are you applying for?" level={importance.department_fit} state={state} wide
+            hint={year ? 'Pick as many as you like. Mentors are 2nd year or above, and domain leads 3rd year or above.' : undefined}>
+            {(describedBy) => <RolePicker roles={roles} disabled={!year} value={chosenRoles} onChange={pickRoles} describedBy={describedBy} />}
           </Question>
           {domains.length > 0 && (
-            <Question name="department" label={findRole(role)?.domainQuestion ?? ''} state={state} wide>
-              {(describedBy, invalid) => <DomainPicker domains={domains} value={domains.includes(domain) ? domain : ''} onChange={setDomain} describedBy={describedBy} invalid={invalid} />}
+            <Question name="domains" label={domainQuestion(chosenRoles)} state={state} wide
+              hint={`Pick up to ${MAX_DOMAINS}. ${chosenDomains.length} of ${MAX_DOMAINS} chosen.`}>
+              {(describedBy) => <DomainPicker domains={domains} max={MAX_DOMAINS} value={chosenDomains} onChange={setPickedDomains} describedBy={describedBy} />}
             </Question>
           )}
           <div className="join-grid">
@@ -250,6 +274,27 @@ export function JoinForm({ departments, importance }: Props) {
             </div>
             {state.fieldErrors?.commitment && <p className="join-error" id="commitment-error">{state.fieldErrors.commitment[0]}</p>}
           </div>
+          <div className="join-question join-question-wide" data-invalid={state.fieldErrors?.otherClubs ? '' : undefined}>
+            <div className="join-question-head" id="otherClubs-label">
+              <span className="join-label">Are you part of any other club?</span>
+              <span className="join-weight join-weight-note">Not scored</span>
+            </div>
+            <p className="join-hint" id="otherClubs-hint">Being in other clubs is fine. It helps us plan work around your time.</p>
+            <div className="join-choices join-choices-two" role="radiogroup" aria-labelledby="otherClubs-label" aria-describedby={`otherClubs-hint${state.fieldErrors?.otherClubs ? ' otherClubs-error' : ''}`}>
+              {[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }].map((option) => (
+                <label key={option.value} className="join-choice">
+                  <input type="radio" name="otherClubs" value={option.value} defaultChecked={value(state, 'otherClubs') === option.value} onChange={() => setOtherClubs(option.value)} />
+                  <span><b>{option.label}</b></span>
+                </label>
+              ))}
+            </div>
+            {state.fieldErrors?.otherClubs && <p className="join-error" id="otherClubs-error">{state.fieldErrors.otherClubs[0]}</p>}
+          </div>
+          {otherClubs === 'yes' && (
+            <Question name="otherClubsDetail" label="Which clubs, and what do you do there?" state={state} wide>
+              {(describedBy, invalid) => <input id="otherClubsDetail" name="otherClubsDetail" maxLength={300} placeholder="e.g. the robotics club, events team" defaultValue={value(state, 'otherClubsDetail')} aria-describedby={describedBy} aria-invalid={invalid || undefined} />}
+            </Question>
+          )}
         </fieldset>
 
         <fieldset className="join-section" id="section-4" data-done={filled.sections[3] || undefined}>

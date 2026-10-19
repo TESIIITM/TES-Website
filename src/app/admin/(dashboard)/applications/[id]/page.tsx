@@ -6,7 +6,7 @@ import { SubmitButton } from '@/components/admin/submit-button';
 import { requireAdmin } from '@/lib/auth';
 import { readEvaluation } from '@/lib/recruitment/ai-prompt';
 import { readEvidence } from '@/lib/recruitment/evidence';
-import { commitmentLabel, isStalled, yearLabel } from '@/lib/recruitment/options';
+import { commitmentLabel, describeChoices, describeOtherClubs, isStalled, yearLabel } from '@/lib/recruitment/options';
 import { importanceOf, IMPORTANCE_LABELS, readScores } from '@/lib/recruitment/rubric';
 import { scoreApplication } from '@/lib/recruitment/score';
 import { loadCriteria } from '@/lib/recruitment/server';
@@ -38,6 +38,7 @@ export default async function ApplicationPage({ params }: PageProps<'/admin/appl
   ]);
   if (!application) notFound();
 
+  const choices = describeChoices(application);
   const evaluation = readEvaluation(application.ai_evaluation);
   const evidence = readEvidence(application.auto_evidence);
   const { resolved, summary } = scoreApplication(application, criteria);
@@ -70,8 +71,8 @@ export default async function ApplicationPage({ params }: PageProps<'/admin/appl
 
       <div className="admin-stats admin-application-stats">
         <div className="admin-stat"><span className="eyebrow">Score</span><strong>{summary.score ?? '—'}</strong><small>{summary.scored} of {summary.total} criteria scored</small></div>
-        <div className="admin-stat"><span className="eyebrow">Department</span><strong className="admin-stat-text">{application.department}</strong><small>{application.role}</small></div>
-        <div className="admin-stat"><span className="eyebrow">Availability</span><strong>{application.weekly_hours}<span className="admin-stat-unit"> h/wk</span></strong><small>{commitmentLabel(application.commitment)}</small></div>
+        <div className="admin-stat"><span className="eyebrow">Roles</span><strong className="admin-stat-text">{choices.roles}</strong><small>{choices.domains}</small></div>
+        <div className="admin-stat"><span className="eyebrow">Availability</span><strong>{application.weekly_hours}<span className="admin-stat-unit"> h/wk</span></strong><small>{commitmentLabel(application.commitment)}</small><small>Other clubs: {describeOtherClubs(application)}</small></div>
         <div className="admin-stat">
           <span className="eyebrow">Confirmation email</span>
           <strong className="admin-stat-text">{EMAIL_STATUS[application.email_status] ?? application.email_status}</strong>

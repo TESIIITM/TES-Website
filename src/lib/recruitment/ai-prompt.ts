@@ -9,10 +9,14 @@ export type EvaluationInput = {
   contributions: string;
   showcase: string;
   plan: string;
-  department: string;
-  role: string;
+  /** Role names, e.g. "Mentor, Design". */
+  roles: string;
+  /** Domain names, empty when no role asks for one. */
+  domains: string;
   weeklyHours: number;
   commitment: Commitment;
+  /** "No", "Yes: <clubs>", or "Not asked" for applications from before the question. */
+  otherClubs: string;
   additionalInfo: string | null;
   links: string[];
   /** Facts the automatic checks established, e.g. verified GitHub contributions. */
@@ -51,10 +55,11 @@ ${rubric}
 
 <application>
 Year of study: ${yearLabel(input.yearOfStudy)}
-Preferred department: ${input.department}
-Preferred role: ${redact(input.role)}
+Roles applied for: ${redact(input.roles)}
+Domains: ${input.domains ? redact(input.domains) : '(none, no technical role)'}
 Hours per week: ${input.weeklyHours}
 Prefers: ${commitmentLabel(input.commitment)}
+Other clubs: ${redact(input.otherClubs)}
 
 What do you know about TES?
 ${answer(input.knowledge)}
@@ -137,7 +142,7 @@ const normalize = (value: string) => value.toLowerCase().replace(/[\s"“”'‘
  * can see when the model put words in someone's mouth.
  */
 export function verifyEvaluation(raw: RawEvaluation, input: EvaluationInput): StoredEvaluation {
-  const source = normalize([input.knowledge, input.contributions, input.showcase, input.plan, input.additionalInfo ?? '', input.role].map(redact).join(' \n '));
+  const source = normalize([input.knowledge, input.contributions, input.showcase, input.plan, input.additionalInfo ?? '', input.roles].map(redact).join(' \n '));
   return {
     ...raw,
     evidence: raw.evidence.map((entry) => ({ ...entry, verified: source.includes(normalize(entry.quote.replace(/^\.{3}|\.{3}$/g, ''))) })),
