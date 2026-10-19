@@ -187,11 +187,14 @@
 .admin-stat .admin-button { min-height: 34px; padding: 6px 12px; }
 .admin-application { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 40px; align-items: start; }
 .admin-application-side .admin-panel:first-child { margin-top: 48px; }
-.admin-answer { padding: 18px 0; border-bottom: 1px solid var(--border); }
+/* The number sits in its own column so questions and answers share one left edge. */
+.admin-answer { --answer-indent: 36px; padding: 20px 0 22px; border-bottom: 1px solid var(--border); }
 .admin-answer:first-of-type { border-top: 1px solid var(--border); }
-.admin-answer h3 { display: flex; gap: 12px; margin-bottom: 8px; font-size: 14px; font-weight: 650; }
-.admin-answer h3 span { color: var(--muted); font: 11px var(--mono); }
-.admin-answer p { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--text); font-size: 14px; line-height: 1.7; }
+.admin-answer h3 { display: flex; align-items: baseline; margin-bottom: 10px; font-size: 14px; font-weight: 650; line-height: 1.45; }
+.admin-answer h3 span { flex: 0 0 var(--answer-indent); color: var(--muted); font: 500 12px var(--mono); font-variant-numeric: tabular-nums; }
+.admin-answer > :not(h3) { margin-left: var(--answer-indent); }
+.admin-answer p { max-width: 70ch; white-space: pre-wrap; overflow-wrap: anywhere; color: color-mix(in oklch, var(--text) 86%, var(--muted)); font-size: 14.5px; line-height: 1.75; }
+.admin-answer p.admin-muted { color: var(--muted); font-style: italic; }
 .admin-links { display: grid; gap: 6px; padding: 0; list-style: none; font-size: 13px; }
 .admin-links a { overflow-wrap: anywhere; border-bottom: 1px solid var(--border); }
 .admin-links a:hover { border-color: currentColor; }
@@ -219,6 +222,7 @@
   .admin-stats:has(> :nth-child(6)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 620px) {
+  .admin-answer { --answer-indent: 28px; }
   .admin-rubric thead { display: table-header-group; }
   .admin-rubric, .admin-rubric tbody { display: table; width: 100%; }
   .admin-rubric tr { display: table-row; }
