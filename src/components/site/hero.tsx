@@ -3,7 +3,7 @@
 import { useRef, type PointerEvent } from 'react';
 import Image from 'next/image';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { ArrowDown, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { Eyebrow } from './eyebrow';
 import type { Navigate } from './navigation';
 import { NeedleIcon } from './needle-icon';
@@ -141,7 +141,6 @@ export function Hero({ navigate }: Props) {
           ))}
         </motion.div>
       </div>
-      <div className="hero-bottom"><a href="#explore" onClick={(event) => { event.preventDefault(); navigate('build'); }}><ArrowDown size={15} /> SCROLL TO EXPLORE</a></div>
     </section>
   );
 }
