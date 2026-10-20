@@ -307,7 +307,7 @@
 .people-section .person-portrait { position: relative; aspect-ratio: 1; overflow: visible; border: 0; border-radius: 50%; background: none; }
 .people-section .person-portrait img, .people-section .person-initials { position: relative; z-index: 1; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; filter: none; background: var(--bg-soft); box-shadow: 0 0 0 5px var(--bg); transition: transform .6s var(--spring); }
 .people-section .person-initials { display: grid; place-items: center; font: 400 clamp(36px, 4vw, 54px) var(--serif); }
-.people-section .person-card:hover .person-portrait img { transform: scale(1.04); }
+.people-section .person-card:hover .person-portrait img { transform: none; }
 .people-section .person-card h4 { margin: 20px 0 3px; font: 600 20px/1.2 var(--serif); letter-spacing: -.025em; }
 .people-section .person-card p { color: var(--muted); font: 500 13px/1.5 var(--sans); letter-spacing: 0; text-transform: none; }
 
@@ -389,10 +389,10 @@
   .domains .domain-tabs { grid-template-columns: 1fr; }
   .domains .domain-tabs button { min-height: 0; }
   .contributor-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-  .people-section .people-grid { gap: 36px 30px; padding: 0 8px; }
-  .people-section .person-card, .people-section .faculty-group .person-card { flex: 0 1 calc((100% - 30px) / 2); }
-  .people-section .person-portrait > .orbit { inset: -11px; }
-  .people-section .orbit i { --s: 4px; border-radius: 1px; }
+  .people-section .people-grid { gap: 40px 40px; padding: 0 10px; }
+  .people-section .person-card, .people-section .faculty-group .person-card { flex: 0 1 calc((100% - 40px) / 2); }
+  .people-section .person-portrait > .orbit { inset: -14px; }
+  .people-section .orbit i { --s: 5px; border-radius: 1.5px; }
   .people-section .people-group::before, .people-section .people-group::after { display: none; }
   .join-band { padding: 22px 18px; border-radius: 24px; }
   .pr-steps { margin: 0; padding: 8px 20px 4px; list-style: none; counter-reset: step; }
