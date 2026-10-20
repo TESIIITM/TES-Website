@@ -52,10 +52,13 @@
 .section-lede { max-width: 56ch; margin: 0; color: var(--muted); font-size: clamp(15px, 1.15vw, 17px); line-height: 1.7; }
 .section-head:has(h3) { gap: 12px; }
 .section-head:has(h3) .section-lede { font-size: 15px; }
-.diff-in { position: relative; isolation: isolate; }
-.section-head h3.diff-in::after, .section-head h3.diff-in::before { display: none; }
-.diff-in::after { content: ""; position: absolute; z-index: -1; inset: -.06em -.22em -.02em -.3em; border-left: 3px solid var(--git-green); border-radius: 4px 10px 10px 4px; background: var(--git-green-soft); transform-origin: left; opacity: 0; }
-.diff-in::before { content: "+"; position: absolute; top: .02em; left: -.75em; color: var(--git-green); font: 600 .5em/1.4 var(--sans); opacity: 0; }
+.diff-in { position: relative; }
+/* Each line of a title gets its own highlight, as added lines do in a diff:
+   it sweeps in from the left, then out to the right. */
+@property --sweep-from { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+@property --sweep-to { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+.diff-line { padding: 0 .1em; margin: 0 -.1em; border-radius: 6px; background-image: linear-gradient(90deg, transparent var(--sweep-from), var(--git-green-soft) var(--sweep-from), var(--git-green-soft) var(--sweep-to), transparent var(--sweep-to)); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.section-head h3 .diff-line { background: none; }
 
 /* About: principles as the checks every contribution passes. */
 .checks-card { max-width: 1480px; margin: 0 auto; overflow: hidden; border: 1px solid var(--border); border-radius: 22px; background: color-mix(in oklch, var(--bg-raised), transparent 45%); }
@@ -339,7 +342,16 @@
 .join-band .join-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; padding: 6px 20px 22px 66px; }
 
 /* Footer */
-.site-footer { --cg-0: rgb(255 255 255 / .055); --cg-1: #0e4429; --cg-2: #006d32; --cg-3: #26a641; --cg-4: #39d353; --git-green: #3fb950; }
+.site-footer { --cg-0: rgb(255 255 255 / .055); --cg-1: #0e4429; --cg-2: #006d32; --cg-3: #26a641; --cg-4: #39d353; --git-green: #3fb950; --git-green-soft: rgb(63 185 80 / .14); --git-purple: #a371f7; --git-purple-soft: rgb(163 113 247 / .16); --git-blue: #58a6ff; --git-blue-soft: rgb(56 139 253 / .14); }
+.footer-link-label { gap: 12px; }
+.footer-icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; transition: background .3s, color .3s, transform .45s var(--spring); }
+.footer-icon[data-tone="green"] { background: var(--git-green-soft); color: var(--git-green); }
+.footer-icon[data-tone="purple"] { background: var(--git-purple-soft); color: var(--git-purple); }
+.footer-icon[data-tone="blue"] { background: var(--git-blue-soft); color: var(--git-blue); }
+.footer-directory a:hover .footer-icon { color: var(--bg); transform: rotate(-6deg); }
+.footer-directory a:hover .footer-icon[data-tone="green"] { background: var(--git-green); }
+.footer-directory a:hover .footer-icon[data-tone="purple"] { background: var(--git-purple); }
+.footer-directory a:hover .footer-icon[data-tone="blue"] { background: var(--git-blue); }
 .footer-label { display: block; margin-bottom: 18px; color: var(--muted); font-size: 13px; font-weight: 600; }
 .footer-top .footer-cta .footer-label { margin: 0; }
 .footer-statement { justify-content: flex-end; gap: 28px; }
@@ -380,7 +392,6 @@
   .section-head h2 { font-size: clamp(36px, 10vw, 46px); }
   .section-head h3 { font-size: clamp(27px, 7.4vw, 34px); }
   .section-lede { font-size: 14px; }
-  .diff-in::before { display: none; }
   .checks-list li { grid-template-columns: 26px minmax(0, 1fr); padding: 20px 18px; }
   .check-label { grid-column: 2; justify-self: start; }
   .checks-head { padding: 14px 18px; }
@@ -407,8 +418,7 @@
 @keyframes merge-pulse { 0% { stroke-width: 0; stroke-opacity: 1; } 70%, 100% { stroke-width: 22; stroke-opacity: 0; } }
 @keyframes graph-wave { 0%, 100% { opacity: .55; } 45% { opacity: 1; } }
 @keyframes line-draw { to { transform: scaleY(1); } }
-@keyframes diff-add { 0% { opacity: 1; transform: scaleX(0); } 45% { opacity: 1; transform: scaleX(1); } 100% { opacity: 0; transform: scaleX(1); } }
-@keyframes diff-plus { 0%, 100% { opacity: 0; } 20%, 55% { opacity: 1; } }
+@keyframes diff-sweep { 0% { --sweep-from: 0%; --sweep-to: 0%; } 50% { --sweep-from: 0%; --sweep-to: 100%; } 100% { --sweep-from: 100%; --sweep-to: 100%; } }
 @keyframes check-draw { from { stroke-dashoffset: 14; } to { stroke-dashoffset: 0; } }
 @keyframes ring-draw { from { stroke-dashoffset: 51; } to { stroke-dashoffset: 0; } }
 @keyframes check-pop { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.18); opacity: 1; } 100% { transform: scale(1); } }
@@ -420,8 +430,7 @@
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .diff-in::after { animation: diff-add linear both; animation-timeline: view(); animation-range: entry 40% cover 48%; }
-    .diff-in::before { animation: diff-plus linear both; animation-timeline: view(); animation-range: entry 40% cover 48%; }
+    .section-head h2 .diff-line { animation: diff-sweep linear both; animation-timeline: view(); animation-range: entry 50% cover 50%; }
     .checks-ring circle { animation: ring-draw linear both; animation-timeline: view(); animation-range: entry 30% cover 45%; }
     .checks-list li .check-mark { animation: check-pop linear both; animation-timeline: view(); animation-range: entry 40% cover 32%; }
     .checks-list li .check-mark path { animation: check-draw linear both; animation-timeline: view(); animation-range: entry 60% cover 38%; }

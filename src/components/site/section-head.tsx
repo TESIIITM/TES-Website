@@ -13,7 +13,7 @@ export function SectionHead({ id, branch, title, lede, level = 2, className = ''
     <div className={`section-head ${className}`}>
       <div>
         <span className="branch-chip"><GitBranch size={13} aria-hidden="true" />{branch}</span>
-        <Heading id={id} className="diff-in">{title}</Heading>
+        <Heading id={id} className="diff-in"><span className="diff-line">{title}</span></Heading>
       </div>
       {lede && <p className="section-lede">{lede}</p>}
     </div>
