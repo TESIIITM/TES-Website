@@ -26,7 +26,8 @@ function buildActions(links: SiteLinks, featuredEvent: string | null): Action[] 
       ? { label: `See ${featuredEvent.replace(/\.$/, '')}`, detail: 'Current announcement and official links', group: 'DISCOVER', target: 'gather' }
       : { label: 'See events', detail: 'Announcements from the society', group: 'DISCOVER', target: 'gather' },
     { label: 'Meet the society', detail: 'Principles and the domains we work in', group: 'DISCOVER', target: 'about' },
-    { label: 'Meet the people', detail: 'Faculty, students, and the next step', group: 'DISCOVER', target: 'people' },
+    { label: 'Meet the people', detail: 'Faculty coordinators and the student team', group: 'DISCOVER', target: 'people' },
+    { label: 'Make your first contribution', detail: 'The way in, from first pull request to joining', group: 'DISCOVER', target: 'join' },
     { label: 'Open GitHub', detail: 'TESIIITM on GitHub', group: 'ELSEWHERE', target: links.github, external: true },
     { label: 'Read on Medium', detail: 'The society publication', group: 'ELSEWHERE', target: links.medium, external: true },
   ];

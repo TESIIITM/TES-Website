@@ -16,7 +16,7 @@ export function Videos({ videos }: { videos: YouTubeVideo[] }) {
 
   return (
     <div className="video-strip">
-      <span className="video-strip-label"><Play size={13} /> FROM THE CHANNEL</span>
+      <h4 className="strip-label"><Play size={14} aria-hidden="true" /> From the channel</h4>
       <ul className="video-grid">
         {videos.map((video) => (
           <li key={video.id}>

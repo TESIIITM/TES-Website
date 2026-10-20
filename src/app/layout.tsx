@@ -11,6 +11,7 @@ import '@/styles/github.css';
 import '@/styles/layout.css';
 import '@/styles/join.css';
 import '@/styles/hero.css';
+import '@/styles/open-source.css';
 import { themeInitScript } from '@/lib/theme';
 
 export const metadata: Metadata = {

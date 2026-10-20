@@ -121,7 +121,7 @@ test('a tech news link appears in the latest week on the site', async ({ page, b
 
   const site = await browser.newPage();
   await site.goto('/#news');
-  await expect(site.locator('#news .eyebrow')).toContainText('WEEK OF 30 DEC 2098');
+  await expect(site.locator('#news .news-week')).toContainText('Week of 30 DEC 2098');
   const card = site.locator('.news-card', { hasText: 'Playwright digest link' });
   await expect(card).toHaveAttribute('href', 'https://example.org/story');
   await expect(card).toContainText('Example Weekly');
