@@ -43,7 +43,7 @@ export function RepoStatsRow({ stats }: { stats: RepoStats }) {
 export function Projects({ repositories }: { repositories: Repository[] }) {
   return (
     <div className="build-block">
-      <SectionHead id="projects-title" level={3} branch="projects" title="Pick a repository. Open a pull request." lede="Live from GitHub, refreshed every hour." />
+      <SectionHead id="projects-title" level={3} title="Pick a repository. Open a pull request." lede="Live from GitHub, refreshed every hour." />
       <ul className="project-grid">
         {repositories.map((repository) => (
           <li key={repository.id}>
@@ -68,7 +68,7 @@ export function Projects({ repositories }: { repositories: Repository[] }) {
 export function Contributors({ section }: { section: ContributorsSection }) {
   return (
     <div className="build-block">
-      <SectionHead id="contributors-title" level={3} branch="contributors" title={section.heading} lede={section.intro ?? undefined} />
+      <SectionHead id="contributors-title" level={3} title={section.heading} lede={section.intro ?? undefined} />
       <ul className="contributor-grid">
         {section.people.map((person, index) => (
           <li key={person.login} style={{ '--i': index } as CSSProperties}>

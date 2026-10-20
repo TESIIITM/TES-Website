@@ -20,7 +20,6 @@ export function JoinPath({ navigate, links }: Props) {
       <div className="join-band">
         <SectionHead
           id="join-title"
-          branch="your-first-pr"
           title={<>Small contributions.<br /><em>Shared progress.</em></>}
           lede="There is no perfect first step. Pick something small and build alongside the community."
         />

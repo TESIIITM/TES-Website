@@ -14,7 +14,6 @@ export function About({ domains }: { domains: Domain[] }) {
     <section className="about-section" id="about" aria-labelledby="about-title">
       <SectionHead
         id="about-title"
-        branch="about"
         title={<>Curiosity is the<br /><em>only prerequisite.</em></>}
         lede="The Enigma Society is a community-first tech space at ABV-IIITM Gwalior. We grow through open discussions, peer learning, and building together across domains."
       />

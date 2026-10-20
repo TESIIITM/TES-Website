@@ -54,7 +54,7 @@ export function Domains({ domains }: { domains: Domain[] }) {
 
   return (
     <div className="domains">
-      <SectionHead id="domains-title" level={3} branch="domains" title="Where you can start." lede="Pick a direction. Your first contribution can be small, and it grows from there." />
+      <SectionHead id="domains-title" level={3} title="Where you can start." lede="Pick a direction. Your first contribution can be small, and it grows from there." />
       <div className="domain-layout">
         <div className="domain-tabs" role="tablist" aria-labelledby="domains-title" aria-orientation="vertical">
           {domains.map((domain, i) => (

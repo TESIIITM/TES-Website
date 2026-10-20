@@ -13,7 +13,6 @@ export function TechNews({ issue }: { issue: TechNewsIssue }) {
     <section id="news" className="news-section" aria-labelledby="news-title">
       <SectionHead
         id="news-title"
-        branch="tech-news"
         title={<>What moved<br /><em>in tech this week.</em></>}
         lede={<><strong className="news-week">Week of {formatStoryDate(issue.weekOf)}.</strong> What the society is reading and talking about. Picked by members, refreshed every Tuesday.</>}
       />
