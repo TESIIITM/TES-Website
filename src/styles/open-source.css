@@ -1,8 +1,8 @@
 /* The site below the hero, in the hero's language (pills, round marks, serif
    display type, springy motion) with GitHub's colours as signals: green for
    open and added, purple for merged, blue for branches and links. Each
-   section heading carries a branch chip and comes in like a line added in a
-   diff. Earlier rules in site.css stay as they are and are overridden
+   section heading carries a branch chip and is written in as you scroll.
+   Earlier rules in site.css stay as they are and are overridden
    here. */
 
 :root {
@@ -42,7 +42,7 @@
 .site-sections > section { position: relative; padding: clamp(88px, 9vw, 150px) 5% 0; border: 0; background: transparent; }
 .site-sections > section:last-child { padding-bottom: clamp(40px, 4vw, 72px); }
 
-/* Section headings: a branch chip and a diff-style title. */
+/* Section headings: a branch chip and a title that is written in as you scroll. */
 .section-head { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; max-width: 1480px; margin: 0 auto clamp(34px, 4vw, 56px); }
 .section-head > div { position: relative; min-width: 0; }
 .branch-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px 4px 9px; border: 1px solid color-mix(in srgb, var(--git-blue), transparent 70%); border-radius: 999px; background: var(--git-blue-soft); color: var(--git-blue); font-size: 12.5px; font-weight: 600; line-height: 1.3; }
@@ -52,13 +52,10 @@
 .section-lede { max-width: 56ch; margin: 0; color: var(--muted); font-size: clamp(15px, 1.15vw, 17px); line-height: 1.7; }
 .section-head:has(h3) { gap: 12px; }
 .section-head:has(h3) .section-lede { font-size: 15px; }
-.diff-in { position: relative; }
-/* Each line of a title gets its own highlight, as added lines do in a diff:
-   it sweeps in from the left, then out to the right. */
-@property --sweep-from { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
-@property --sweep-to { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
-.diff-line { padding: 0 .1em; margin: 0 -.1em; border-radius: 6px; background-image: linear-gradient(90deg, transparent var(--sweep-from), var(--git-green-soft) var(--sweep-from), var(--git-green-soft) var(--sweep-to), transparent var(--sweep-to)); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.section-head h3 .diff-line { background: none; }
+.ink-in { position: relative; }
+/* Titles are written in as you scroll: each line starts as faint ink and
+   fills to full ink from the left, with a soft edge. */
+@property --ink { syntax: "<percentage>"; inherits: false; initial-value: 100%; }
 
 /* About: principles as the checks every contribution passes. */
 .checks-card { max-width: 1480px; margin: 0 auto; overflow: hidden; border: 1px solid var(--border); border-radius: 22px; background: color-mix(in oklch, var(--bg-raised), transparent 45%); }
@@ -320,7 +317,6 @@
 :root[data-theme="light"] .join-band { --join-panel: var(--bg-raised); --join-ink: var(--text); }
 .join-band .section-head { flex-direction: column; align-items: flex-start; margin: 0; }
 .join-band .section-head h2 { font-size: clamp(40px, 4.4vw, 68px); }
-.join-band .section-head h2 em { color: var(--text); }
 .pr-card { view-timeline-name: --pr; overflow: hidden; border: 1px solid var(--border); border-radius: 22px; background: var(--bg); box-shadow: 0 30px 70px oklch(.05 0 0 / .25); }
 .pr-card-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 16px 20px; border-bottom: 1px solid var(--border); }
 .pr-card-head strong { font-size: 15px; font-weight: 650; }
@@ -417,7 +413,7 @@
 @keyframes branch-flow { from { stroke-dashoffset: 400; } to { stroke-dashoffset: 0; } }
 @keyframes merge-pulse { 0% { stroke-width: 0; stroke-opacity: 1; } 70%, 100% { stroke-width: 22; stroke-opacity: 0; } }
 @keyframes graph-wave { 0%, 100% { opacity: .55; } 45% { opacity: 1; } }
-@keyframes diff-sweep { 0% { --sweep-from: 0%; --sweep-to: 0%; } 50% { --sweep-from: 0%; --sweep-to: 100%; } 100% { --sweep-from: 100%; --sweep-to: 100%; } }
+@keyframes ink-fill { from { --ink: -12%; } to { --ink: 100%; } }
 @keyframes check-draw { from { stroke-dashoffset: 14; } to { stroke-dashoffset: 0; } }
 @keyframes ring-draw { from { stroke-dashoffset: 51; } to { stroke-dashoffset: 0; } }
 @keyframes check-pop { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.18); opacity: 1; } 100% { transform: scale(1); } }
@@ -429,7 +425,8 @@
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .section-head h2 .diff-line { animation: diff-sweep linear both; animation-timeline: view(); animation-range: entry 50% cover 50%; }
+    .section-head h2 .ink-line, .section-head h2 .ink-line * { color: transparent; }
+    .section-head h2 .ink-line { background-image: linear-gradient(90deg, var(--text) var(--ink), color-mix(in oklch, var(--text), transparent 82%) calc(var(--ink) + 12%)); -webkit-background-clip: text; background-clip: text; -webkit-box-decoration-break: clone; box-decoration-break: clone; animation: ink-fill linear both; animation-timeline: view(); animation-range: entry 40% cover 45%; }
     .checks-ring circle { animation: ring-draw linear both; animation-timeline: view(); animation-range: entry 30% cover 45%; }
     .checks-list li .check-mark { animation: check-pop linear both; animation-timeline: view(); animation-range: entry 40% cover 32%; }
     .checks-list li .check-mark path { animation: check-draw linear both; animation-timeline: view(); animation-range: entry 60% cover 38%; }
