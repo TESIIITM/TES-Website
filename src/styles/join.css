@@ -2,13 +2,8 @@
    The page reads as a GitHub README, in GitHub's own light and dark palettes. */
 
 /* Entry points on the main site */
-.header-join { display: inline-flex; align-items: center; gap: 8px; min-height: 39px; padding: 8px 15px; background: var(--text); color: var(--bg); font-size: 11px; font-weight: 760; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; transition: box-shadow .2s; }
-.header-join:hover { box-shadow: 0 0 0 1px var(--text), 0 8px 28px var(--accent-soft); }
 .join-actions .join-apply { min-height: 51px; border: 1px solid var(--join-ink); background: transparent; color: var(--join-ink); }
 .join-actions .join-apply:hover { background: color-mix(in oklch, var(--join-ink), transparent 90%); }
-@media (max-width: 620px) { .header-join { min-height: 34px; padding: 7px 11px; font-size: 10px; } }
-/* Room for Join TES on narrow phones; GitHub stays linked from Build and the footer. */
-@media (max-width: 520px) { .site-header .header-github { display: none; } }
 
 /* Palette: GitHub light by default, GitHub dark unless the site is in light mode. */
 .join-page {
