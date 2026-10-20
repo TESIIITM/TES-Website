@@ -398,6 +398,7 @@
 
 /* Motion. Scroll-linked where the browser supports it; everything is in its
    final state otherwise, and for anyone who prefers less motion. */
+@keyframes field-glow { 0%, 100% { opacity: .12; filter: none; } 50% { opacity: .95; filter: brightness(1.35) drop-shadow(0 0 7px var(--git-green)); } }
 @keyframes dep-alert { 50% { stroke-width: 4; } }
 @keyframes branch-flow { from { stroke-dashoffset: 400; } to { stroke-dashoffset: 0; } }
 @keyframes merge-pulse { 0% { stroke-width: 0; stroke-opacity: 1; } 70%, 100% { stroke-width: 22; stroke-opacity: 0; } }
@@ -422,6 +423,7 @@
     .checks-list li .check-mark { animation: check-pop linear both; animation-timeline: view(); animation-range: entry 40% cover 32%; }
     .checks-list li .check-mark path { animation: check-draw linear both; animation-timeline: view(); animation-range: entry 60% cover 38%; }
     .branch-feature { animation: draw-path linear both; animation-timeline: view(); animation-range: entry 10% cover 45%; }
+    .people-section .people-group::before, .people-section .people-group::after { animation: field-glow linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
     .contributor-grid li { animation: avatar-commit linear both; animation-timeline: view(); animation-range: entry 0% cover 25%; }
     .pr-timeline::after { transform: scaleY(0); animation: line-draw linear both; animation-timeline: --pr; animation-range: cover 18% cover 52%; }
     .pr-timeline li .pr-badge { animation: badge-pop linear both; animation-timeline: view(); animation-range: entry 70% cover 30%; }
