@@ -301,7 +301,7 @@
 .people-section .people-group-heading::before { display: none; }
 .people-section .people-group-heading h3 { margin: 0; font: 600 clamp(26px, 2.4vw, 34px)/1.15 var(--serif); letter-spacing: -.035em; }
 .people-section .people-group-heading p { margin: 0; color: var(--muted); font-size: 14px; }
-.people-section .people-grid { justify-content: center; gap: clamp(18px, 2.4vw, 34px); margin-top: 28px; }
+.people-section .people-grid { justify-content: center; gap: 44px clamp(52px, 4.4vw, 72px); margin-top: 40px; }
 .people-section .person-card { flex: 0 1 200px; padding: 0; text-align: center; transition: transform .5s var(--spring); }
 .people-section .faculty-group .person-card { flex-basis: 220px; }
 .people-section .person-card:hover, .people-section .person-card:focus-visible { transform: translateY(-6px); }
@@ -387,7 +387,10 @@
   .domains .domain-tabs { grid-template-columns: 1fr; }
   .domains .domain-tabs button { min-height: 0; }
   .contributor-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-  .people-section .person-card, .people-section .faculty-group .person-card { flex: 0 1 calc((100% - 18px) / 2); }
+  .people-section .people-grid { gap: 36px 30px; padding: 0 8px; }
+  .people-section .person-card, .people-section .faculty-group .person-card { flex: 0 1 calc((100% - 30px) / 2); }
+  .people-section .person-portrait > .orbit { inset: -11px; }
+  .people-section .orbit i { --s: 4px; border-radius: 1px; }
   .people-section .people-group::before, .people-section .people-group::after { display: none; }
   .join-band { padding: 22px 18px; border-radius: 24px; }
   .join-band .join-actions { padding: 6px 18px 20px; }
