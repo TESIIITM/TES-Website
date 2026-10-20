@@ -1,4 +1,4 @@
-import { ArrowUpRight, BookOpen, GitCommitHorizontal, GitMerge, GitPullRequest } from 'lucide-react';
+import { ArrowUpRight, GitMerge, GitPullRequest } from 'lucide-react';
 import type { SiteLinks } from '@/lib/content/types';
 import type { Navigate } from './navigation';
 import { NeedleIcon } from './needle-icon';
@@ -6,12 +6,12 @@ import { SectionHead } from './section-head';
 
 type Props = { navigate: Navigate; links: SiteLinks };
 
-/** Joining, told as a first pull request: opened, reviewed, committed, merged. */
+/** Joining, told as the steps of a first pull request. */
 const steps = [
-  { kind: 'open', icon: GitPullRequest, title: 'Explore the projects', detail: 'Find a repository you would like to work on.' },
-  { kind: 'review', icon: BookOpen, title: 'Read the contribution guide', detail: 'How we branch, review and merge.' },
-  { kind: 'commit', icon: GitCommitHorizontal, title: 'Make your first change', detail: 'A typo, a bug fix or clearer docs all count.' },
-  { kind: 'merge', icon: GitMerge, title: 'Apply to join the team', detail: 'Merged. Welcome to the society.' },
+  { title: 'Explore the projects', detail: 'Find a repository you would like to work on.' },
+  { title: 'Read the contribution guide', detail: 'How we branch, review and merge.' },
+  { title: 'Make your first change', detail: 'A typo, a bug fix or clearer docs all count.' },
+  { title: 'Apply to join the team', detail: 'Once it is merged, you are one of us.' },
 ] as const;
 
 export function JoinPath({ navigate, links }: Props) {
@@ -33,12 +33,9 @@ export function JoinPath({ navigate, links }: Props) {
             <strong>Your first contribution</strong>
             <span className="pr-number">#1</span>
           </div>
-          <ol className="pr-timeline">
-            {steps.map(({ kind, icon: Icon, title, detail }) => (
-              <li key={kind} data-kind={kind}>
-                <span className="pr-badge" aria-hidden="true"><Icon size={16} /></span>
-                <div><strong>{title}</strong><span>{detail}</span></div>
-              </li>
+          <ol className="pr-steps">
+            {steps.map(({ title, detail }) => (
+              <li key={title}><strong>{title}</strong><span>{detail}</span></li>
             ))}
           </ol>
           <div className="join-actions">
