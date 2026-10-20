@@ -223,7 +223,7 @@
 .instagram-image img, .news-image img, .video-frame img { filter: none; }
 .instagram-card:hover .instagram-image img, .news-card:hover .news-image img, .video-frame button:hover img, .video-frame button:focus-visible img { filter: none; }
 .orbit { position: absolute; inset: -11px; container-type: inline-size; border-radius: 50%; pointer-events: none; }
-.orbit i { --s: 4px; position: absolute; top: 0; left: calc(50% - var(--s) / 2); width: var(--s); height: var(--s); border-radius: 1px; background: var(--cg-0); transform-origin: 50% 50cqw; transform: rotate(calc(var(--k) * 360deg / var(--count))); transition: background .25s ease; transition-delay: 0s; }
+.orbit i { --s: 4px; position: absolute; top: 0; left: calc(50% - var(--s) / 2); width: var(--s); height: var(--s); border-radius: 1px; background: transparent; transform-origin: 50% 50cqw; transform: rotate(calc(var(--k) * 360deg / var(--count))); transition: background .25s ease; transition-delay: 0s; }
 .people-section .person-portrait > .orbit { display: block; inset: -18px; width: auto; height: auto; background: none; }
 .people-section .orbit i { --s: 7px; border-radius: 2px; }
 :is(.contributor-grid a, .people-section .person-card):is(:hover, :focus-visible) .orbit i { transition-delay: calc(var(--k) * 22ms); }
@@ -454,4 +454,17 @@
 }
 @media (max-width: 900px) {
   .people-section .people-group::before, .people-section .people-group::after { display: none; }
+}
+
+/* The footer fits below the sticky header on laptop screens: spacing, the
+   sign-off and the graph scale with the window's height as well as its width. */
+@media (min-width: 1081px) {
+  .site-footer { padding-top: clamp(24px, 4svh, 56px); }
+  .footer-top { padding-bottom: clamp(20px, 3.4svh, 48px); }
+  .footer-main { padding: clamp(24px, 4.2svh, 64px) 0; }
+  .footer-statement { gap: clamp(14px, 2.6svh, 28px); }
+  .footer-statement h2 { font-size: clamp(54px, min(5.6vw, 10.5svh), 112px); }
+  .footer-statement .footer-graph { max-width: min(640px, 66svh); }
+  .footer-directory a { min-height: clamp(42px, 6svh, 52px); }
+  .footer-directory .footer-label { margin-bottom: clamp(10px, 1.8svh, 18px); }
 }
