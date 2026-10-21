@@ -9,7 +9,7 @@ export function People({ members }: { members: Member[] }) {
 
   return (
     <section className="about-section people-section" id="people" aria-labelledby="people-title">
-      <SectionHead id="people-title" title="People" lede="Faculty who guide the society and the students who run it day to day." />
+      <SectionHead id="people-title" title={<>The people<br /><em>behind TES.</em></>} lede="Faculty who guide the society and the students who run it day to day." />
       {faculty.length > 0 && (
         <div className="people-group faculty-group" aria-labelledby="faculty-title">
           <div className="people-group-heading"><h3 id="faculty-title">Faculty coordinators</h3></div>

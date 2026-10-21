@@ -1,4 +1,4 @@
-import { ArrowUpRight, GitMerge, GitPullRequest } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import type { SiteLinks } from '@/lib/content/types';
 import type { Navigate } from './navigation';
 import { NeedleIcon } from './needle-icon';
@@ -6,7 +6,7 @@ import { SectionHead } from './section-head';
 
 type Props = { navigate: Navigate; links: SiteLinks };
 
-/** Joining, told as the steps of a first pull request. */
+/** Joining, plotted as a route: three waypoints, then the compass at the end. */
 const steps = [
   { title: 'Explore the projects', detail: 'Find a repository you would like to work on.' },
   { title: 'Read the contribution guide', detail: 'How we branch, review and merge.' },
@@ -23,26 +23,25 @@ export function JoinPath({ navigate, links }: Props) {
           title="Get involved"
           lede="Anyone can contribute to the projects. Joining the team is a separate application."
         />
-        <div className="pr-card">
-          <div className="pr-card-head">
-            <span className="pr-state" aria-hidden="true">
-              <span className="pr-state-open"><GitPullRequest size={15} /> Open</span>
-              <span className="pr-state-merged"><GitMerge size={15} /> Merged</span>
-            </span>
-            <strong>Your first contribution</strong>
-            <span className="pr-number">#1</span>
-          </div>
-          <ol className="pr-steps">
-            {steps.map(({ title, detail }) => (
-              <li key={title}><strong>{title}</strong><span>{detail}</span></li>
-            ))}
-          </ol>
-          <div className="join-actions">
-            <a className="pill-button pill-primary" href="/join">Join TES<span className="join-knob" aria-hidden="true"><NeedleIcon /></span></a>
-            <a className="pill-button" href="#build" onClick={(event) => { event.preventDefault(); navigate('build'); }}>Explore projects</a>
-            <a className="inline-link" href={links.contributionGuide} target="_blank" rel="noopener noreferrer">Contribution guide <ArrowUpRight size={15} /></a>
-          </div>
-        </div>
+        <ol className="join-route">
+          {steps.map(({ title, detail }, index) => {
+            const last = index === steps.length - 1;
+            return (
+              <li key={title} data-last={last || undefined}>
+                <span className="route-mark" aria-hidden="true">{last ? <NeedleIcon size={18} /> : index + 1}</span>
+                <strong>{title}</strong>
+                <span className="route-detail">{detail}</span>
+                {last && (
+                  <div className="join-actions">
+                    <a className="pill-button pill-primary" href="/join">Join TES<span className="join-knob" aria-hidden="true"><NeedleIcon /></span></a>
+                    <a className="pill-button" href="#build" onClick={(event) => { event.preventDefault(); navigate('build'); }}>Explore projects</a>
+                    <a className="inline-link" href={links.contributionGuide} target="_blank" rel="noopener noreferrer">Contribution guide <ArrowUpRight size={15} /></a>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );
