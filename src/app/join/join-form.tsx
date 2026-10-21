@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useActionState, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useFormStatus } from 'react-dom';
 import { ArrowRight, Check, FileText } from 'lucide-react';
@@ -8,6 +8,7 @@ import { initialFormState, type FormState } from '@/lib/admin/form-state';
 import { ANSWER_MAX, ANSWER_MIN, COMMITMENTS, MAX_DOMAINS, YEARS, domainQuestion, domainsFor, rolesFor } from '@/lib/recruitment/options';
 import { IMPORTANCE_LABELS, type Importance } from '@/lib/recruitment/rubric';
 import { submitApplication } from './actions';
+import { clearDraft, readDraft, saveDraft, type Draft } from './draft';
 import { CommitmentGlyph, JoinSidebar, SectionHeading, Signature } from './form-art';
 import { DomainPicker, RolePicker } from './pickers';
 
@@ -98,7 +99,14 @@ function SubmitButton() {
 }
 
 export function JoinForm({ departments, importance }: Props) {
-  const [state, formAction] = useActionState(submitApplication, initialFormState);
+  const [result, formAction] = useActionState(submitApplication, initialFormState);
+  // Undefined until read after hydration, so the server and first client render match.
+  const [draft, setDraft] = useState<Draft | null>();
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- sessionStorage only exists in the browser.
+  useEffect(() => setDraft(readDraft()), []);
+  // A returned form has the latest answers; before the first attempt, a saved draft fills it.
+  const state = useMemo(() => (!result.values && draft ? { ...result, values: draft } : result), [result, draft]);
+  useEffect(() => { if (result.status === 'saved') clearDraft(); }, [result.status]);
   const formRef = useRef<HTMLFormElement>(null);
   const [filled, setFilled] = useState({ done: 0, total: REQUIRED.length, sections: SECTIONS.map(() => false) });
   const [resumeName, setResumeName] = useState<string | null>(null);
@@ -149,9 +157,11 @@ export function JoinForm({ departments, importance }: Props) {
       total: required.length,
       sections: SECTIONS.map((names) => names.filter((name) => required.includes(name)).every(answered)),
     });
+    // Not before the draft is read, or the empty form would overwrite it.
+    if (draft !== undefined) saveDraft(form);
   };
-  // Runs after the domain question appears or goes, so the count includes it.
-  useEffect(measure, [state, pickedRoles, year, otherClubs, departments]);
+  // Runs after the domain question appears or goes, so the count and the draft include it.
+  useEffect(measure, [state, draft, pickedRoles, pickedDomains, year, otherClubs, departments]);
 
   if (state.status === 'saved') {
     return (

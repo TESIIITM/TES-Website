@@ -42,6 +42,19 @@ async function fillApplication(page: Page) {
   await page.getByLabel(/I confirm these answers are my own/).check();
 }
 
+test('unsent answers survive a refresh, but consent is asked again', async ({ page }) => {
+  await page.goto('/join');
+  await fillApplication(page);
+  await page.reload();
+  await expect(page.getByLabel('Name')).toHaveValue(applicant);
+  await expect(page.getByLabel('Year of study')).toHaveValue('2');
+  await expect(page.getByLabel('How would you like to contribute to TES?')).toHaveValue(/keyboard shortcuts/);
+  await expect(page.getByRole('checkbox', { name: /^Design/ })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'Web Development' })).toBeChecked();
+  await expect(page.getByLabel('Which clubs, and what do you do there?')).toHaveValue('Robotics club, events team');
+  await expect(page.getByLabel(/I confirm these answers are my own/)).not.toBeChecked();
+});
+
 test('an applicant sees what is missing, then sends the form once', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'Writes shared data; run once.');
   await page.goto('/join');
@@ -70,7 +83,9 @@ test('an applicant sees what is missing, then sends the form once', async ({ pag
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Thank you, Playwright.');
   await page.screenshot({ path: 'test-results/join-sent.png' });
 
+  // Sending clears the saved answers.
   await page.goto('/join');
+  await expect(page.getByLabel('Name')).toHaveValue('');
   await fillApplication(page);
   await page.getByRole('button', { name: 'Send application' }).click();
   await expect(page.locator('#rollNumber-error')).toContainText('We already have an application from this roll number');
