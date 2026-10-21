@@ -1,7 +1,8 @@
 'use client';
 
 import { useActionState } from 'react';
-import { FormMessage, TextField } from '@/components/admin/fields';
+import { FormMessage } from '@/components/admin/fields';
+import { PasswordField } from '@/components/admin/password-field';
 import { SubmitButton } from '@/components/admin/submit-button';
 import { initialFormState } from '@/lib/admin/form-state';
 import { MIN_PASSWORD_LENGTH } from '@/lib/validation';
@@ -15,18 +16,9 @@ export function ChangePasswordForm({ email }: { email: string }) {
       <FormMessage state={state} />
       {/* Lets password managers save the new password against the right account. */}
       <input type="email" name="username" autoComplete="username" value={email} readOnly hidden />
-      <TextField name="currentPassword" label="Current password" type="password" autoComplete="current-password" required state={state} />
-      <TextField
-        name="password"
-        label="New password"
-        type="password"
-        autoComplete="new-password"
-        minLength={MIN_PASSWORD_LENGTH}
-        hint={`At least ${MIN_PASSWORD_LENGTH} characters.`}
-        required
-        state={state}
-      />
-      <TextField name="confirmPassword" label="Confirm new password" type="password" autoComplete="new-password" required state={state} />
+      <PasswordField name="currentPassword" label="Current password" autoComplete="current-password" required state={state} />
+      <PasswordField name="password" label="New password" autoComplete="new-password" minLength={MIN_PASSWORD_LENGTH} hint={`At least ${MIN_PASSWORD_LENGTH} characters.`} required state={state} />
+      <PasswordField name="confirmPassword" label="Confirm new password" autoComplete="new-password" required state={state} />
       <div className="admin-form-actions"><SubmitButton pendingLabel="Saving…">Change password</SubmitButton></div>
     </form>
   );
