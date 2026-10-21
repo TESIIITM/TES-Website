@@ -177,10 +177,10 @@ function CompassArt() {
 }
 
 const arts = [
-  { test: /web|app|front|design/i, art: WebArt, hint: 'Drag the window’s edge. The layout reflows to fit.' },
-  { test: /\bcp\b|dsa|algorithm|competitive/i, art: TreeArt, hint: 'Point at a value to see the path a search takes.' },
-  { test: /\bai\b|data|machine|\bml\b/i, art: ClusterArt, hint: 'Move across the plot to steer the decision line.' },
-  { test: /security|open source|devops/i, art: DependencyArt, hint: 'Patch the vulnerable package to fix everything that depends on it.' },
+  { test: /web|app|front|design/i, art: WebArt },
+  { test: /\bcp\b|dsa|algorithm|competitive/i, art: TreeArt },
+  { test: /\bai\b|data|machine|\bml\b/i, art: ClusterArt },
+  { test: /security|open source|devops/i, art: DependencyArt },
 ];
 
 /** An interactive drawing for a domain, chosen by its title. */
@@ -190,7 +190,6 @@ export function DomainArt({ title }: { title: string }) {
   return (
     <figure className="domain-figure">
       <Art />
-      <figcaption>{match?.hint ?? 'Move the pointer and the needle follows.'}</figcaption>
     </figure>
   );
 }
