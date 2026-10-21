@@ -14,7 +14,10 @@ import '@/styles/hero.css';
 import { themeInitScript } from '@/lib/theme';
 
 export const metadata: Metadata = {
-  title: 'The Enigma Society — Find your next commit',
+  title: {
+    default: 'The Enigma Society — Find your next commit',
+    template: '%s · The Enigma Society',
+  },
   description: 'The Enigma Society at ABV-IIITM Gwalior. Learn together, build in public, and contribute to open source.',
   icons: { icon: { url: '/favicon.svg', type: 'image/svg+xml' } },
 };
