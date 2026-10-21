@@ -13,7 +13,7 @@ export function ContributorsForm({ settings }: { settings: Tables<'github_settin
     <form className="admin-form" action={formAction} noValidate>
       <FormMessage state={state} />
       <Checkbox name="showContributors" label="Show contributors on the site" hint="Everyone who has committed to the repositories above, most commits first." state={state} defaultChecked={settings?.show_contributors ?? true} />
-      <TextField name="heading" label="Heading" required maxLength={80} state={state} defaultValue={settings?.contributors_heading ?? 'Merged into main.'} />
+      <TextField name="heading" label="Heading" required maxLength={80} state={state} defaultValue={settings?.contributors_heading ?? 'Contributors'} />
       <TextField name="maxContributors" label="How many to show" type="number" min={1} max={100} inputMode="numeric" required state={state} defaultValue={settings?.max_contributors ?? 24} />
       <TextArea name="intro" label="Introduction" maxLength={300} rows={2} hint="Optional. One sentence beside the heading." className="admin-field-wide" state={state} defaultValue={settings?.contributors_intro} />
       <TextArea

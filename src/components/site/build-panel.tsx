@@ -40,7 +40,7 @@ export function BuildPanel({ links, repositories, contributors }: Props) {
             <span className="repo-chip">Public</span>
             <span className="repo-chip is-featured">Featured</span>
           </div>
-          <h3>{featured?.headline ?? DEFAULT_HEADLINE}<br /><em>{featured?.headlineEmphasis ?? DEFAULT_EMPHASIS}</em></h3>
+          <h3>{featured?.headline ?? DEFAULT_HEADLINE} {featured?.headlineEmphasis ?? DEFAULT_EMPHASIS}</h3>
           {featured?.description && <p>{featured.description}</p>}
           {(featured?.language || featured?.license) && (
             <div className="repo-meta">

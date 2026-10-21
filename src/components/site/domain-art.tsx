@@ -42,7 +42,8 @@ function WebArt() {
         <rect x={frame - 2} y="115" width="24" height="50" rx="12" />
         <path d={`M${frame + 6} 130v20M${frame + 14} 130v20`} />
       </g>
-      <text className="art-readout" x={frame + 38 > 520 ? frame - 70 : frame + 38} y="34">{columns} {columns === 1 ? 'column' : 'columns'}</text>
+      {/* In the title bar, right-aligned, so it stays inside the window at any width. */}
+      <text className="art-readout" x={frame - 6} y="30" textAnchor="end">{columns} {columns === 1 ? 'column' : 'columns'}</text>
     </svg>
   );
 }
@@ -179,7 +180,7 @@ const arts = [
   { test: /web|app|front|design/i, art: WebArt, hint: 'Drag the window’s edge. The layout reflows to fit.' },
   { test: /\bcp\b|dsa|algorithm|competitive/i, art: TreeArt, hint: 'Point at a value to see the path a search takes.' },
   { test: /\bai\b|data|machine|\bml\b/i, art: ClusterArt, hint: 'Move across the plot to steer the decision line.' },
-  { test: /security|open source|devops/i, art: DependencyArt, hint: 'Patch the vulnerable package and watch the fix reach your app.' },
+  { test: /security|open source|devops/i, art: DependencyArt, hint: 'Patch the vulnerable package to fix everything that depends on it.' },
 ];
 
 /** An interactive drawing for a domain, chosen by its title. */

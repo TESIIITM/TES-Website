@@ -23,7 +23,7 @@ export function Explorer({ panel, onPanel, content }: Props) {
 
   return (
     <section id="explore" className="explorer-section" aria-labelledby="explorer-title">
-      <SectionHead id="explorer-title" title={<>Build. Learn.<br /><em>Gather.</em></>} lede="Three ways into the society. Open a project, read what members write, or come to the next event." />
+      <SectionHead id="explorer-title" title="Projects, stories and events" lede="Open a project, read what members write, or come to the next event." />
       <div id="explore-tabs" className="explorer-tabs" role="tablist" aria-label="Explore the community">
         {panels.map((item, index) => (
           <button id={`tab-${item.value}`} role="tab" aria-selected={panel === item.value} aria-controls={`panel-${item.value}`} tabIndex={panel === item.value ? 0 : -1} onClick={() => onPanel(item.value)} onKeyDown={(event) => onKeyDown(event, index)} key={item.value}>

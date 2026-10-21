@@ -50,7 +50,7 @@ export function LearnPanel({ stories, videos, mediumUrl }: Props) {
   return (
     <div className="learn-panel">
       <div className="panel-heading">
-        <SectionHead id="learn-title" level={3} title={<>Knowledge moves<br /><em>when we share it.</em></>} />
+        <SectionHead id="learn-title" level={3} title="Stories" />
         <a className="pill-button" href={mediumUrl} target="_blank" rel="noopener noreferrer">All stories on Medium <ArrowUpRight size={16} /></a>
       </div>
       <div className="reading-tools">

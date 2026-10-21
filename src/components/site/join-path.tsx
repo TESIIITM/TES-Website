@@ -11,7 +11,7 @@ const steps = [
   { title: 'Explore the projects', detail: 'Find a repository you would like to work on.' },
   { title: 'Read the contribution guide', detail: 'How we branch, review and merge.' },
   { title: 'Make your first change', detail: 'A typo, a bug fix or clearer docs all count.' },
-  { title: 'Apply to join the team', detail: 'Once it is merged, you are one of us.' },
+  { title: 'Apply to join the team', detail: 'Fill in the JOIN TES form while applications are open.' },
 ] as const;
 
 export function JoinPath({ navigate, links }: Props) {
@@ -20,8 +20,8 @@ export function JoinPath({ navigate, links }: Props) {
       <div className="join-band">
         <SectionHead
           id="join-title"
-          title={<>Small contributions.<br /><em>Shared progress.</em></>}
-          lede="There is no perfect first step. Pick something small and build alongside the community."
+          title="Get involved"
+          lede="Anyone can contribute to the projects. Joining the team is a separate application."
         />
         <div className="pr-card">
           <div className="pr-card-head">

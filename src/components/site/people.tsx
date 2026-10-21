@@ -9,16 +9,16 @@ export function People({ members }: { members: Member[] }) {
 
   return (
     <section className="about-section people-section" id="people" aria-labelledby="people-title">
-      <SectionHead id="people-title" title={<>The people<br /><em>behind TES.</em></>} lede="Faculty who guide the society and the students who run it day to day." />
+      <SectionHead id="people-title" title="People" lede="Faculty who guide the society and the students who run it day to day." />
       {faculty.length > 0 && (
         <div className="people-group faculty-group" aria-labelledby="faculty-title">
-          <div className="people-group-heading"><h3 id="faculty-title">Faculty coordinators</h3><p>Mentors who guide the society.</p></div>
+          <div className="people-group-heading"><h3 id="faculty-title">Faculty coordinators</h3></div>
           <div className="people-grid faculty-grid">{faculty.map((member) => <PersonCard member={member} key={member.id} />)}</div>
         </div>
       )}
       {students.length > 0 && (
         <div className="people-group students-group" aria-labelledby="students-title">
-          <div className="people-group-heading"><h3 id="students-title">Student team</h3><p>The students who plan, build and run things.</p></div>
+          <div className="people-group-heading"><h3 id="students-title">Student team</h3></div>
           <div className="people-grid student-grid">{students.map((member) => <PersonCard member={member} key={member.id} />)}</div>
         </div>
       )}
