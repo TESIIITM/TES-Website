@@ -70,9 +70,6 @@
 .hero-cta:hover, .hero-cta:focus-visible { color: var(--bg); border-color: var(--text); }
 .hero-cta:hover .hero-cta-fill, .hero-cta:focus-visible .hero-cta-fill { transform: scale(15); }
 .hero-cta:hover .hero-cta-disc .needle-icon, .hero-cta:focus-visible .hero-cta-disc .needle-icon { transform: rotate(90deg); }
-.hero-bottom { border-top: 0; }
-.hero-bottom a { gap: 12px; color: var(--muted); }
-.hero-bottom svg { animation: hero-bob 2.2s ease-in-out infinite; }
 
 /* Compass. The hero sets --needle (degrees, unwrapped so it never turns the
    long way round), data-aim to the point being aimed at, and data-steering
@@ -143,9 +140,8 @@
 @keyframes hero-twinkle { 0%, 100% { opacity: .18; } 50% { opacity: .7; } }
 @keyframes hero-settle { 0%, 100% { transform: rotate(-7deg); } 25% { transform: rotate(5deg); } 50% { transform: rotate(-3deg); } 75% { transform: rotate(8deg); } }
 @keyframes hero-march { to { stroke-dashoffset: -20; } }
-@keyframes hero-bob { 50% { transform: translateY(4px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .compass-stars circle, .compass-bezel, .compass-needle svg, .compass-track, .hero-bottom svg { animation: none !important; }
+  .compass-stars circle, .compass-bezel, .compass-needle svg, .compass-track { animation: none !important; }
   .compass-needle, .nav-lens, .hero-cta-fill, .brand .brand-compass { transition: none; }
 }

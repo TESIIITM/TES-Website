@@ -11,8 +11,8 @@ export function InstagramPosts({ posts, instagramUrl }: Props) {
   return (
     <div className="instagram-strip">
       <div className="instagram-strip-head">
-        <span><Instagram size={15} /> ON INSTAGRAM</span>
-        <a className="text-action" href={instagramUrl} target="_blank" rel="noopener noreferrer">Follow the society <ArrowUpRight size={16} /></a>
+        <h4 className="strip-label"><Instagram size={15} aria-hidden="true" /> On Instagram</h4>
+        <a className="pill-button" href={instagramUrl} target="_blank" rel="noopener noreferrer">Follow the society <ArrowUpRight size={16} /></a>
       </div>
       <ul className="instagram-grid">
         {posts.map((post) => (

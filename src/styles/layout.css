@@ -15,7 +15,6 @@
   .hero-content { flex: 1; width: 100%; min-height: 0; padding: clamp(24px, 5svh, 56px) 0; }
   .hero-copy h1 { font-size: clamp(60px, min(8.2vw, 14.5svh), 136px); margin: clamp(18px, 3.4svh, 37px) 0 clamp(18px, 3.4svh, 34px); }
   .hero-actions { margin-top: clamp(20px, 3.4svh, 32px); }
-  .hero-bottom { width: 100%; }
 }
 
 /* Reading list pages, drawn like the filter buttons above them. */
@@ -28,36 +27,3 @@
 /* Footer links carry their brand icon; only the arrow nudges on hover. */
 .footer-link-label { display: inline-flex; align-items: center; gap: 11px; }
 .footer-directory a:hover .footer-link-label svg { transform: none; }
-
-/* The featured repository has the Build panel's top row to itself: the
-   heading on the left, its details on the right. */
-.feature-grid { grid-template-columns: 1fr; }
-.feature-card { border-right: 0; }
-@media (min-width: 851px) {
-  .feature-card { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); column-gap: clamp(32px, 6vw, 96px); align-content: start; padding-right: 5px; }
-  .feature-card > * { grid-column: 2; }
-  .feature-card > .feature-heading { grid-column: 1 / -1; }
-  .feature-card > h3 { grid-column: 1; grid-row: 2 / span 5; align-self: start; }
-  .feature-card > p:first-of-type { margin-top: 55px; }
-}
-
-/* Scroll motion: sections rise into place as they enter, and large headings
-   drift slower than the page. Scroll-driven, so no script runs; browsers
-   without view timelines simply show everything in place. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .section-title, .about-head, .domains-top, .domain-layout, .principle-grid article, .feature-card,
-    .project-grid > li, .contributor-grid > li, .news-grid > li, .people-group, .join-band, .footer-statement {
-      animation: rise-in linear both;
-      animation-timeline: view();
-      animation-range: entry 5% cover 28%;
-    }
-    .section-title h2, .about-head h2, .join-band h2, .footer-statement h2 {
-      animation: heading-drift linear both;
-      animation-timeline: view();
-      animation-range: cover;
-    }
-  }
-}
-@keyframes rise-in { from { opacity: 0; translate: 0 36px; } to { opacity: 1; translate: 0 0; } }
-@keyframes heading-drift { from { translate: 0 26px; } to { translate: 0 -26px; } }

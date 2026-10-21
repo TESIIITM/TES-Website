@@ -11,6 +11,7 @@ import { Footer } from './footer';
 import { Header } from './header';
 import { Hero } from './hero';
 import { isPanel, isSection, type Navigate, type Panel } from './navigation';
+import { JoinPath } from './join-path';
 import { People } from './people';
 import { TechNews } from './tech-news';
 
@@ -81,10 +82,13 @@ export function SiteShell({ content }: { content: SiteContent }) {
       <Header navigate={navigate} onCommand={openCommand} githubUrl={content.links.github} panel={panel} />
       <main>
         <Hero navigate={navigate} />
-        <About domains={content.domains} />
-        <Explorer panel={panel} onPanel={(value) => navigate(value, false)} content={content} />
-        {content.techNews && <TechNews issue={content.techNews} />}
-        <People navigate={navigate} members={content.members} links={content.links} />
+        <div className="site-sections">
+          <About domains={content.domains} />
+          <Explorer panel={panel} onPanel={(value) => navigate(value, false)} content={content} />
+          {content.techNews && <TechNews issue={content.techNews} />}
+          <People members={content.members} />
+          <JoinPath navigate={navigate} links={content.links} />
+        </div>
       </main>
       <Footer links={content.links} />
       {commandOpen && <CommandPalette onOpenChange={setCommandOpen} navigate={navigate} links={content.links} featuredEvent={featured ? announcementTitle(featured) : null} />}

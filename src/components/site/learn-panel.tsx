@@ -6,7 +6,7 @@ import { useBrowserStore } from '@/lib/browser-store';
 import { formatStoryDate } from '@/lib/format';
 import { readingListStore } from '@/lib/reading-list';
 import type { Story, YouTubeVideo } from '@/lib/content/types';
-import { Eyebrow } from './eyebrow';
+import { SectionHead } from './section-head';
 import { Videos } from './videos';
 
 const ALL = 'All';
@@ -49,7 +49,10 @@ export function LearnPanel({ stories, videos, mediumUrl }: Props) {
 
   return (
     <div className="learn-panel">
-      <div className="panel-heading"><div><Eyebrow>FROM THE COMMUNITY</Eyebrow><h3>Knowledge moves<br /><em>when we share it.</em></h3></div><a href={mediumUrl} target="_blank" rel="noopener noreferrer">All stories on Medium <ArrowUpRight size={16} /></a></div>
+      <div className="panel-heading">
+        <SectionHead id="learn-title" level={3} title="Stories" />
+        <a className="pill-button" href={mediumUrl} target="_blank" rel="noopener noreferrer">All stories on Medium <ArrowUpRight size={16} /></a>
+      </div>
       <div className="reading-tools">
         <label className="search-field" htmlFor={inputId}><Search size={17} /><input id={inputId} value={query} onChange={(event) => search(event.target.value)} placeholder="Search the reading list" type="search" /></label>
         <div className="filter-set" role="group" aria-label="Filter stories">
@@ -65,7 +68,7 @@ export function LearnPanel({ stories, videos, mediumUrl }: Props) {
               return (
                 <article className="story-row" key={story.id}>
                   <span className="story-date">{formatStoryDate(story.publishedOn)}</span>
-                  <div><span className="story-category">{story.category}</span><a href={story.url} target="_blank" rel="noopener noreferrer"><h4>{story.title} <ArrowUpRight size={18} /></h4></a><p>{story.summary}</p></div>
+                  <div><span className="story-category" data-category={story.category.toLowerCase().replace(/\s+/g, '-')}>{story.category}</span><a href={story.url} target="_blank" rel="noopener noreferrer"><h4>{story.title} <ArrowUpRight size={18} /></h4></a><p>{story.summary}</p></div>
                   <button className="bookmark-button" aria-label={`${isSaved ? 'Remove' : 'Save'} ${story.title}`} aria-pressed={isSaved} onClick={() => toggleSaved(story.slug)}><Bookmark size={19} fill={isSaved ? 'currentColor' : 'none'} /></button>
                 </article>
               );
