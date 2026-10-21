@@ -58,6 +58,7 @@ test('unknown pages render the styled not-found page', async ({ page }) => {
   const response = await page.goto('/does-not-exist');
   expect(response?.status()).toBe(404);
   await expect(page.getByRole('heading', { name: 'Off the map.' })).toBeVisible();
+  await expect(page).toHaveTitle('Page not found · The Enigma Society');
 });
 
 test('signed-out visitors are sent from the dashboard to sign in', async ({ page }) => {
